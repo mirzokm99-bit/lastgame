@@ -228,7 +228,7 @@
         <div id="game" style="display: none;">
             <div id="score">Score: 0</div>
             <div id="streak">Streak: 0 🔥</div>
-            <div id="timer">Time Left: 60s</div>
+            <div id="timer">Time Left: 5:00</div>
             <div id="progress">Question 1 / 15</div>
             <p id="question"></p>
             <div id="calculator">
@@ -277,316 +277,312 @@
         let streak = 0;
         let maxStreak = 0;
         let timerInterval;
-        let timeLeft = 60;
+        let timeLeft = 300; // MODIFIED: Initialized for 5 minutes (300 seconds)
         let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
         let calculatorState = '0';
         const questionBank = [
             // CM Questions (10 GRE-like / Case Studies)
-            { 
-                type: 'cm', 
-                question: 'In a startup producing eco-friendly water bottles, the selling price is given, along with variable costs. Calculate the Contribution Margin per unit to assess profitability.', 
+            {
+                type: 'cm',
+                question: 'In a startup producing eco-friendly water bottles, the selling price is given, along with variable costs. Calculate the Contribution Margin per unit to assess profitability.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'Contribution Margin (CM) represents the amount each unit contributes to covering fixed costs after variable costs are deducted. It is crucial for pricing decisions and profitability analysis.'
             },
-            { 
-                type: 'cm', 
-                question: 'A coffee shop chain is analyzing its latte sales. With the provided selling price and variable costs for ingredients and labor, determine the Contribution Margin per latte.', 
+            {
+                type: 'cm',
+                question: 'A coffee shop chain is analyzing its latte sales. With the provided selling price and variable costs for ingredients and labor, determine the Contribution Margin per latte.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'CM helps in understanding how much revenue from each latte sale contributes to fixed costs like rent and salaries, aiding in break-even analysis.'
             },
-            { 
-                type: 'cm', 
-                question: 'For a tech company selling smartwatches, compute the Contribution Margin per unit using the given selling price and variable manufacturing costs.', 
+            {
+                type: 'cm',
+                question: 'For a tech company selling smartwatches, compute the Contribution Margin per unit using the given selling price and variable manufacturing costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'High CM indicates strong profitability potential per unit, important for scaling production in tech industries.'
             },
-            { 
-                type: 'cm', 
-                question: 'In the case of a bookstore selling novels, calculate the Contribution Margin per book based on the retail price and variable acquisition costs.', 
+            {
+                type: 'cm',
+                question: 'In the case of a bookstore selling novels, calculate the Contribution Margin per book based on the retail price and variable acquisition costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'This metric assists bookstores in deciding inventory levels and promotional strategies.'
             },
-            { 
-                type: 'cm', 
-                question: 'A fitness center is evaluating its membership plans. Determine the Contribution Margin per membership using the annual fee and variable service costs.', 
+            {
+                type: 'cm',
+                question: 'A fitness center is evaluating its membership plans. Determine the Contribution Margin per membership using the annual fee and variable service costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'CM per membership guides pricing adjustments and cost control in service-based businesses.'
             },
-            { 
-                type: 'cm', 
-                question: 'For a software firm offering subscriptions, compute the Contribution Margin per subscription with the given price and variable support costs.', 
+            {
+                type: 'cm',
+                question: 'For a software firm offering subscriptions, compute the Contribution Margin per subscription with the given price and variable support costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'In SaaS models, high CM supports rapid scaling and investor confidence.'
             },
-            { 
-                type: 'cm', 
-                question: 'In a restaurant scenario, calculate the Contribution Margin per meal using the menu price and variable food preparation costs.', 
+            {
+                type: 'cm',
+                question: 'In a restaurant scenario, calculate the Contribution Margin per meal using the menu price and variable food preparation costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'Restaurants use CM to optimize menu items and control portion sizes.'
             },
-            { 
-                type: 'cm', 
-                question: 'A clothing retailer is analyzing t-shirt sales. Determine the Contribution Margin per t-shirt based on the selling price and variable production costs.', 
+            {
+                type: 'cm',
+                question: 'A clothing retailer is analyzing t-shirt sales. Determine the Contribution Margin per t-shirt based on the selling price and variable production costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'CM analysis helps retailers decide on bulk purchasing and sales promotions.'
             },
-            { 
-                type: 'cm', 
-                question: 'For an online course provider, compute the Contribution Margin per enrollment using the course fee and variable platform costs.', 
+            {
+                type: 'cm',
+                question: 'For an online course provider, compute the Contribution Margin per enrollment using the course fee and variable platform costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'High CM in digital products indicates low incremental costs and high scalability.'
             },
-            { 
-                type: 'cm', 
-                question: 'In the case of a toy manufacturer, calculate the Contribution Margin per toy set with the provided retail price and variable assembly costs.', 
+            {
+                type: 'cm',
+                question: 'In the case of a toy manufacturer, calculate the Contribution Margin per toy set with the provided retail price and variable assembly costs.',
                 formula: 'CM = Selling Price - Variable Cost',
                 explanation: 'Toy manufacturers rely on CM to manage seasonal demand fluctuations.'
             },
-
             // BEP Units Questions (10)
-            { 
-                type: 'bep_units', 
-                question: 'A manufacturing plant producing bicycles needs to cover its fixed costs. Calculate the Break-Even Point in units, rounding up, to determine the minimum sales required.', 
+            {
+                type: 'bep_units',
+                question: 'A manufacturing plant producing bicycles needs to cover its fixed costs. Calculate the Break-Even Point in units, rounding up, to determine the minimum sales required.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'Break-Even Point (BEP) indicates the sales volume where total revenues equal total costs, with no profit or loss. Rounding up ensures conservative estimates.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'In a pharmacy chain case study, compute the Break-Even Point in units for medication sales to offset operational fixed costs.', 
+            {
+                type: 'bep_units',
+                question: 'In a pharmacy chain case study, compute the Break-Even Point in units for medication sales to offset operational fixed costs.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'BEP helps pharmacies plan inventory and staffing levels.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'For a car wash service, determine the Break-Even Point in units (number of washes) using the given fixed costs and per-wash margins.', 
+            {
+                type: 'bep_units',
+                question: 'For a car wash service, determine the Break-Even Point in units (number of washes) using the given fixed costs and per-wash margins.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'Service businesses use BEP to set daily targets.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'A bakery is assessing its bread production. Calculate the Break-Even Point in loaves to cover monthly fixed expenses.', 
+            {
+                type: 'bep_units',
+                question: 'A bakery is assessing its bread production. Calculate the Break-Even Point in loaves to cover monthly fixed expenses.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'BEP aids in production scheduling and waste reduction.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'In the context of a gym equipment supplier, find the Break-Even Point in units for treadmill sales.', 
+            {
+                type: 'bep_units',
+                question: 'In the context of a gym equipment supplier, find the Break-Even Point in units for treadmill sales.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'Suppliers use BEP for sales forecasting and inventory management.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'For a mobile app developer, compute the Break-Even Point in downloads assuming a freemium model with fixed development costs.', 
+            {
+                type: 'bep_units',
+                question: 'For a mobile app developer, compute the Break-Even Point in downloads assuming a freemium model with fixed development costs.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'In digital goods, low variable costs lead to lower BEP.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'A farm producing organic vegetables needs to break even. Determine the units (baskets) required based on fixed farming costs.', 
+            {
+                type: 'bep_units',
+                question: 'A farm producing organic vegetables needs to break even. Determine the units (baskets) required based on fixed farming costs.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'Farms use BEP for crop planning and pricing.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'In a hotel management case, calculate the Break-Even Point in room nights to cover fixed overheads.', 
+            {
+                type: 'bep_units',
+                question: 'In a hotel management case, calculate the Break-Even Point in room nights to cover fixed overheads.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'Hotels rely on BEP for occupancy targets.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'For a printing company, find the Break-Even Point in print jobs using the provided data.', 
+            {
+                type: 'bep_units',
+                question: 'For a printing company, find the Break-Even Point in print jobs using the provided data.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'Printing firms use BEP to optimize machine utilization.'
             },
-            { 
-                type: 'bep_units', 
-                question: 'A cosmetics brand is launching a new lipstick. Compute the Break-Even Point in units to recover marketing fixed costs.', 
+            {
+                type: 'bep_units',
+                question: 'A cosmetics brand is launching a new lipstick. Compute the Break-Even Point in units to recover marketing fixed costs.',
                 formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
                 explanation: 'New product launches use BEP for risk assessment.'
             },
-
             // Profit Questions (10)
-            { 
-                type: 'profit', 
-                question: 'A electronics retailer is forecasting profits. Calculate the total profit at the given sales units for smartphones.', 
+            {
+                type: 'profit',
+                question: 'A electronics retailer is forecasting profits. Calculate the total profit at the given sales units for smartphones.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Profit calculation shows financial health beyond break-even.'
             },
-            { 
-                type: 'profit', 
-                question: 'In a case study of a furniture store, determine the profit from selling chairs at the specified volume.', 
+            {
+                type: 'profit',
+                question: 'In a case study of a furniture store, determine the profit from selling chairs at the specified volume.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Helps in evaluating product line performance.'
             },
-            { 
-                type: 'profit', 
-                question: 'For a streaming service, compute the profit based on subscriber numbers and operational costs.', 
+            {
+                type: 'profit',
+                question: 'For a streaming service, compute the profit based on subscriber numbers and operational costs.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Subscription models focus on retention for sustained profits.'
             },
-            { 
-                type: 'profit', 
-                question: 'A pet store is analyzing dog food sales. Calculate the profit at target sales units.', 
+            {
+                type: 'profit',
+                question: 'A pet store is analyzing dog food sales. Calculate the profit at target sales units.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Assists in inventory and supplier negotiations.'
             },
-            { 
-                type: 'profit', 
-                question: 'In the scenario of a concert organizer, find the profit from ticket sales.', 
+            {
+                type: 'profit',
+                question: 'In the scenario of a concert organizer, find the profit from ticket sales.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Event planning uses profit projections for budgeting.'
             },
-            { 
-                type: 'profit', 
-                question: 'For a bike rental business, determine the profit at the given rental units.', 
+            {
+                type: 'profit',
+                question: 'For a bike rental business, determine the profit at the given rental units.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Seasonal businesses track profits for off-peak strategies.'
             },
-            { 
-                type: 'profit', 
-                question: 'A jewelry maker is evaluating handmade necklace sales. Compute the total profit.', 
+            {
+                type: 'profit',
+                question: 'A jewelry maker is evaluating handmade necklace sales. Compute the total profit.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Artisans use this to price handmade items appropriately.'
             },
-            { 
-                type: 'profit', 
-                question: 'In a supermarket chain case, calculate profit from grocery items at sales volume.', 
+            {
+                type: 'profit',
+                question: 'In a supermarket chain case, calculate profit from grocery items at sales volume.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Retail chains optimize assortments based on profit margins.'
             },
-            { 
-                type: 'profit', 
-                question: 'For an e-commerce platform selling books, find the profit at projected sales.', 
+            {
+                type: 'profit',
+                question: 'For an e-commerce platform selling books, find the profit at projected sales.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Online sellers factor in shipping in variable costs.'
             },
-            { 
-                type: 'profit', 
-                question: 'A toy store is assessing puzzle sales. Determine the profit based on units sold.', 
+            {
+                type: 'profit',
+                question: 'A toy store is assessing puzzle sales. Determine the profit based on units sold.',
                 formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
                 explanation: 'Toy stores use profit analysis for holiday planning.'
             },
-
             // MoS Questions (10)
-            { 
-                type: 'mos', 
-                question: 'A pharmaceutical company is measuring risk. Calculate the Margin of Safety percentage for its drug sales.', 
+            {
+                type: 'mos',
+                question: 'A pharmaceutical company is measuring risk. Calculate the Margin of Safety percentage for its drug sales.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Margin of Safety (MoS) measures how much sales can drop before incurring losses, indicating business risk.'
             },
-            { 
-                type: 'mos', 
-                question: 'In a case study of an airline, determine the Margin of Safety % for ticket sales.', 
+            {
+                type: 'mos',
+                question: 'In a case study of an airline, determine the Margin of Safety % for ticket sales.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'High MoS provides buffer against fuel price fluctuations.'
             },
-            { 
-                type: 'mos', 
-                question: 'For a real estate firm, compute the Margin of Safety % based on property sales.', 
+            {
+                type: 'mos',
+                question: 'For a real estate firm, compute the Margin of Safety % based on property sales.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Real estate uses MoS to assess market downturn risks.'
             },
-            { 
-                type: 'mos', 
-                question: 'A manufacturing plant producing cars needs to assess buffer. Calculate MoS%.', 
+            {
+                type: 'mos',
+                question: 'A manufacturing plant producing cars needs to assess buffer. Calculate MoS%.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Auto industry monitors MoS for supply chain disruptions.'
             },
-            { 
-                type: 'mos', 
-                question: 'In the context of a tech startup, find the Margin of Safety % for app subscriptions.', 
+            {
+                type: 'mos',
+                question: 'In the context of a tech startup, find the Margin of Safety % for app subscriptions.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Startups aim for high MoS to attract investors.'
             },
-            { 
-                type: 'mos', 
-                question: 'For a fashion brand, determine MoS% for clothing line sales.', 
+            {
+                type: 'mos',
+                question: 'For a fashion brand, determine MoS% for clothing line sales.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Fashion trends affect MoS; high MoS cushions volatility.'
             },
-            { 
-                type: 'mos', 
-                question: 'A food delivery service is evaluating operations. Compute Margin of Safety %.', 
+            {
+                type: 'mos',
+                question: 'A food delivery service is evaluating operations. Compute Margin of Safety %.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Delivery services use MoS for peak/off-peak planning.'
             },
-            { 
-                type: 'mos', 
-                question: 'In a hotel chain case, calculate MoS% for room bookings.', 
+            {
+                type: 'mos',
+                question: 'In a hotel chain case, calculate MoS% for room bookings.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Hospitality industry tracks MoS for seasonal variations.'
             },
-            { 
-                type: 'mos', 
-                question: 'For an insurance company, find the Margin of Safety % on policies sold.', 
+            {
+                type: 'mos',
+                question: 'For an insurance company, find the Margin of Safety % on policies sold.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Insurance firms use MoS to manage claim risks.'
             },
-            { 
-                type: 'mos', 
-                question: 'A publishing house is analyzing book sales. Determine MoS%.', 
+            {
+                type: 'mos',
+                question: 'A publishing house is analyzing book sales. Determine MoS%.',
                 formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
                 explanation: 'Publishers assess MoS for bestseller dependencies.'
             },
-
             // Target Sales Questions (10)
-            { 
-                type: 'target_sales', 
-                question: 'A non-profit organization aims for a surplus. Calculate units needed to achieve the target profit.', 
+            {
+                type: 'target_sales',
+                question: 'A non-profit organization aims for a surplus. Calculate units needed to achieve the target profit.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Target Sales helps set goals for desired profit levels.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'In a case study of a solar panel installer, determine sales units for desired profit.', 
+            {
+                type: 'target_sales',
+                question: 'In a case study of a solar panel installer, determine sales units for desired profit.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Renewable energy firms use this for expansion planning.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'For a gaming company, compute units of video games to sell for target earnings.', 
+            {
+                type: 'target_sales',
+                question: 'For a gaming company, compute units of video games to sell for target earnings.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Game developers set launch targets based on this.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'A winery is planning production. Calculate bottles needed for profit goal.', 
+            {
+                type: 'target_sales',
+                question: 'A winery is planning production. Calculate bottles needed for profit goal.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Wineries align production with market demand.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'In the scenario of a tutoring service, find student enrollments for target income.', 
+            {
+                type: 'target_sales',
+                question: 'In the scenario of a tutoring service, find student enrollments for target income.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Education services scale based on target sales.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'For a landscaping business, determine projects required for profit target.', 
+            {
+                type: 'target_sales',
+                question: 'For a landscaping business, determine projects required for profit target.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Service businesses use this for workforce planning.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'A craft brewery aims for expansion funds. Compute kegs to sell.', 
+            {
+                type: 'target_sales',
+                question: 'A craft brewery aims for expansion funds. Compute kegs to sell.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Breweries set sales goals for growth.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'In a photography studio case, calculate sessions needed for desired profit.', 
+            {
+                type: 'target_sales',
+                question: 'In a photography studio case, calculate sessions needed for desired profit.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Creative studios balance artistry with financial targets.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'For a graphic design firm, find client projects for target revenue after costs.', 
+            {
+                type: 'target_sales',
+                question: 'For a graphic design firm, find client projects for target revenue after costs.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Design firms use this for client acquisition strategies.'
             },
-            { 
-                type: 'target_sales', 
-                question: 'A florist shop is setting goals. Determine bouquets to sell for profit objective.', 
+            {
+                type: 'target_sales',
+                question: 'A florist shop is setting goals. Determine bouquets to sell for profit objective.',
                 formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
                 explanation: 'Small businesses like florists rely on target sales for sustainability.'
             }
@@ -635,6 +631,7 @@
                 showResults();
                 return;
             }
+
             generateData();
             const q = gameQuestions[currentQuestionIndex];
             let qText = `${q.question}\n\nData:\nSelling Price: $${data.sellingPrice}\nVariable Cost: $${data.variableCost}\nFixed Costs: $${data.fixedCosts}\nSales Units: ${data.salesUnits}\nTarget Profit: $${data.targetProfit}`;
@@ -645,157 +642,226 @@
             document.getElementById('score').textContent = `Score: ${score}`;
             document.getElementById('streak').textContent = `Streak: ${streak} 🔥`;
             document.getElementById('progress').textContent = `Question ${currentQuestionIndex + 1} / 15`;
-            timeLeft = 60;
-            document.getElementById('timer').textContent = `Time Left: ${timeLeft}s`;
+
+            // 5-MINUTE TIMER LOGIC
+            timeLeft = 300; // MODIFIED: 5 minutes (300 seconds)
+            document.getElementById('timer').textContent = `Time Left: 5:00`; // Initial display
             clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 1000);
         }
 
         function updateTimer() {
             timeLeft--;
-            document.getElementById('timer').textContent = `Time Left: ${timeLeft}s`;
-            if (timeLeft <= 0) {
+
+            if (timeLeft < 0) {
                 clearInterval(timerInterval);
-                checkAnswer(true); // Auto-submit with incorrect
+                checkAnswer(true); // Treat as a wrong answer due to timeout
+                return;
             }
+
+            // MODIFIED: Display time in MM:SS format
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('timer').textContent = `Time Left: ${timeString}`;
         }
 
-        function calculateCorrectAnswer(type) {
-            const cm = data.sellingPrice - data.variableCost;
-            switch (type) {
-                case 'cm': return cm.toFixed(2);
-                case 'bep_units': return Math.ceil(data.fixedCosts / cm);
-                case 'profit': return ((data.salesUnits * cm) - data.fixedCosts).toFixed(2);
-                case 'mos': {
-                    const bep = data.fixedCosts / cm;
-                    const mos = (data.salesUnits - bep) / data.salesUnits * 100;
-                    return mos.toFixed(2);
+        function calculateAnswer(type) {
+            const { sellingPrice, variableCost, fixedCosts, salesUnits, targetProfit } = data;
+            const cm = sellingPrice - variableCost;
+            let result;
+            let calculationDetails = '';
+
+            try {
+                switch (type) {
+                    case 'cm':
+                        result = cm;
+                        calculationDetails = `CM = Selling Price - Variable Cost\nCM = $${sellingPrice} - $${variableCost} = $${result}`;
+                        break;
+                    case 'bep_units':
+                        // Break Even Point in Units. Needs to be rounded UP.
+                        result = Math.ceil(fixedCosts / cm);
+                        calculationDetails = `BEP (Units) = Fixed Costs / CM\nBEP (Units) = $${fixedCosts} / $${cm} = ${result}`;
+                        break;
+                    case 'profit':
+                        result = (salesUnits * cm) - fixedCosts;
+                        calculationDetails = `Profit = (Sales Units * CM) - Fixed Costs\nProfit = (${salesUnits} * $${cm}) - $${fixedCosts} = $${result}`;
+                        break;
+                    case 'mos':
+                        const bepUnitsMoS = Math.ceil(fixedCosts / cm);
+                        // Margin of Safety Percentage: ((Actual Sales - BEP Sales) / Actual Sales) * 100
+                        result = ((salesUnits - bepUnitsMoS) / salesUnits) * 100;
+                        result = parseFloat(result.toFixed(2));
+                        calculationDetails = `1. BEP Units: $${fixedCosts} / $${cm} = ${bepUnitsMoS} units\n2. MoS (Units) = Sales Units - BEP Units\nMoS (Units) = ${salesUnits} - ${bepUnitsMoS} = ${salesUnits - bepUnitsMoS} units\n3. MoS% = (MoS Units / Sales Units) * 100\nMoS% = (${salesUnits - bepUnitsMoS} / ${salesUnits}) * 100 = ${result}%`;
+                        break;
+                    case 'target_sales':
+                        // Target Sales in Units
+                        result = Math.ceil((fixedCosts + targetProfit) / cm);
+                        calculationDetails = `Target Sales = (Fixed Costs + Target Profit) / CM\nTarget Sales = ($${fixedCosts} + $${targetProfit}) / $${cm} = ${result} units`;
+                        break;
+                    default:
+                        result = 0;
+                        calculationDetails = 'Error: Unknown question type.';
                 }
-                case 'target_sales': return Math.ceil((data.fixedCosts + data.targetProfit) / cm);
+                return { answer: result, details: calculationDetails };
+            } catch (e) {
+                console.error("Calculation Error:", e);
+                return { answer: NaN, details: 'Calculation Error' };
             }
         }
 
-        function checkAnswer(autoIncorrect = false) {
+        function checkAnswer(timedOut = false) {
             clearInterval(timerInterval);
-            let userAnswer = autoIncorrect ? NaN : parseFloat(document.getElementById('answer').value);
-            if (isNaN(userAnswer)) {
-                userAnswer = 0; // Treat as incorrect
-            }
+
+            const userAnswer = parseFloat(document.getElementById('answer').value);
             const q = gameQuestions[currentQuestionIndex];
-            const correct = parseFloat(calculateCorrectAnswer(q.type));
-            const feedback = document.getElementById('feedback');
-            const isCorrect = Math.abs(userAnswer - correct) < 0.01;
-            let bonus = 0;
+            const correctCalc = calculateAnswer(q.type);
+            const correctAnswer = correctCalc.answer;
+            const tolerance = 0.02; // Allowing for slight floating point errors or rounding
+            let isCorrect = false;
+            let feedbackMessage = '';
+            let points = 0;
+
+            if (timedOut) {
+                feedbackMessage = "⏰ Time's up! The correct answer was: " + (correctAnswer.toFixed(q.type === 'mos' ? 2 : 0));
+                document.getElementById('feedback').className = 'incorrect';
+                isCorrect = false;
+            } else if (isNaN(userAnswer)) {
+                feedbackMessage = "Please enter a numeric answer.";
+                document.getElementById('feedback').className = 'incorrect';
+                isCorrect = false;
+            } else {
+                if (q.type === 'mos') {
+                    // MoS is a percentage, checking with tolerance
+                    isCorrect = Math.abs(userAnswer - correctAnswer) <= tolerance;
+                    feedbackMessage = isCorrect
+                        ? `✅ Correct! Margin of Safety is ${correctAnswer.toFixed(2)}%`
+                        : `❌ Incorrect. The correct answer was: ${correctAnswer.toFixed(2)}%`;
+                } else if (q.type === 'bep_units' || q.type === 'target_sales') {
+                    // BEP and Target Sales are units, must be integers and rounded up
+                    isCorrect = Math.round(userAnswer) === correctAnswer;
+                    feedbackMessage = isCorrect
+                        ? `🎉 Correct! You need to sell ${correctAnswer} units.`
+                        : `❌ Incorrect. The correct BEP/Target Sales (Units) is ${correctAnswer}.`;
+                } else {
+                    // CM and Profit, checking with tolerance
+                    isCorrect = Math.abs(userAnswer - correctAnswer) <= tolerance;
+                    feedbackMessage = isCorrect
+                        ? `💰 Correct! The answer is $${correctAnswer.toFixed(2)}`
+                        : `❌ Incorrect. The correct answer was: $${correctAnswer.toFixed(2)}`;
+                }
+            }
+
             if (isCorrect) {
                 streak++;
-                if (streak > maxStreak) maxStreak = streak;
-                bonus = Math.floor(timeLeft / 10) * 2; // Bonus for time left
-                if (streak >= 3) bonus += streak * 5; // Streak bonus
-                score += 10 + bonus;
-                feedback.textContent = `Correct! +${10 + bonus} points (Bonus: ${bonus})`;
-                feedback.className = 'correct';
-                correctAnswers++;
-                playSound('correct');
-                if (streak >= 3) createConfetti();
+                points = 10 + (streak * 5); // Base 10 points + 5 per streak
+                score += points;
+                document.getElementById('feedback').className = 'correct';
             } else {
+                maxStreak = Math.max(maxStreak, streak);
                 streak = 0;
-                feedback.textContent = `Incorrect. The correct answer is ${correct}.`;
-                feedback.className = 'incorrect';
-                playSound('incorrect');
+                if (!timedOut) document.getElementById('feedback').className = 'incorrect';
             }
+
             results.push({
-                questionIndex: currentQuestionIndex + 1,
-                question: q.question,
+                question: q.question.split('\n\n')[0],
+                dataType: q.type,
+                data: JSON.stringify(data),
+                userAnswer: timedOut ? 'Timeout' : userAnswer,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect,
+                scoreGained: isCorrect ? points : 0,
+                details: correctCalc.details,
                 formula: q.formula,
-                explanation: q.explanation,
-                data: { ...data },
-                userAnswer: userAnswer.toFixed(2),
-                correctAnswer: correct.toString(),
-                isCorrect
+                explanation: q.explanation
             });
+
+            document.getElementById('feedback').innerHTML = feedbackMessage + `<div class="calculation-details" onclick="toggleExplanation(this)"><h4>Click for Detailed Calculation & Explanation</h4><div class="explanation"><h5>Formula: ${q.formula}</h5><p><strong>Calculation:</strong></p><pre>${correctCalc.details}</pre><p><strong>Concept:</strong> ${q.explanation}</p></div></div>`;
+            document.getElementById('next').style.display = 'block';
             document.getElementById('score').textContent = `Score: ${score}`;
             document.getElementById('streak').textContent = `Streak: ${streak} 🔥`;
-            document.getElementById('next').style.display = 'block';
             currentQuestionIndex++;
         }
 
-        function playSound(type) {
-            const audio = new Audio(type === 'correct' ? 'https://www.soundjay.com/buttons/sounds/button-3.mp3' : 'https://www.soundjay.com/buttons/sounds/button-10.mp3');
-            audio.play().catch(() => {});
-        }
-
-        function createConfetti() {
-            const colors = ['#ff0', '#f00', '#0f0', '#00f', '#f0f'];
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
-                confetti.style.opacity = Math.random();
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 5000);
-            }
+        function toggleExplanation(element) {
+            const explanation = element.querySelector('.explanation');
+            explanation.style.display = explanation.style.display === 'block' ? 'none' : 'block';
         }
 
         function showResults() {
-            const modal = document.getElementById('resultsModal');
-            const resultsContent = document.getElementById('resultsContent');
-            highScores.push({ name: playerName, score, maxStreak });
-            highScores.sort((a, b) => b.score - a.score);
-            highScores = highScores.slice(0, 5);
+            clearInterval(timerInterval);
+            document.getElementById('game').style.display = 'none';
+            document.getElementById('resultsModal').style.display = 'flex';
+
+            let resultHTML = `<h3>Final Score: ${score}</h3>`;
+            resultHTML += `<p>Correct Answers: ${results.filter(r => r.isCorrect).length} / ${gameQuestions.length}</p>`;
+            resultHTML += `<p>Max Streak: ${Math.max(maxStreak, streak)} 🔥</p>`;
+            resultHTML += `<h3>Detailed Breakdown:</h3>`;
+
+            results.forEach((r, index) => {
+                const status = r.isCorrect ? '✅ Correct' : '❌ Incorrect';
+                const statusClass = r.isCorrect ? 'correct' : 'incorrect';
+                resultHTML += `
+                    <div class="scoreboard">
+                        <h4>Q${index + 1}: ${r.question}</h4>
+                        <p><strong>Status:</strong> <span class="${statusClass}">${status}</span> (+$${r.scoreGained})</p>
+                        <p><strong>Your Answer:</strong> ${r.userAnswer}</p>
+                        <p><strong>Correct Answer:</strong> ${r.correctAnswer.toFixed(r.dataType === 'mos' ? 2 : (r.dataType === 'cm' || r.dataType === 'profit' ? 2 : 0))}</p>
+                        <div class="calculation-details" onclick="toggleExplanation(this)">
+                            <h4>Detailed Calculation</h4>
+                            <div class="explanation">
+                                <h5>Formula: ${r.formula}</h5>
+                                <p><strong>Data Used:</strong> ${r.data}</p>
+                                <p><strong>Calculation:</strong></p><pre>${r.details}</pre>
+                                <p><strong>Concept:</strong> ${r.explanation}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('resultsContent').innerHTML = resultHTML;
+            saveHighScore();
+        }
+
+        function saveHighScore() {
+            const finalScore = score;
+            highScores.push({ name: playerName, score: finalScore, date: new Date().toLocaleDateString() });
+            highScores.sort((a, b) => b.score - a.score); // Sort descending
+            highScores = highScores.slice(0, 10); // Keep top 10
+
             localStorage.setItem('highScores', JSON.stringify(highScores));
-            const leaderboard = highScores.map((hs, i) => `<p>${i + 1}. ${hs.name}: ${hs.score} (Max Streak: ${hs.maxStreak})</p>`).join('');
-            const scoreboard = `
-                <div class="scoreboard">
-                    <h3>Final Scoreboard</h3>
-                    <p><strong>Player:</strong> ${playerName}</p>
-                    <p><strong>Total Score:</strong> ${score}</p>
-                    <p><strong>Correct Answers:</strong> ${correctAnswers} / 15</p>
-                    <p><strong>Incorrect Answers:</strong> ${15 - correctAnswers}</p>
-                    <p><strong>Max Streak:</strong> ${maxStreak} 🔥</p>
-                    <h4>Leaderboard</h4>
-                    ${leaderboard}
-                </div>
-            `;
-            const calculations = results.map(result => `
-                <div class="calculation-details" onclick="this.querySelector('.explanation').style.display = this.querySelector('.explanation').style.display === 'block' ? 'none' : 'block';">
-                    <h4>Question ${result.questionIndex}: ${result.question}</h4>
-                    <p><strong>Formula:</strong> ${result.formula}</p>
-                    <p><strong>Data:</strong> Selling Price: $${result.data.sellingPrice}, Variable Cost: $${result.data.variableCost}, Fixed Costs: $${result.data.fixedCosts}, Sales Units: ${result.data.salesUnits}, Target Profit: $${result.data.targetProfit}</p>
-                    <p><strong>Your Answer:</strong> ${result.userAnswer}</p>
-                    <p><strong>Correct Answer:</strong> ${result.correctAnswer}</p>
-                    <p><strong>Result:</strong> <span class="${result.isCorrect ? 'correct' : 'incorrect'}">${result.isCorrect ? 'Correct' : 'Incorrect'}</span></p>
-                    <div class="explanation">${result.explanation}</div>
-                </div>
-            `).join('');
-            resultsContent.innerHTML = `${scoreboard}${calculations}`;
-            modal.style.display = 'flex';
         }
 
         function restartGame() {
             document.getElementById('resultsModal').style.display = 'none';
-            document.getElementById('game').style.display = 'none';
             document.getElementById('setup').style.display = 'block';
-            document.getElementById('playerName').value = '';
+            document.getElementById('playerName').value = playerName; // Keep last entered name
         }
 
         // Calculator Functions
         function toggleCalculator() {
             const calc = document.getElementById('calculator');
-            const toggleBtn = document.getElementById('toggleCalculator');
-            calc.style.display = calc.style.display === 'none' ? 'block' : 'none';
-            toggleBtn.textContent = calc.style.display === 'block' ? 'Hide Calculator' : 'Show Calculator';
+            const button = document.getElementById('toggleCalculator');
+            if (calc.style.display === 'block') {
+                calc.style.display = 'none';
+                button.textContent = 'Show Calculator';
+            } else {
+                calc.style.display = 'block';
+                button.textContent = 'Hide Calculator';
+            }
         }
 
-        function calculatorAppend(value) {
-            const display = document.getElementById('calculatorDisplay');
-            if (calculatorState === '0' && value !== '.') {
-                calculatorState = value;
+        function calculatorAppend(char) {
+            if (calculatorState === '0' && !isNaN(char) && char !== '.') {
+                calculatorState = char;
+            } else if (calculatorState === 'Error') {
+                calculatorState = char;
             } else {
-                calculatorState += value;
+                calculatorState += char;
             }
-            display.value = calculatorState;
+            document.getElementById('calculatorDisplay').value = calculatorState;
         }
 
         function calculatorClear() {
@@ -805,23 +871,19 @@
 
         function calculatorCalculate() {
             try {
-                calculatorState = eval(calculatorState).toFixed(2);
-                document.getElementById('calculatorDisplay').value = calculatorState;
+                // Use a safe evaluation function (or better: a math parser)
+                // For simplicity, using eval but being mindful of security risks
+                const result = eval(calculatorState);
+                if (isFinite(result)) {
+                    calculatorState = result.toString();
+                } else {
+                    calculatorState = 'Error';
+                }
             } catch (e) {
                 calculatorState = 'Error';
-                document.getElementById('calculatorDisplay').value = calculatorState;
-                setTimeout(calculatorClear, 1000);
             }
+            document.getElementById('calculatorDisplay').value = calculatorState;
         }
-
-        window.startGame = startGame;
-        window.checkAnswer = checkAnswer;
-        window.nextQuestion = nextQuestion;
-        window.restartGame = restartGame;
-        window.toggleCalculator = toggleCalculator;
-        window.calculatorAppend = calculatorAppend;
-        window.calculatorClear = calculatorClear;
-        window.calculatorCalculate = calculatorCalculate;
     </script>
 </body>
 </html>
