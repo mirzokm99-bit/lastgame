@@ -3,887 +3,976 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Break-Even Quest: Master CVP Analysis</title>
+    <title>Financial Ratio Speed Challenge (Complex Stage)</title>
     <style>
+        /* General Styling and Animations (Keeping styles consistent) */
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #ff9d6c, #bb4e75);
-            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fc;
             margin: 0;
-            padding: 3vw;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
-            font-size: 1.2rem;
         }
-        .container {
-            max-width: 90vw;
+
+        .game-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            max-width: 650px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 4vw;
-            border-radius: 2vw;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            color: #333;
-            position: relative;
+            text-align: center;
+            transition: all 0.5s ease-in-out;
         }
+
         h1 {
-            font-size: 2.5rem;
-            text-align: center;
-            color: #ff4500;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            margin: 2vw 0;
+            color: #1a73e8; 
+            margin-bottom: 5px;
+            font-size: 2em;
         }
-        h2, h3 {
-            font-size: 1.8rem;
-            color: #ff4500;
-            text-align: center;
+        
+        /* Start Screen */
+        #start-screen {
+            padding: 30px;
         }
-        #setup, #game {
-            text-align: center;
-        }
-        input, button {
-            padding: 3vw 5vw;
-            margin: 2vw;
-            font-size: 1.4rem;
-            border-radius: 1.5vw;
+        #start-button {
+            padding: 15px 35px;
+            background-color: #00a859;
+            color: white;
             border: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            width: calc(100% - 10vw);
-            box-sizing: border-box;
-        }
-        input {
-            background: #fff;
-            color: #333;
-        }
-        button {
-            background: linear-gradient(135deg, #ff6b6b, #ffd166);
-            color: #fff;
+            border-radius: 10px;
             cursor: pointer;
-            min-height: 12vw;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-        }
-        #feedback {
-            margin-top: 3vw;
+            font-size: 1.3em;
             font-weight: bold;
-            font-size: 1.5rem;
-            transition: transform 0.5s;
+            transition: background-color 0.3s, transform 0.1s;
         }
-        .correct { color: #4caf50; animation: bounce 0.5s; }
-        .incorrect { color: #f44336; animation: shake 0.5s; }
-        #score { font-size: 1.8rem; margin-bottom: 3vw; color: #2196f3; }
-        #progress { margin-bottom: 3vw; color: #ffeb3b; font-size: 1.6rem; }
-        #timer { font-size: 1.6rem; color: #ff5722; margin-bottom: 2vw; }
-        #streak { font-size: 1.5rem; color: #ffc107; margin-bottom: 2vw; }
-        #question { font-size: 1.4rem; line-height: 1.6; white-space: pre-wrap; }
-        #resultsModal {
+        #start-button:hover {
+            background-color: #008a48;
+            transform: scale(1.03);
+        }
+
+        /* Game Area */
+        #data-area {
+            background-color: #e6eef5;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid #1a73e8;
+            text-align: left;
+        }
+
+        .data-point {
+            font-size: 1.1em;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 5px;
+        }
+
+        .data-label {
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        #ratio-goal {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #d93025;
+            margin: 20px 0 10px;
+            animation: none; 
+        }
+        
+        #ratio-goal.conceptual-goal {
+            color: #1a73e8; 
+            font-size: 1.6em;
+            text-align: center;
+        }
+        #ratio-goal.complex-goal {
+            color: #d93025; 
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+
+        /* Hint and Input Area */
+        #hint-display {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border: 1px solid #ffeeba;
+            display: none; 
+        }
+
+        .dual-input-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #34495e;
+            font-size: 0.9em;
+        }
+
+        .input-area-toggle {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
+        }
+
+        /* Single Input for calculation ratios */
+        #single-input-area {
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
         }
-        #resultsModalContent {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 4vw;
-            border-radius: 2vw;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.37);
-            color: #333;
+        #single-answer-input {
+            padding: 12px;
+            width: 60%;
+            border: 3px solid #ccc;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+            margin-right: 10px;
+            transition: border-color 0.3s;
         }
-        .scoreboard {
-            border: 2px solid #3498db;
-            padding: 3vw;
-            margin: 3vw 0;
-            border-radius: 1.5vw;
-            background: linear-gradient(135deg, #e6f3fa, #d9e6f2);
-            font-size: 1.3rem;
+        
+        /* Conceptual Text Input */
+        #conceptual-input-area {
+            display: none;
+            justify-content: center;
+            align-items: center;
         }
-        .calculation-details {
-            margin-top: 3vw;
-            padding: 3vw;
-            border: 1px solid #ddd;
-            border-radius: 1.5vw;
-            background-color: #f9f9f9;
+        #conceptual-answer-input {
+            padding: 12px;
+            width: 80%;
+            border: 3px solid #ccc;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+            margin-right: 10px;
+            transition: border-color 0.3s;
+            text-transform: uppercase;
+        }
+
+        /* Buttons */
+        #submit-button, #hint-button {
+            padding: 12px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin: 5px;
         }
-        .calculation-details:hover {
-            background-color: #e3f2fd;
+        #submit-button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
         }
-        .calculation-details h4 {
-            margin: 0 0 2vw;
-            color: #2c3e50;
-            font-size: 1.5rem;
+        #hint-button {
+            background-color: #fbbc05;
+            color: #34495e;
+            border: none;
         }
-        .calculation-details p {
-            margin: 1vw 0;
-            font-size: 1.3rem;
+
+        /* Timer */
+        #timer-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 25px 0 15px;
+            height: 20px;
+            overflow: hidden;
+            border: 1px solid #ccc;
         }
-        .explanation {
-            display: none;
-            margin-top: 2vw;
-            padding: 2vw;
-            background: #fff;
-            border-radius: 1vw;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-size: 1.2rem;
+        #timer-bar {
+            height: 100%;
+            width: 100%;
+            background-color: #00a859;
+            transition: width 0.1s linear;
         }
-        #calculator {
-            display: none;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 3vw;
-            border-radius: 1.5vw;
-            margin: 2vw auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            width: calc(100% - 10vw);
+
+        #score-display {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #00a859;
+            margin-top: 15px;
         }
-        #calculatorDisplay {
-            width: calc(100% - 6vw);
-            padding: 2vw;
-            font-size: 1.4rem;
-            margin-bottom: 2vw;
-            border: 1px solid #ddd;
-            border-radius: 1vw;
-            background: #fff;
-            text-align: right;
+
+        /* Feedback Animation */
+        .feedback {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-top: 10px;
+            animation: fade-in-out 1s ease-out;
         }
-        .calculator-buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1vw;
+        .correct-feedback { color: #00a859; }
+        .incorrect-feedback { color: #d93025; }
+
+        @keyframes fade-in-out {
+            0% { opacity: 0; transform: translateY(-10px); }
+            50% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(10px); }
         }
-        .calculator-buttons button {
-            padding: 3vw;
-            font-size: 1.3rem;
-            min-height: 10vw;
+
+        /* Game Over Screen Buttons */
+        .game-over-buttons button {
+            margin: 10px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.3s;
         }
-        .calculator-buttons button.clear {
-            background: linear-gradient(135deg, #f44336, #d32f2f);
+
+        #restart-button {
+            background-color: #1a73e8;
+            color: white;
         }
-        #toggleCalculator {
-            background: linear-gradient(135deg, #4caf50, #388e3c);
-            width: calc(50% - 6vw);
+
+        #review-button {
+            background-color: #fbbc05;
+            color: #34495e;
         }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-2vw); }
-            60% { transform: translateY(-1vw); }
+
+        /* Review Window (Modal) Styling */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.7); 
         }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-1vw); }
-            20%, 40%, 60%, 80% { transform: translateX(1vw); }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%; 
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            text-align: left;
         }
-        .confetti {
-            position: fixed;
-            width: 2vw;
-            height: 2vw;
-            background: #f00;
-            animation: confetti-fall 5s linear infinite;
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
         }
-        @keyframes confetti-fall {
-            0% { transform: translateY(-100vh) rotate(0deg); }
-            100% { transform: translateY(100vh) rotate(360deg); }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
         }
-        @media (max-width: 600px) {
-            body { font-size: 1rem; padding: 2vw; }
-            .container { padding: 3vw; }
-            h1 { font-size: 2rem; }
-            h2, h3 { font-size: 1.5rem; }
-            input, button { font-size: 1.2rem; padding: 2.5vw 4vw; min-height: 10vw; }
-            #question { font-size: 1.2rem; }
-            #score, #progress, #timer, #streak { font-size: 1.3rem; }
-            #feedback { font-size: 1.3rem; }
-            .scoreboard { font-size: 1.1rem; }
-            .calculation-details h4 { font-size: 1.3rem; }
-            .calculation-details p { font-size: 1.1rem; }
-            .explanation { font-size: 1rem; }
-            #calculatorDisplay { font-size: 1.2rem; }
-            .calculator-buttons button { font-size: 1.1rem; padding: 2.5vw; }
-            #toggleCalculator { width: calc(100% - 6vw); }
+
+        .mistake-item {
+            border: 2px solid #d93025;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background-color: #fde8e7;
         }
+        .mistake-item.hint-used {
+            border-color: #fbbc05;
+            background-color: #fffbe9;
+        }
+
+        .mistake-item.conceptual-mistake {
+            border-color: #1a73e8;
+            background-color: #e6eef5;
+        }
+         .mistake-item.complex-mistake {
+            border-color: #7d33b0; /* Purple for complex */
+            background-color: #f0e6f7;
+        }
+
+        .mistake-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #d93025;
+            margin-bottom: 10px;
+        }
+        .mistake-item.conceptual-mistake .mistake-title {
+            color: #1a73e8;
+        }
+        .mistake-item.complex-mistake .mistake-title {
+            color: #7d33b0;
+        }
+
+        .mistake-data {
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .mistake-data div {
+            padding: 3px 0;
+        }
+        .mistake-data strong {
+            color: #34495e;
+            margin-right: 5px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Break-Even Quest</h1>
-        <div id="setup">
-            <p>Enter your name to start the quest:</p>
-            <input type="text" id="playerName" placeholder="Your Name">
-            <button onclick="startGame()">Start Quest</button>
+
+<div class="game-container">
+    <h1>Financial Ratio Speed Challenge (120s) 🧠</h1>
+    <p>You have two full minutes per question for complex calculations! Hint cost: -1 point.</p>
+    
+    <div id="start-screen">
+        <p>You will have 120 seconds per question initially. A new "Complex Stage" begins at Level 8!</p>
+        <p>Difficulty increases every 5 correct answers, decreasing the time limit by 2 seconds!</p>
+        <button id="start-button" onclick="startGame()">Start Challenge &gt;&gt;</button>
+    </div>
+
+    <div id="game-area" style="display: none;">
+        <div id="score-display">Score: 0 / Level 1</div>
+        <div id="timer-bar-container">
+            <div id="timer-bar"></div>
         </div>
-        <div id="game" style="display: none;">
-            <div id="score">Score: 0</div>
-            <div id="streak">Streak: 0 🔥</div>
-            <div id="timer">Time Left: 5:00</div>
-            <div id="progress">Question 1 / 15</div>
-            <p id="question"></p>
-            <div id="calculator">
-                <input type="text" id="calculatorDisplay" readonly value="0">
-                <div class="calculator-buttons">
-                    <button onclick="calculatorClear()">C</button>
-                    <button onclick="calculatorAppend('7')">7</button>
-                    <button onclick="calculatorAppend('8')">8</button>
-                    <button onclick="calculatorAppend('9')">9</button>
-                    <button onclick="calculatorAppend('/')">/</button>
-                    <button onclick="calculatorAppend('4')">4</button>
-                    <button onclick="calculatorAppend('5')">5</button>
-                    <button onclick="calculatorAppend('6')">6</button>
-                    <button onclick="calculatorAppend('*')">*</button>
-                    <button onclick="calculatorAppend('1')">1</button>
-                    <button onclick="calculatorAppend('2')">2</button>
-                    <button onclick="calculatorAppend('3')">3</button>
-                    <button onclick="calculatorAppend('-')">-</button>
-                    <button onclick="calculatorAppend('0')">0</button>
-                    <button onclick="calculatorAppend('.')">.</button>
-                    <button onclick="calculatorCalculate()">=</button>
-                    <button onclick="calculatorAppend('+')">+</button>
+
+        <div id="ratio-goal">Calculate: RATIO NAME</div>
+        
+        <div id="data-area">
+            </div>
+
+        <div id="hint-display"></div>
+
+        <div id="input-area">
+            
+            <div id="dual-input-area" class="input-area-toggle">
+                <div class="dual-input-container">
+                    <div class="input-group">
+                        <label id="label-1" for="answer-input-1">Ratio 1:</label>
+                        <input type="number" step="0.01" id="answer-input-1" placeholder="Ratio 1 (e.g., 1.50)">
+                    </div>
+                    <div class="input-group">
+                        <label id="label-2" for="answer-input-2">Ratio 2:</label>
+                        <input type="number" step="0.01" id="answer-input-2" placeholder="Ratio 2 (e.g., 20.00)">
+                    </div>
                 </div>
             </div>
-            <button id="toggleCalculator" onclick="toggleCalculator()">Show Calculator</button>
-            <input type="number" id="answer" placeholder="Your Answer" step="0.01">
-            <button onclick="checkAnswer()">Submit</button>
-            <div id="feedback"></div>
-            <button id="next" style="display: none;" onclick="nextQuestion()">Next Question</button>
+
+            <div id="single-input-area" class="input-area-toggle">
+                <input type="number" step="0.01" id="single-answer-input" placeholder="Enter Ratio (e.g., 1.50)" onkeydown="if(event.key === 'Enter') checkAnswer()">
+            </div>
+            
+             <div id="conceptual-input-area" class="input-area-toggle">
+                <input type="text" id="conceptual-answer-input" placeholder="Enter Answer (e.g., LIQUIDITY)" onkeydown="if(event.key === 'Enter') checkAnswer()">
+            </div>
+
+            <div style="margin-top: 10px;">
+                <button id="submit-button" onclick="checkAnswer()">Submit</button>
+                <button id="hint-button" onclick="showHint()">Hint (-1 Point)</button>
+            </div>
+        </div>
+
+        <div id="feedback-area"></div>
+    </div>
+
+    <div id="game-over-screen" style="display: none;">
+        <h2>Game Over! 🛑</h2>
+        <p>Time ran out or you made an error!</p>
+        <p class="final-score" style="font-size: 2.2em; color: #1a73e8;">Your Final Score: <span id="final-score">0</span></p>
+        <div class="game-over-buttons">
+            <button id="review-button" onclick="showReview()">Review Mistakes / Hints</button>
+            <button id="restart-button" onclick="startGame()">Try Again</button>
         </div>
     </div>
-    <div id="resultsModal">
-        <div id="resultsModalContent">
-            <h2>Mission Results</h2>
-            <div id="resultsContent"></div>
-            <button onclick="restartGame()">Play Again</button>
-        </div>
+</div>
+
+<div id="review-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeReview()">&times;</span>
+        <h2>Review Mistakes & Hints 🧐</h2>
+        <div id="mistakes-list">
+            </div>
+        <p id="no-mistakes-message" style="display: none; text-align: center; color: #00a859; font-weight: bold; font-size: 1.1em;">
+            Great job! You made no mistakes and didn't need any hints this session.
+        </p>
     </div>
-    <script>
-        let playerName = '';
-        let score = 0;
-        let currentQuestionIndex = 0;
-        let correctAnswers = 0;
-        let results = [];
-        let gameQuestions = [];
-        let streak = 0;
-        let maxStreak = 0;
-        let timerInterval;
-        let timeLeft = 300; // MODIFIED: Initialized for 5 minutes (300 seconds)
-        let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
-        let calculatorState = '0';
-        const questionBank = [
-            // CM Questions (10 GRE-like / Case Studies)
-            {
-                type: 'cm',
-                question: 'In a startup producing eco-friendly water bottles, the selling price is given, along with variable costs. Calculate the Contribution Margin per unit to assess profitability.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'Contribution Margin (CM) represents the amount each unit contributes to covering fixed costs after variable costs are deducted. It is crucial for pricing decisions and profitability analysis.'
-            },
-            {
-                type: 'cm',
-                question: 'A coffee shop chain is analyzing its latte sales. With the provided selling price and variable costs for ingredients and labor, determine the Contribution Margin per latte.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'CM helps in understanding how much revenue from each latte sale contributes to fixed costs like rent and salaries, aiding in break-even analysis.'
-            },
-            {
-                type: 'cm',
-                question: 'For a tech company selling smartwatches, compute the Contribution Margin per unit using the given selling price and variable manufacturing costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'High CM indicates strong profitability potential per unit, important for scaling production in tech industries.'
-            },
-            {
-                type: 'cm',
-                question: 'In the case of a bookstore selling novels, calculate the Contribution Margin per book based on the retail price and variable acquisition costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'This metric assists bookstores in deciding inventory levels and promotional strategies.'
-            },
-            {
-                type: 'cm',
-                question: 'A fitness center is evaluating its membership plans. Determine the Contribution Margin per membership using the annual fee and variable service costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'CM per membership guides pricing adjustments and cost control in service-based businesses.'
-            },
-            {
-                type: 'cm',
-                question: 'For a software firm offering subscriptions, compute the Contribution Margin per subscription with the given price and variable support costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'In SaaS models, high CM supports rapid scaling and investor confidence.'
-            },
-            {
-                type: 'cm',
-                question: 'In a restaurant scenario, calculate the Contribution Margin per meal using the menu price and variable food preparation costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'Restaurants use CM to optimize menu items and control portion sizes.'
-            },
-            {
-                type: 'cm',
-                question: 'A clothing retailer is analyzing t-shirt sales. Determine the Contribution Margin per t-shirt based on the selling price and variable production costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'CM analysis helps retailers decide on bulk purchasing and sales promotions.'
-            },
-            {
-                type: 'cm',
-                question: 'For an online course provider, compute the Contribution Margin per enrollment using the course fee and variable platform costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'High CM in digital products indicates low incremental costs and high scalability.'
-            },
-            {
-                type: 'cm',
-                question: 'In the case of a toy manufacturer, calculate the Contribution Margin per toy set with the provided retail price and variable assembly costs.',
-                formula: 'CM = Selling Price - Variable Cost',
-                explanation: 'Toy manufacturers rely on CM to manage seasonal demand fluctuations.'
-            },
-            // BEP Units Questions (10)
-            {
-                type: 'bep_units',
-                question: 'A manufacturing plant producing bicycles needs to cover its fixed costs. Calculate the Break-Even Point in units, rounding up, to determine the minimum sales required.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'Break-Even Point (BEP) indicates the sales volume where total revenues equal total costs, with no profit or loss. Rounding up ensures conservative estimates.'
-            },
-            {
-                type: 'bep_units',
-                question: 'In a pharmacy chain case study, compute the Break-Even Point in units for medication sales to offset operational fixed costs.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'BEP helps pharmacies plan inventory and staffing levels.'
-            },
-            {
-                type: 'bep_units',
-                question: 'For a car wash service, determine the Break-Even Point in units (number of washes) using the given fixed costs and per-wash margins.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'Service businesses use BEP to set daily targets.'
-            },
-            {
-                type: 'bep_units',
-                question: 'A bakery is assessing its bread production. Calculate the Break-Even Point in loaves to cover monthly fixed expenses.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'BEP aids in production scheduling and waste reduction.'
-            },
-            {
-                type: 'bep_units',
-                question: 'In the context of a gym equipment supplier, find the Break-Even Point in units for treadmill sales.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'Suppliers use BEP for sales forecasting and inventory management.'
-            },
-            {
-                type: 'bep_units',
-                question: 'For a mobile app developer, compute the Break-Even Point in downloads assuming a freemium model with fixed development costs.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'In digital goods, low variable costs lead to lower BEP.'
-            },
-            {
-                type: 'bep_units',
-                question: 'A farm producing organic vegetables needs to break even. Determine the units (baskets) required based on fixed farming costs.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'Farms use BEP for crop planning and pricing.'
-            },
-            {
-                type: 'bep_units',
-                question: 'In a hotel management case, calculate the Break-Even Point in room nights to cover fixed overheads.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'Hotels rely on BEP for occupancy targets.'
-            },
-            {
-                type: 'bep_units',
-                question: 'For a printing company, find the Break-Even Point in print jobs using the provided data.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'Printing firms use BEP to optimize machine utilization.'
-            },
-            {
-                type: 'bep_units',
-                question: 'A cosmetics brand is launching a new lipstick. Compute the Break-Even Point in units to recover marketing fixed costs.',
-                formula: 'BEP (Units) = Fixed Costs / (Selling Price - Variable Cost)',
-                explanation: 'New product launches use BEP for risk assessment.'
-            },
-            // Profit Questions (10)
-            {
-                type: 'profit',
-                question: 'A electronics retailer is forecasting profits. Calculate the total profit at the given sales units for smartphones.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Profit calculation shows financial health beyond break-even.'
-            },
-            {
-                type: 'profit',
-                question: 'In a case study of a furniture store, determine the profit from selling chairs at the specified volume.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Helps in evaluating product line performance.'
-            },
-            {
-                type: 'profit',
-                question: 'For a streaming service, compute the profit based on subscriber numbers and operational costs.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Subscription models focus on retention for sustained profits.'
-            },
-            {
-                type: 'profit',
-                question: 'A pet store is analyzing dog food sales. Calculate the profit at target sales units.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Assists in inventory and supplier negotiations.'
-            },
-            {
-                type: 'profit',
-                question: 'In the scenario of a concert organizer, find the profit from ticket sales.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Event planning uses profit projections for budgeting.'
-            },
-            {
-                type: 'profit',
-                question: 'For a bike rental business, determine the profit at the given rental units.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Seasonal businesses track profits for off-peak strategies.'
-            },
-            {
-                type: 'profit',
-                question: 'A jewelry maker is evaluating handmade necklace sales. Compute the total profit.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Artisans use this to price handmade items appropriately.'
-            },
-            {
-                type: 'profit',
-                question: 'In a supermarket chain case, calculate profit from grocery items at sales volume.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Retail chains optimize assortments based on profit margins.'
-            },
-            {
-                type: 'profit',
-                question: 'For an e-commerce platform selling books, find the profit at projected sales.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Online sellers factor in shipping in variable costs.'
-            },
-            {
-                type: 'profit',
-                question: 'A toy store is assessing puzzle sales. Determine the profit based on units sold.',
-                formula: 'Profit = (Sales Units * (Selling Price - Variable Cost)) - Fixed Costs',
-                explanation: 'Toy stores use profit analysis for holiday planning.'
-            },
-            // MoS Questions (10)
-            {
-                type: 'mos',
-                question: 'A pharmaceutical company is measuring risk. Calculate the Margin of Safety percentage for its drug sales.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Margin of Safety (MoS) measures how much sales can drop before incurring losses, indicating business risk.'
-            },
-            {
-                type: 'mos',
-                question: 'In a case study of an airline, determine the Margin of Safety % for ticket sales.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'High MoS provides buffer against fuel price fluctuations.'
-            },
-            {
-                type: 'mos',
-                question: 'For a real estate firm, compute the Margin of Safety % based on property sales.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Real estate uses MoS to assess market downturn risks.'
-            },
-            {
-                type: 'mos',
-                question: 'A manufacturing plant producing cars needs to assess buffer. Calculate MoS%.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Auto industry monitors MoS for supply chain disruptions.'
-            },
-            {
-                type: 'mos',
-                question: 'In the context of a tech startup, find the Margin of Safety % for app subscriptions.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Startups aim for high MoS to attract investors.'
-            },
-            {
-                type: 'mos',
-                question: 'For a fashion brand, determine MoS% for clothing line sales.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Fashion trends affect MoS; high MoS cushions volatility.'
-            },
-            {
-                type: 'mos',
-                question: 'A food delivery service is evaluating operations. Compute Margin of Safety %.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Delivery services use MoS for peak/off-peak planning.'
-            },
-            {
-                type: 'mos',
-                question: 'In a hotel chain case, calculate MoS% for room bookings.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Hospitality industry tracks MoS for seasonal variations.'
-            },
-            {
-                type: 'mos',
-                question: 'For an insurance company, find the Margin of Safety % on policies sold.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Insurance firms use MoS to manage claim risks.'
-            },
-            {
-                type: 'mos',
-                question: 'A publishing house is analyzing book sales. Determine MoS%.',
-                formula: 'MoS% = ((Sales Units - BEP Units) / Sales Units) * 100',
-                explanation: 'Publishers assess MoS for bestseller dependencies.'
-            },
-            // Target Sales Questions (10)
-            {
-                type: 'target_sales',
-                question: 'A non-profit organization aims for a surplus. Calculate units needed to achieve the target profit.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Target Sales helps set goals for desired profit levels.'
-            },
-            {
-                type: 'target_sales',
-                question: 'In a case study of a solar panel installer, determine sales units for desired profit.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Renewable energy firms use this for expansion planning.'
-            },
-            {
-                type: 'target_sales',
-                question: 'For a gaming company, compute units of video games to sell for target earnings.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Game developers set launch targets based on this.'
-            },
-            {
-                type: 'target_sales',
-                question: 'A winery is planning production. Calculate bottles needed for profit goal.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Wineries align production with market demand.'
-            },
-            {
-                type: 'target_sales',
-                question: 'In the scenario of a tutoring service, find student enrollments for target income.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Education services scale based on target sales.'
-            },
-            {
-                type: 'target_sales',
-                question: 'For a landscaping business, determine projects required for profit target.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Service businesses use this for workforce planning.'
-            },
-            {
-                type: 'target_sales',
-                question: 'A craft brewery aims for expansion funds. Compute kegs to sell.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Breweries set sales goals for growth.'
-            },
-            {
-                type: 'target_sales',
-                question: 'In a photography studio case, calculate sessions needed for desired profit.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Creative studios balance artistry with financial targets.'
-            },
-            {
-                type: 'target_sales',
-                question: 'For a graphic design firm, find client projects for target revenue after costs.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Design firms use this for client acquisition strategies.'
-            },
-            {
-                type: 'target_sales',
-                question: 'A florist shop is setting goals. Determine bouquets to sell for profit objective.',
-                formula: 'Target Sales = (Fixed Costs + Target Profit) / (Selling Price - Variable Cost)',
-                explanation: 'Small businesses like florists rely on target sales for sustainability.'
-            }
-        ];
-        let data = {};
+</div>
 
-        function generateData() {
-            data = {
-                sellingPrice: Math.floor(Math.random() * 50) + 50, // 50-100
-                variableCost: Math.floor(Math.random() * 30) + 20, // 20-50
-                fixedCosts: Math.floor(Math.random() * 20000) + 10000, // 10000-30000
-                salesUnits: Math.floor(Math.random() * 1000) + 500, // 500-1500
-                targetProfit: Math.floor(Math.random() * 10000) + 5000 // 5000-15000
-            };
-            while (data.sellingPrice <= data.variableCost) {
-                data.sellingPrice = data.variableCost + Math.floor(Math.random() * 20) + 10;
-            }
+<script>
+    // --- Configuration ---
+    const MAX_LIVES = 3;
+    const INITIAL_TIME_LIMIT = 120; // 120 Seconds (2 Minutes)
+    const TIME_DECREMENT_PER_LEVEL = 2;
+    const QUESTIONS_PER_LEVEL = 5;
+    const COMPLEX_STAGE_LEVEL = 8; // NEW: Level where complex questions become available
+    const PRECISION = 2; 
+    const HINT_PENALTY = 1; 
+    
+    // --- Game State Variables ---
+    let score = 0;
+    let level = 1;
+    let lives = MAX_LIVES;
+    let timeLimit = INITIAL_TIME_LIMIT;
+    let currentData = {};
+    let currentRatioName = '';
+    let currentDataLabels = {};
+    let currentFormulaText = '';
+    let hintUsedForCurrentQuestion = false;
+    let isConceptualQuestion = false;
+    let isComplexQuestion = false; // NEW
+    let correctRatioValues = []; 
+    let correctConceptualAnswer = ''; 
+    let currentConceptualTopic = ''; 
+    let timerInterval;
+    let timeLeft = INITIAL_TIME_LIMIT;
+    let isDualQuestion = false;
+    let mistakes = []; 
+
+    // --- DOM Elements ---
+    const startScreen = document.getElementById('start-screen');
+    const gameArea = document.getElementById('game-area');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const scoreDisplay = document.getElementById('score-display');
+    const ratioGoal = document.getElementById('ratio-goal');
+    const dataArea = document.getElementById('data-area');
+    const hintDisplay = document.getElementById('hint-display');
+    const hintButton = document.getElementById('hint-button');
+    const singleInput = document.getElementById('single-answer-input');
+    const dualInputArea = document.getElementById('dual-input-area');
+    const singleInputArea = document.getElementById('single-input-area');
+    const conceptualInputArea = document.getElementById('conceptual-input-area');
+    const conceptualInput = document.getElementById('conceptual-answer-input');
+    const answerInput1 = document.getElementById('answer-input-1');
+    const answerInput2 = document.getElementById('answer-input-2');
+    const label1 = document.getElementById('label-1');
+    const label2 = document.getElementById('label-2');
+    const timerBar = document.getElementById('timer-bar');
+    const feedbackArea = document.getElementById('feedback-area');
+    const reviewModal = document.getElementById('review-modal');
+    const mistakesList = document.getElementById('mistakes-list');
+    const noMistakesMessage = document.getElementById('no-mistakes-message');
+
+    // --- Conceptual Question Data ---
+    const conceptualConfigs = [
+        { 
+            name: "CONCEPT: LIQUIDITY MEASURE", 
+            goal: "Which ratio is the MOST restrictive measure of a firm's short-term solvency?", 
+            answer: "ACID TEST RATIO", 
+            type: "conceptual", 
+            area: "LIQUIDITY", 
+            formulaText: "The Acid Test Ratio (Quick Ratio) excludes Inventory, which is the least liquid Current Asset." 
+        },
+        { 
+            name: "CONCEPT: LEVERAGE IMPLICATION", 
+            goal: "Does a high Debt-to-Equity ratio indicate LOWER or HIGHER financial risk?", 
+            answer: "HIGHER", 
+            type: "conceptual", 
+            area: "LEVERAGE", 
+            formulaText: "Higher leverage (more debt relative to equity) increases the risk of default." 
+        },
+        { 
+            name: "CONCEPT: TURNOVER IMPROVEMENT", 
+            goal: "If a firm collects cash faster from customers, will its Debtor Turnover (Days) be HIGHER or LOWER?", 
+            answer: "LOWER", 
+            type: "conceptual", 
+            area: "TURNOVER", 
+            formulaText: "Collecting cash faster means fewer days to collect, so the Debtor Days ratio is lower." 
+        },
+        { 
+            name: "CONCEPT: EFFICIENCY INDICATOR", 
+            goal: "Which category measures how effectively a company uses its assets to generate revenue: Profitability or Efficiency?", 
+            answer: "EFFICIENCY", 
+            type: "conceptual", 
+            area: "EFFICIENCY", 
+            formulaText: "Efficiency ratios (like Asset Turnover) focus on the management of assets to generate sales." 
+        },
+         { 
+            name: "CONCEPT: CURRENT RATIO BENCHMARK", 
+            goal: "Is a Current Ratio of 0.8 generally considered SAFE or UNSAFE?", 
+            answer: "UNSAFE", 
+            type: "conceptual", 
+            area: "LIQUIDITY", 
+            formulaText: "A ratio below 1.0 means Current Liabilities exceed Current Assets, indicating potential short-term liquidity problems." 
         }
+    ];
 
-        function startGame() {
-            playerName = document.getElementById('playerName').value.trim();
-            if (!playerName) {
-                alert('Please enter your name!');
-                return;
-            }
-            // Shuffle question bank and select 15
-            const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
-            gameQuestions = shuffled.slice(0, 15);
-            document.getElementById('setup').style.display = 'none';
-            document.getElementById('game').style.display = 'block';
-            score = 0;
-            streak = 0;
-            maxStreak = 0;
-            currentQuestionIndex = 0;
-            correctAnswers = 0;
-            results = [];
-            calculatorState = '0';
-            document.getElementById('calculatorDisplay').value = calculatorState;
-            document.getElementById('calculator').style.display = 'none';
-            document.getElementById('toggleCalculator').textContent = 'Show Calculator';
-            nextQuestion();
+    // --- Complex Question Data (NEW) ---
+    const complexConfigs = [
+        { 
+            name: "COMPLEX: EFFICIENCY & PROFITABILITY", 
+            goal: "Calculate the *Net Profit Margin* (%) AND the *Asset Turnover* (times).", 
+            data: [
+                { label: "Sales Revenue", min: 2000000, max: 5000000, key: 'R' },
+                { label: "Net Profit", min: 100000, max: 500000, key: 'NP' },
+                { label: "Total Assets", min: 1500000, max: 4000000, key: 'TA' }
+            ], 
+            formula: (d) => [ 
+                (d.NP / d.R) * 100, // Net Profit Margin
+                d.R / d.TA          // Asset Turnover
+            ], 
+            formulaText: "Ratio 1 (NPM): (Net Profit / Revenue) * 100 | Ratio 2 (AT): Revenue / Total Assets",
+            labels: ["Net Profit Margin (%)", "Asset Turnover (times)"],
+            type: "complex"
+        },
+        { 
+            name: "COMPLEX: DEBT & LIQUIDITY", 
+            goal: "Calculate the *Debt-to-Asset Ratio* (%) AND the *Quick Ratio* (Acid Test).", 
+            data: [
+                { label: "Total Debt", min: 500000, max: 1500000, key: 'TD' },
+                { label: "Total Assets", min: 1000000, max: 2500000, key: 'TA' },
+                { label: "Current Assets", min: 400000, max: 800000, key: 'CA' },
+                { label: "Inventory", min: 50000, max: 200000, key: 'Inv' },
+                { label: "Current Liabilities", min: 300000, max: 600000, key: 'CL' }
+            ], 
+            formula: (d) => [ 
+                (d.TD / d.TA) * 100, // Debt-to-Asset Ratio
+                (d.CA - d.Inv) / d.CL // Quick Ratio
+            ], 
+            formulaText: "Ratio 1 (D/A): (Total Debt / Total Assets) * 100 | Ratio 2 (QR): (Current Assets - Inventory) / Current Liabilities",
+            labels: ["Debt-to-Asset Ratio (%)", "Quick Ratio (times)"],
+            type: "complex"
+        },
+        { 
+            name: "COMPLEX: ROCE & INTEREST COVER", 
+            goal: "Calculate the *Return on Capital Employed* (ROCE, %) AND the *Interest Cover* (times).", 
+            data: [
+                { label: "Operating Profit", min: 200000, max: 600000, key: 'OP' },
+                { label: "Total Equity", min: 800000, max: 2000000, key: 'E' },
+                { label: "Non-Current Liabilities", min: 300000, max: 800000, key: 'NCL' },
+                { label: "Interest Expense", min: 50000, max: 150000, key: 'IE' }
+            ], 
+            formula: (d) => [ 
+                (d.OP / (d.E + d.NCL)) * 100, // ROCE
+                d.OP / d.IE                  // Interest Cover
+            ], 
+            formulaText: "Ratio 1 (ROCE): (Operating Profit / Capital Employed) * 100 | Ratio 2 (IC): Operating Profit / Interest Expense",
+            labels: ["ROCE (%)", "Interest Cover (times)"],
+            type: "complex"
         }
+    ];
 
-        function nextQuestion() {
-            if (currentQuestionIndex >= gameQuestions.length) {
-                showResults();
-                return;
-            }
+    // --- Calculation Question Data (Retained from previous for levels 1-7) ---
+    const calculationConfigs = [
+        { name: "CURRENT RATIO", data: [{ label: "Current Assets", min: 100000, max: 500000, key: 'CA' }, { label: "Current Liabilities", min: 50000, max: 300000, key: 'CL' }], formula: (d) => [d.CA / d.CL], formulaText: "Current Assets / Current Liabilities", maxLevel: 2, labels: [], type: "calculation" },
+        
+        { name: "GROSS PROFIT MARGIN (%)", data: [{ label: "Sales Revenue", min: 800000, max: 2000000, key: 'R' }, { label: "Cost of Goods Sold (COGS)", min: 300000, max: 1500000, key: 'COGS' }], formula: (d) => [((d.R - d.COGS) / d.R) * 100], formulaText: "((Revenue - COGS) / Revenue) * 100", maxLevel: 4, labels: [], type: "calculation" },
+        
+        { name: "GEARING RATIO (%)", data: [{ label: "Total Debt (Long-term)", min: 100000, max: 800000, key: 'D' }, { label: "Total Equity (Shareholders' Funds)", min: 200000, max: 1000000, key: 'E' }], formula: (d) => [(d.D / (d.D + d.E)) * 100], formulaText: "(Total Debt / (Total Debt + Total Equity)) * 100", maxLevel: 99, labels: [], type: "calculation" },
+        
+        { name: "ASSET TURNOVER (times)", data: [{ label: "Sales Revenue", min: 1000000, max: 5000000, key: 'R' }, { label: "Total Assets", min: 500000, max: 3000000, key: 'TA' }], formula: (d) => [d.R / d.TA], formulaText: "Sales Revenue / Total Assets", maxLevel: 99, labels: [], type: "calculation" },
+        
+        { name: "ACID TEST RATIO", data: [{ label: "Current Assets", min: 200000, max: 600000, key: 'CA' }, { label: "Inventory", min: 50000, max: 300000, key: 'Inv' }, { label: "Current Liabilities", min: 100000, max: 400000, key: 'CL' }], formula: (d) => [(d.CA - d.Inv) / d.CL], formulaText: "(Current Assets - Inventory) / Current Liabilities", maxLevel: 99, labels: [], type: "calculation" },
+        
+        { name: "RETURN ON CAPITAL EMPLOYED (ROCE) (%)", data: [
+            { label: "Operating Profit", min: 80000, max: 400000, key: 'OP' }, 
+            { label: "Total Equity", min: 400000, max: 1500000, key: 'E' },
+            { label: "Non-Current Liabilities", min: 100000, max: 600000, key: 'NCL' }
+        ], formula: (d) => [(d.OP / (d.E + d.NCL)) * 100], formulaText: "(Operating Profit / (Total Equity + Non-Current Liabilities)) * 100", maxLevel: 99, labels: [], type: "calculation" },
 
-            generateData();
-            const q = gameQuestions[currentQuestionIndex];
-            let qText = `${q.question}\n\nData:\nSelling Price: $${data.sellingPrice}\nVariable Cost: $${data.variableCost}\nFixed Costs: $${data.fixedCosts}\nSales Units: ${data.salesUnits}\nTarget Profit: $${data.targetProfit}`;
-            document.getElementById('question').textContent = qText;
-            document.getElementById('answer').value = '';
-            document.getElementById('feedback').textContent = '';
-            document.getElementById('next').style.display = 'none';
-            document.getElementById('score').textContent = `Score: ${score}`;
-            document.getElementById('streak').textContent = `Streak: ${streak} 🔥`;
-            document.getElementById('progress').textContent = `Question ${currentQuestionIndex + 1} / 15`;
+        { name: "INTEREST COVER RATIO (times)", data: [
+            { label: "Operating Profit", min: 200000, max: 600000, key: 'OP' }, 
+            { label: "Interest Expense", min: 50000, max: 200000, key: 'IE' }
+        ], formula: (d) => [d.OP / d.IE], formulaText: "Operating Profit / Interest Expense", maxLevel: 99, labels: [], type: "calculation" },
 
-            // 5-MINUTE TIMER LOGIC
-            timeLeft = 300; // MODIFIED: 5 minutes (300 seconds)
-            document.getElementById('timer').textContent = `Time Left: 5:00`; // Initial display
-            clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimer, 1000);
+        { 
+            name: "DUAL CALCULATION: GROSS MARGIN & NET MARGIN (%)", 
+            data: [
+                { label: "Sales Revenue", min: 1000000, max: 3000000, key: 'R' },
+                { label: "Cost of Goods Sold (COGS)", min: 400000, max: 1500000, key: 'COGS' },
+                { label: "Operating Expenses", min: 100000, max: 500000, key: 'OE' },
+                { label: "Interest & Tax Costs", min: 50000, max: 200000, key: 'IT' }
+            ], 
+            formula: (d) => [ 
+                ((d.R - d.COGS) / d.R) * 100, 
+                ((d.R - d.COGS - d.OE - d.IT) / d.R) * 100
+            ], 
+            formulaText: "Gross Margin: ((R - COGS) / R) * 100 | Net Margin: ((R - COGS - OE - IT) / R) * 100",
+            maxLevel: 99,
+            labels: ["Gross Margin", "Net Margin"],
+            type: "calculation"
         }
+    ];
+    
+    // --- Game Flow Functions ---
 
-        function updateTimer() {
-            timeLeft--;
+    function startGame() {
+        score = 0;
+        level = 1;
+        lives = MAX_LIVES;
+        timeLimit = INITIAL_TIME_LIMIT;
+        mistakes = []; 
+        
+        startScreen.style.display = 'none';
+        gameOverScreen.style.display = 'none';
+        reviewModal.style.display = 'none';
+        gameArea.style.display = 'block';
+        hintDisplay.style.display = 'none'; 
+        
+        loadNewQuestion();
+    }
 
-            if (timeLeft < 0) {
-                clearInterval(timerInterval);
-                checkAnswer(true); // Treat as a wrong answer due to timeout
-                return;
-            }
+    function generateRandomValue(min, max) {
+        return Math.round((Math.floor(Math.random() * (max - min + 1)) + min) / 1000) * 1000;
+    }
 
-            // MODIFIED: Display time in MM:SS format
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    function formatCurrency(value) {
+        return '$' + value.toLocaleString('en-US');
+    }
 
-            document.getElementById('timer').textContent = `Time Left: ${timeString}`;
-        }
+    function loadNewQuestion() {
+        stopTimer();
+        
+        // Clear all inputs and feedback
+        singleInput.value = '';
+        answerInput1.value = '';
+        answerInput2.value = '';
+        conceptualInput.value = '';
+        feedbackArea.innerHTML = '';
+        hintDisplay.style.display = 'none'; 
+        hintUsedForCurrentQuestion = false; 
+        isComplexQuestion = false; // Reset complexity flag
+        
+        let selectedConfig;
+        
+        // --- Question Selection Logic ---
+        
+        const isComplexRoll = level >= COMPLEX_STAGE_LEVEL && Math.random() < 0.35; // 35% chance for complex at Level 8+
+        const isConceptualRoll = !isComplexRoll && Math.random() < 0.25; // 25% chance for conceptual
 
-        function calculateAnswer(type) {
-            const { sellingPrice, variableCost, fixedCosts, salesUnits, targetProfit } = data;
-            const cm = sellingPrice - variableCost;
-            let result;
-            let calculationDetails = '';
-
-            try {
-                switch (type) {
-                    case 'cm':
-                        result = cm;
-                        calculationDetails = `CM = Selling Price - Variable Cost\nCM = $${sellingPrice} - $${variableCost} = $${result}`;
-                        break;
-                    case 'bep_units':
-                        // Break Even Point in Units. Needs to be rounded UP.
-                        result = Math.ceil(fixedCosts / cm);
-                        calculationDetails = `BEP (Units) = Fixed Costs / CM\nBEP (Units) = $${fixedCosts} / $${cm} = ${result}`;
-                        break;
-                    case 'profit':
-                        result = (salesUnits * cm) - fixedCosts;
-                        calculationDetails = `Profit = (Sales Units * CM) - Fixed Costs\nProfit = (${salesUnits} * $${cm}) - $${fixedCosts} = $${result}`;
-                        break;
-                    case 'mos':
-                        const bepUnitsMoS = Math.ceil(fixedCosts / cm);
-                        // Margin of Safety Percentage: ((Actual Sales - BEP Sales) / Actual Sales) * 100
-                        result = ((salesUnits - bepUnitsMoS) / salesUnits) * 100;
-                        result = parseFloat(result.toFixed(2));
-                        calculationDetails = `1. BEP Units: $${fixedCosts} / $${cm} = ${bepUnitsMoS} units\n2. MoS (Units) = Sales Units - BEP Units\nMoS (Units) = ${salesUnits} - ${bepUnitsMoS} = ${salesUnits - bepUnitsMoS} units\n3. MoS% = (MoS Units / Sales Units) * 100\nMoS% = (${salesUnits - bepUnitsMoS} / ${salesUnits}) * 100 = ${result}%`;
-                        break;
-                    case 'target_sales':
-                        // Target Sales in Units
-                        result = Math.ceil((fixedCosts + targetProfit) / cm);
-                        calculationDetails = `Target Sales = (Fixed Costs + Target Profit) / CM\nTarget Sales = ($${fixedCosts} + $${targetProfit}) / $${cm} = ${result} units`;
-                        break;
-                    default:
-                        result = 0;
-                        calculationDetails = 'Error: Unknown question type.';
-                }
-                return { answer: result, details: calculationDetails };
-            } catch (e) {
-                console.error("Calculation Error:", e);
-                return { answer: NaN, details: 'Calculation Error' };
-            }
-        }
-
-        function checkAnswer(timedOut = false) {
-            clearInterval(timerInterval);
-
-            const userAnswer = parseFloat(document.getElementById('answer').value);
-            const q = gameQuestions[currentQuestionIndex];
-            const correctCalc = calculateAnswer(q.type);
-            const correctAnswer = correctCalc.answer;
-            const tolerance = 0.02; // Allowing for slight floating point errors or rounding
-            let isCorrect = false;
-            let feedbackMessage = '';
-            let points = 0;
-
-            if (timedOut) {
-                feedbackMessage = "⏰ Time's up! The correct answer was: " + (correctAnswer.toFixed(q.type === 'mos' ? 2 : 0));
-                document.getElementById('feedback').className = 'incorrect';
-                isCorrect = false;
-            } else if (isNaN(userAnswer)) {
-                feedbackMessage = "Please enter a numeric answer.";
-                document.getElementById('feedback').className = 'incorrect';
-                isCorrect = false;
-            } else {
-                if (q.type === 'mos') {
-                    // MoS is a percentage, checking with tolerance
-                    isCorrect = Math.abs(userAnswer - correctAnswer) <= tolerance;
-                    feedbackMessage = isCorrect
-                        ? `✅ Correct! Margin of Safety is ${correctAnswer.toFixed(2)}%`
-                        : `❌ Incorrect. The correct answer was: ${correctAnswer.toFixed(2)}%`;
-                } else if (q.type === 'bep_units' || q.type === 'target_sales') {
-                    // BEP and Target Sales are units, must be integers and rounded up
-                    isCorrect = Math.round(userAnswer) === correctAnswer;
-                    feedbackMessage = isCorrect
-                        ? `🎉 Correct! You need to sell ${correctAnswer} units.`
-                        : `❌ Incorrect. The correct BEP/Target Sales (Units) is ${correctAnswer}.`;
-                } else {
-                    // CM and Profit, checking with tolerance
-                    isCorrect = Math.abs(userAnswer - correctAnswer) <= tolerance;
-                    feedbackMessage = isCorrect
-                        ? `💰 Correct! The answer is $${correctAnswer.toFixed(2)}`
-                        : `❌ Incorrect. The correct answer was: $${correctAnswer.toFixed(2)}`;
-                }
-            }
-
-            if (isCorrect) {
-                streak++;
-                points = 10 + (streak * 5); // Base 10 points + 5 per streak
-                score += points;
-                document.getElementById('feedback').className = 'correct';
-            } else {
-                maxStreak = Math.max(maxStreak, streak);
-                streak = 0;
-                if (!timedOut) document.getElementById('feedback').className = 'incorrect';
-            }
-
-            results.push({
-                question: q.question.split('\n\n')[0],
-                dataType: q.type,
-                data: JSON.stringify(data),
-                userAnswer: timedOut ? 'Timeout' : userAnswer,
-                correctAnswer: correctAnswer,
-                isCorrect: isCorrect,
-                scoreGained: isCorrect ? points : 0,
-                details: correctCalc.details,
-                formula: q.formula,
-                explanation: q.explanation
+        if (isComplexRoll) {
+            selectedConfig = complexConfigs[Math.floor(Math.random() * complexConfigs.length)];
+            isConceptualQuestion = false;
+            isComplexQuestion = true;
+        } else if (isConceptualRoll) {
+            selectedConfig = conceptualConfigs[Math.floor(Math.random() * conceptualConfigs.length)];
+            isConceptualQuestion = true;
+            isComplexQuestion = false;
+        } else {
+             // Filter calculation ratios by level
+            const availableRatios = calculationConfigs.filter(r => {
+                return r.maxLevel > level || level >= COMPLEX_STAGE_LEVEL;
             });
 
-            document.getElementById('feedback').innerHTML = feedbackMessage + `<div class="calculation-details" onclick="toggleExplanation(this)"><h4>Click for Detailed Calculation & Explanation</h4><div class="explanation"><h5>Formula: ${q.formula}</h5><p><strong>Calculation:</strong></p><pre>${correctCalc.details}</pre><p><strong>Concept:</strong> ${q.explanation}</p></div></div>`;
-            document.getElementById('next').style.display = 'block';
-            document.getElementById('score').textContent = `Score: ${score}`;
-            document.getElementById('streak').textContent = `Streak: ${streak} 🔥`;
-            currentQuestionIndex++;
+            // Randomly select one from available calculation ratios
+            selectedConfig = availableRatios[Math.floor(Math.random() * availableRatios.length)];
+            isConceptualQuestion = false;
+            isComplexQuestion = false;
+        }
+        
+        // Store info
+        currentRatioName = selectedConfig.name;
+        currentFormulaText = selectedConfig.formulaText; 
+        isDualQuestion = selectedConfig.labels && selectedConfig.labels.length === 2;
+
+        // --- Setup Question UI ---
+        ratioGoal.textContent = selectedConfig.goal;
+        ratioGoal.className = isConceptualQuestion ? 'conceptual-goal' : (isComplexQuestion ? 'complex-goal' : '');
+        dataArea.innerHTML = ''; 
+
+        // Handle Input Fields
+        if (isConceptualQuestion) {
+            conceptualInputArea.style.display = 'flex';
+            singleInputArea.style.display = 'none';
+            dualInputArea.style.display = 'none';
+            
+            // Set conceptual answer and topic for logging
+            correctConceptualAnswer = selectedConfig.answer.toUpperCase();
+            currentConceptualTopic = selectedConfig.area; 
+            conceptualInput.focus();
+            dataArea.innerHTML = `<div style="text-align: center; font-style: italic; color: #777;">Topic: ${selectedConfig.area}</div>`;
+        } else {
+            // Setup for Calculation and Complex Questions
+            conceptualInputArea.style.display = 'none';
+            singleInputArea.style.display = isDualQuestion ? 'none' : 'flex';
+            dualInputArea.style.display = isDualQuestion ? 'block' : 'none';
+
+            let dataHtml = '';
+            currentData = {};
+            currentDataLabels = {}; 
+
+            selectedConfig.data.forEach(item => {
+                const value = generateRandomValue(item.min, item.max);
+                currentData[item.key] = value;
+                currentDataLabels[item.label] = formatCurrency(value);
+                dataHtml += `<div class="data-point"><span class="data-label">${item.label}:</span><span>${formatCurrency(value)}</span></div>`;
+            });
+            dataArea.innerHTML = dataHtml;
+            
+            correctRatioValues = selectedConfig.formula(currentData).map(val => 
+                parseFloat(val.toFixed(PRECISION))
+            );
+            
+            if (isDualQuestion) {
+                // Dual input setup (used for Complex questions as well)
+                label1.textContent = `${selectedConfig.labels[0]}:`;
+                label2.textContent = `${selectedConfig.labels[1]}:`;
+                answerInput1.focus();
+            } else {
+                singleInput.focus();
+            }
+        }
+        
+        const timeReduction = Math.floor(score / QUESTIONS_PER_LEVEL) * TIME_DECREMENT_PER_LEVEL;
+        timeLimit = Math.max(5, INITIAL_TIME_LIMIT - timeReduction);
+        
+        timeLeft = timeLimit;
+        updateScoreDisplay();
+        startTimer();
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeLeft -= 0.1;
+            
+            const progressPercentage = (timeLeft / timeLimit) * 100;
+            timerBar.style.width = `${progressPercentage}%`;
+
+            if (progressPercentage > 66) {
+                timerBar.style.backgroundColor = '#00a859';
+            } else if (progressPercentage > 33) {
+                timerBar.style.backgroundColor = '#fbbc05';
+            } else {
+                timerBar.style.backgroundColor = '#d93025';
+            }
+
+            if (timeLeft <= 0) {
+                timeExpired();
+            }
+        }, 100);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function showHint() { 
+        if (hintUsedForCurrentQuestion) return;
+
+        stopTimer();
+        score = Math.max(0, score - HINT_PENALTY); 
+        hintUsedForCurrentQuestion = true;
+        
+        hintDisplay.innerHTML = `*Formula/Concept Hint:* ${currentFormulaText}`;
+        hintDisplay.style.display = 'block';
+        
+        showFeedback(`⚠️ Hint Used! Score -${HINT_PENALTY} Point.`, false);
+        updateScoreDisplay();
+        
+        setTimeout(startTimer, 1000); 
+    }
+
+    function checkAnswer() {
+        stopTimer();
+        
+        let isCorrect = false;
+        let submittedAnswers = [];
+
+        if (isConceptualQuestion) {
+            const submittedText = conceptualInput.value.toUpperCase().trim();
+            isCorrect = (submittedText === correctConceptualAnswer);
+            submittedAnswers = [submittedText];
+        } else if (isDualQuestion || isComplexQuestion) {
+            submittedAnswers = [answerInput1.value, answerInput2.value];
+            isCorrect = validateCalculationAnswers(submittedAnswers);
+        } else {
+            submittedAnswers = [singleInput.value];
+            isCorrect = validateCalculationAnswers(submittedAnswers);
         }
 
-        function toggleExplanation(element) {
-            const explanation = element.querySelector('.explanation');
-            explanation.style.display = explanation.style.display === 'block' ? 'none' : 'block';
+        if (isCorrect) {
+            score++;
+            showFeedback("✅ Correct! +1 Point", true);
+            
+            if (hintUsedForCurrentQuestion) {
+                 logMistake('CORRECT (Hint Used)', submittedAnswers.join(' / '));
+            }
+
+            if (score > 0 && score % QUESTIONS_PER_LEVEL === 0) {
+                levelUp();
+            } else {
+                setTimeout(loadNewQuestion, 1200);
+            }
+        } else {
+            // Log mistake 
+            logMistake('INCORRECT', submittedAnswers.join(' / '));
+
+            let correctDisplay = isConceptualQuestion 
+                ? correctConceptualAnswer 
+                : correctRatioValues.map(v => v.toFixed(PRECISION)).join(' / ');
+
+            let feedbackMessage = `❌ Wrong! Correct Answer: ${correctDisplay}`;
+            showFeedback(feedbackMessage, false);
+            handleIncorrectAnswer();
         }
+    }
 
-        function showResults() {
-            clearInterval(timerInterval);
-            document.getElementById('game').style.display = 'none';
-            document.getElementById('resultsModal').style.display = 'flex';
+    function validateCalculationAnswers(submitted) {
+        const tolerance = 0.01;
+        let allCorrect = true;
 
-            let resultHTML = `<h3>Final Score: ${score}</h3>`;
-            resultHTML += `<p>Correct Answers: ${results.filter(r => r.isCorrect).length} / ${gameQuestions.length}</p>`;
-            resultHTML += `<p>Max Streak: ${Math.max(maxStreak, streak)} 🔥</p>`;
-            resultHTML += `<h3>Detailed Breakdown:</h3>`;
+        if (submitted.length !== correctRatioValues.length) return false;
 
-            results.forEach((r, index) => {
-                const status = r.isCorrect ? '✅ Correct' : '❌ Incorrect';
-                const statusClass = r.isCorrect ? 'correct' : 'incorrect';
-                resultHTML += `
-                    <div class="scoreboard">
-                        <h4>Q${index + 1}: ${r.question}</h4>
-                        <p><strong>Status:</strong> <span class="${statusClass}">${status}</span> (+$${r.scoreGained})</p>
-                        <p><strong>Your Answer:</strong> ${r.userAnswer}</p>
-                        <p><strong>Correct Answer:</strong> ${r.correctAnswer.toFixed(r.dataType === 'mos' ? 2 : (r.dataType === 'cm' || r.dataType === 'profit' ? 2 : 0))}</p>
-                        <div class="calculation-details" onclick="toggleExplanation(this)">
-                            <h4>Detailed Calculation</h4>
-                            <div class="explanation">
-                                <h5>Formula: ${r.formula}</h5>
-                                <p><strong>Data Used:</strong> ${r.data}</p>
-                                <p><strong>Calculation:</strong></p><pre>${r.details}</pre>
-                                <p><strong>Concept:</strong> ${r.explanation}</p>
-                            </div>
+        for (let i = 0; i < submitted.length; i++) {
+            const submittedValue = parseFloat(submitted[i]);
+            if (isNaN(submittedValue)) return false;
+
+            const roundedSubmitted = parseFloat(submittedValue.toFixed(PRECISION));
+            
+            if (Math.abs(roundedSubmitted - correctRatioValues[i]) > tolerance) {
+                allCorrect = false;
+                break;
+            }
+        }
+        return allCorrect;
+    }
+
+    function logMistake(type, userAnswer) {
+        const dataForReview = isConceptualQuestion 
+            ? { "Topic": currentConceptualTopic } 
+            : currentDataLabels;
+
+        mistakes.push({
+            type: type, 
+            ratio: currentRatioName,
+            formula: currentFormulaText,
+            data: dataForReview,
+            correct: isConceptualQuestion ? correctConceptualAnswer : correctRatioValues.map(v => v.toFixed(PRECISION)).join(' / '),
+            user: userAnswer,
+            hintUsed: hintUsedForCurrentQuestion,
+            isConceptual: isConceptualQuestion,
+            isComplex: isComplexQuestion // Log complexity
+        });
+    }
+
+    function handleIncorrectAnswer() {
+        lives--;
+        if (lives <= 0) {
+            setTimeout(gameOver, 1500);
+        } else {
+            updateScoreDisplay();
+            setTimeout(loadNewQuestion, 1500); 
+        }
+    }
+
+    function timeExpired() {
+        stopTimer();
+        showFeedback("⏰ Time Expired!", false);
+        logMistake('TIMEOUT', 'N/A (Timeout)'); 
+        handleIncorrectAnswer();
+    }
+
+    function levelUp() {
+        level++;
+        showFeedback(`⭐ LEVEL UP! Now Level ${level}`, true);
+        setTimeout(loadNewQuestion, 2000);
+    }
+
+    function updateScoreDisplay() {
+        scoreDisplay.innerHTML = `Score: ${score} / Level ${level} / Lives: ${'❤️'.repeat(lives)}`;
+    }
+
+    function showFeedback(message, isCorrect) {
+        feedbackArea.innerHTML = `<div class="feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}">${message}</div>`;
+    }
+
+    function gameOver() {
+        stopTimer();
+        gameArea.style.display = 'none';
+        gameOverScreen.style.display = 'block';
+        document.getElementById('final-score').textContent = score;
+    }
+    
+    // --- Review Functions ---
+    function showReview() {
+        gameOverScreen.style.display = 'none';
+        mistakesList.innerHTML = ''; 
+
+        const reviewItems = mistakes.filter(m => m.type !== 'CORRECT (Hint Used)' || m.hintUsed);
+
+        if (reviewItems.length === 0) {
+            noMistakesMessage.style.display = 'block';
+            mistakesList.style.display = 'none';
+        } else {
+            noMistakesMessage.style.display = 'none';
+            mistakesList.style.display = 'block';
+
+            reviewItems.forEach((item, index) => {
+                let dataHtml = '';
+                for (const label in item.data) {
+                    dataHtml += `<div><strong>${label}:</strong> ${item.data[label]}</div>`;
+                }
+
+                const titleText = item.type === 'CORRECT (Hint Used)' 
+                    ? `Hint Used (Question ${index + 1}): ${item.ratio}`
+                    : `Mistake (Question ${index + 1}): ${item.ratio}`;
+                
+                let typeClass = '';
+                if (item.hintUsed && item.type === 'CORRECT (Hint Used)') {
+                    typeClass = 'hint-used';
+                } else if (item.isConceptual) {
+                    typeClass = 'conceptual-mistake';
+                } else if (item.isComplex) {
+                    typeClass = 'complex-mistake';
+                }
+
+                const mistakeItem = `
+                    <div class="mistake-item ${typeClass.trim()}">
+                        <div class="mistake-title">${titleText}</div>
+                        
+                        <div class="mistake-data">
+                            <strong>Hint/Explanation:</strong> <span style="color: #6c757d;">${item.formula}</span>
                         </div>
+                        ${item.type !== 'CORRECT (Hint Used)' ? 
+                            `<div class="mistake-data">
+                                <strong>Your Answer(s):</strong> <span style="color: #d93025;">${item.user}</span>
+                            </div>` : ''}
+                        
+                        <div class="mistake-data">
+                            <strong>Correct Answer(s):</strong> <span style="color: #00a859;">${item.correct}</span>
+                        </div>
+                        <p style="font-weight: bold; margin-top: 10px; color: #34495e;">${item.isConceptual ? 'Topic Context:' : 'Input Data Used:'}</p>
+                        <div class="mistake-data" style="border-top: 1px dashed #ccc;">${dataHtml}</div>
                     </div>
                 `;
+                mistakesList.innerHTML += mistakeItem;
             });
-
-            document.getElementById('resultsContent').innerHTML = resultHTML;
-            saveHighScore();
         }
+        
+        reviewModal.style.display = 'block';
+    }
 
-        function saveHighScore() {
-            const finalScore = score;
-            highScores.push({ name: playerName, score: finalScore, date: new Date().toLocaleDateString() });
-            highScores.sort((a, b) => b.score - a.score); // Sort descending
-            highScores = highScores.slice(0, 10); // Keep top 10
+    function closeReview() {
+        reviewModal.style.display = 'none';
+        gameOverScreen.style.display = 'block';
+    }
 
-            localStorage.setItem('highScores', JSON.stringify(highScores));
-        }
+    // Initialize: Show start screen on load
+    document.addEventListener('DOMContentLoaded', () => {
+        startScreen.style.display = 'block';
+        gameArea.style.display = 'none';
+        gameOverScreen.style.display = 'none';
+    });
+</script>
 
-        function restartGame() {
-            document.getElementById('resultsModal').style.display = 'none';
-            document.getElementById('setup').style.display = 'block';
-            document.getElementById('playerName').value = playerName; // Keep last entered name
-        }
-
-        // Calculator Functions
-        function toggleCalculator() {
-            const calc = document.getElementById('calculator');
-            const button = document.getElementById('toggleCalculator');
-            if (calc.style.display === 'block') {
-                calc.style.display = 'none';
-                button.textContent = 'Show Calculator';
-            } else {
-                calc.style.display = 'block';
-                button.textContent = 'Hide Calculator';
-            }
-        }
-
-        function calculatorAppend(char) {
-            if (calculatorState === '0' && !isNaN(char) && char !== '.') {
-                calculatorState = char;
-            } else if (calculatorState === 'Error') {
-                calculatorState = char;
-            } else {
-                calculatorState += char;
-            }
-            document.getElementById('calculatorDisplay').value = calculatorState;
-        }
-
-        function calculatorClear() {
-            calculatorState = '0';
-            document.getElementById('calculatorDisplay').value = calculatorState;
-        }
-
-        function calculatorCalculate() {
-            try {
-                // Use a safe evaluation function (or better: a math parser)
-                // For simplicity, using eval but being mindful of security risks
-                const result = eval(calculatorState);
-                if (isFinite(result)) {
-                    calculatorState = result.toString();
-                } else {
-                    calculatorState = 'Error';
-                }
-            } catch (e) {
-                calculatorState = 'Error';
-            }
-            document.getElementById('calculatorDisplay').value = calculatorState;
-        }
-    </script>
 </body>
 </html>
