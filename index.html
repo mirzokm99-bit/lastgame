@@ -3,976 +3,1687 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Ratio Speed Challenge (Complex Stage)</title>
+    <title>English Grammar & Vocabulary Quiz</title>
     <style>
-        /* General Styling and Animations (Keeping styles consistent) */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7f9fc;
-            margin: 0;
-            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
         }
-
-        .game-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            max-width: 650px;
-            width: 100%;
-            text-align: center;
-            transition: all 0.5s ease-in-out;
-        }
-
-        h1 {
-            color: #1a73e8; 
-            margin-bottom: 5px;
-            font-size: 2em;
-        }
-        
-        /* Start Screen */
-        #start-screen {
+        #quiz-container {
+            background: white;
             padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        /* --- Start Page Styles --- */
+        #start-page {
+            text-align: center;
+            padding: 50px 0;
+        }
+        #player-name-input {
+            padding: 10px;
+            margin: 20px 0;
+            width: 80%;
+            max-width: 300px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1em;
         }
         #start-button {
-            padding: 15px 35px;
-            background-color: #00a859;
+            padding: 12px 30px;
+            background-color: #28a745;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1.3em;
-            font-weight: bold;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-        #start-button:hover {
-            background-color: #008a48;
-            transform: scale(1.03);
-        }
-
-        /* Game Area */
-        #data-area {
-            background-color: #e6eef5;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            border: 2px solid #1a73e8;
-            text-align: left;
-        }
-
-        .data-point {
             font-size: 1.1em;
-            margin: 8px 0;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        #start-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* --- Quiz Styles --- */
+        #score-display {
+            text-align: right;
+            font-weight: bold;
+            color: #343a40;
+            margin-bottom: 15px;
+        }
+        #question-text {
+            font-size: 1.25em;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        #options-container {
             display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dotted #ccc;
-            padding-bottom: 5px;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
         }
-
-        .data-label {
-            font-weight: 600;
-            color: #34495e;
+        .option-btn {
+            padding: 15px 20px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+            font-size: 1em;
+            line-height: 1.4;
         }
-
-        #ratio-goal {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #d93025;
-            margin: 20px 0 10px;
-            animation: none; 
+        .option-btn:hover:not([disabled]) {
+            background-color: #e2e6ea;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        .correct {
+            background-color: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+            animation: pulse-correct 0.5s ease-out;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24;
+            animation: shake 0.5s;
+        }
+        .selected-disabled {
+            pointer-events: none;
         }
         
-        #ratio-goal.conceptual-goal {
-            color: #1a73e8; 
-            font-size: 1.6em;
-            text-align: center;
-        }
-        #ratio-goal.complex-goal {
-            color: #d93025; 
-            font-size: 1.5em;
-            text-align: center;
-        }
-
-
-        /* Hint and Input Area */
-        #hint-display {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            border: 1px solid #ffeeba;
-            display: none; 
-        }
-
-        .dual-input-container {
+        #feedback {
+            margin-top: 15px;
+            min-height: 24px;
+            font-size: 1.1em;
             display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 15px;
+            flex-direction: column;
         }
-
-        .input-group {
-            flex-grow: 1;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
+        .result-text {
             font-weight: bold;
             margin-bottom: 5px;
-            color: #34495e;
+        }
+        .explanation {
+            font-weight: normal;
             font-size: 0.9em;
+            color: #495057;
+            padding: 10px;
+            background-color: #e2f0ff;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
         }
 
-        .input-area-toggle {
-            display: none;
-        }
-
-        /* Single Input for calculation ratios */
-        #single-input-area {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #single-answer-input {
-            padding: 12px;
-            width: 60%;
-            border: 3px solid #ccc;
-            border-radius: 8px;
-            font-size: 1.2em;
-            text-align: center;
-            margin-right: 10px;
-            transition: border-color 0.3s;
-        }
-        
-        /* Conceptual Text Input */
-        #conceptual-input-area {
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        #conceptual-answer-input {
-            padding: 12px;
-            width: 80%;
-            border: 3px solid #ccc;
-            border-radius: 8px;
-            font-size: 1.2em;
-            text-align: center;
-            margin-right: 10px;
-            transition: border-color 0.3s;
-            text-transform: uppercase;
-        }
-
-        /* Buttons */
-        #submit-button, #hint-button {
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
-            font-weight: bold;
-            transition: background-color 0.3s;
-            margin: 5px;
-        }
-        #submit-button {
-            background-color: #1a73e8;
+        #next-button {
+            padding: 10px 25px;
+            background-color: #007bff;
             color: white;
             border: none;
-        }
-        #hint-button {
-            background-color: #fbbc05;
-            color: #34495e;
-            border: none;
-        }
-
-        /* Timer */
-        #timer-bar-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            margin: 25px 0 15px;
-            height: 20px;
-            overflow: hidden;
-            border: 1px solid #ccc;
-        }
-        #timer-bar {
-            height: 100%;
-            width: 100%;
-            background-color: #00a859;
-            transition: width 0.1s linear;
-        }
-
-        #score-display {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #00a859;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            float: right;
             margin-top: 15px;
         }
-
-        /* Feedback Animation */
-        .feedback {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-top: 10px;
-            animation: fade-in-out 1s ease-out;
-        }
-        .correct-feedback { color: #00a859; }
-        .incorrect-feedback { color: #d93025; }
-
-        @keyframes fade-in-out {
-            0% { opacity: 0; transform: translateY(-10px); }
-            50% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(10px); }
+        #next-button:disabled {
+            background-color: #a0c3e6;
+            cursor: not-allowed;
         }
 
-        /* Game Over Screen Buttons */
-        .game-over-buttons button {
-            margin: 10px;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.3s, transform 0.3s;
+        /* --- Animations --- */
+        @keyframes pulse-correct {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.01); box-shadow: 0 0 10px #28a745; }
+            100% { transform: scale(1); }
         }
 
-        #restart-button {
-            background-color: #1a73e8;
-            color: white;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
         }
 
-        #review-button {
-            background-color: #fbbc05;
-            color: #34495e;
+        /* --- Scoreboard Styles --- */
+        #scoreboard {
+            padding: 30px 0;
+            text-align: center;
         }
-
-        /* Review Window (Modal) Styling */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.7); 
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 30px;
-            border-radius: 15px;
-            width: 80%; 
-            max-width: 800px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            text-align: left;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .mistake-item {
-            border: 2px solid #d93025;
-            padding: 15px;
+        #scoreboard h2 {
+            color: #007bff;
             margin-bottom: 20px;
-            border-radius: 10px;
-            background-color: #fde8e7;
         }
-        .mistake-item.hint-used {
-            border-color: #fbbc05;
-            background-color: #fffbe9;
+        #scoreboard-list {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin: 0 auto;
+            max-width: 350px;
         }
-
-        .mistake-item.conceptual-mistake {
-            border-color: #1a73e8;
-            background-color: #e6eef5;
+        #scoreboard-list li {
+            background-color: #e9ecef;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 500;
         }
-         .mistake-item.complex-mistake {
-            border-color: #7d33b0; /* Purple for complex */
-            background-color: #f0e6f7;
-        }
-
-        .mistake-title {
+        #scoreboard-list li:first-child {
+            background-color: #ffe08a;
             font-weight: bold;
-            font-size: 1.2em;
-            color: #d93025;
-            margin-bottom: 10px;
         }
-        .mistake-item.conceptual-mistake .mistake-title {
-            color: #1a73e8;
-        }
-        .mistake-item.complex-mistake .mistake-title {
-            color: #7d33b0;
-        }
-
-        .mistake-data {
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-        .mistake-data div {
-            padding: 3px 0;
-        }
-        .mistake-data strong {
-            color: #34495e;
-            margin-right: 5px;
-        }
-
     </style>
 </head>
 <body>
-
-<div class="game-container">
-    <h1>Financial Ratio Speed Challenge (120s) 🧠</h1>
-    <p>You have two full minutes per question for complex calculations! Hint cost: -1 point.</p>
-    
-    <div id="start-screen">
-        <p>You will have 120 seconds per question initially. A new "Complex Stage" begins at Level 8!</p>
-        <p>Difficulty increases every 5 correct answers, decreasing the time limit by 2 seconds!</p>
-        <button id="start-button" onclick="startGame()">Start Challenge &gt;&gt;</button>
-    </div>
-
-    <div id="game-area" style="display: none;">
-        <div id="score-display">Score: 0 / Level 1</div>
-        <div id="timer-bar-container">
-            <div id="timer-bar"></div>
+    <div id="quiz-container">
+        <h1>📚 English Quiz Game</h1>
+        
+        <div id="start-page">
+            <h2>Welcome to the Quiz!</h2>
+            <p>Please enter your name to start:</p>
+            <input type="text" id="player-name-input" placeholder="Your Name">
+            <button id="start-button" disabled>Start Quiz</button>
         </div>
 
-        <div id="ratio-goal">Calculate: RATIO NAME</div>
-        
-        <div id="data-area">
-            </div>
-
-        <div id="hint-display"></div>
-
-        <div id="input-area">
-            
-            <div id="dual-input-area" class="input-area-toggle">
-                <div class="dual-input-container">
-                    <div class="input-group">
-                        <label id="label-1" for="answer-input-1">Ratio 1:</label>
-                        <input type="number" step="0.01" id="answer-input-1" placeholder="Ratio 1 (e.g., 1.50)">
+        <div id="quiz-area" style="display: none;">
+            <div id="score-display">Score: 0 / 0 | Player: Guest</div>
+            <div id="question-content">
+                <p id="question-text"></p>
+                <div id="options-container">
                     </div>
-                    <div class="input-group">
-                        <label id="label-2" for="answer-input-2">Ratio 2:</label>
-                        <input type="number" step="0.01" id="answer-input-2" placeholder="Ratio 2 (e.g., 20.00)">
-                    </div>
-                </div>
-            </div>
-
-            <div id="single-input-area" class="input-area-toggle">
-                <input type="number" step="0.01" id="single-answer-input" placeholder="Enter Ratio (e.g., 1.50)" onkeydown="if(event.key === 'Enter') checkAnswer()">
-            </div>
-            
-             <div id="conceptual-input-area" class="input-area-toggle">
-                <input type="text" id="conceptual-answer-input" placeholder="Enter Answer (e.g., LIQUIDITY)" onkeydown="if(event.key === 'Enter') checkAnswer()">
-            </div>
-
-            <div style="margin-top: 10px;">
-                <button id="submit-button" onclick="checkAnswer()">Submit</button>
-                <button id="hint-button" onclick="showHint()">Hint (-1 Point)</button>
+                <div id="feedback"></div>
+                <button id="next-button" disabled>Next Question &raquo;</button>
             </div>
         </div>
-
-        <div id="feedback-area"></div>
-    </div>
-
-    <div id="game-over-screen" style="display: none;">
-        <h2>Game Over! 🛑</h2>
-        <p>Time ran out or you made an error!</p>
-        <p class="final-score" style="font-size: 2.2em; color: #1a73e8;">Your Final Score: <span id="final-score">0</span></p>
-        <div class="game-over-buttons">
-            <button id="review-button" onclick="showReview()">Review Mistakes / Hints</button>
-            <button id="restart-button" onclick="startGame()">Try Again</button>
+        
+        <div id="final-results" style="display: none;">
+            <h2>Quiz Finished! 🎉</h2>
+            <p id="final-score-text" style="font-size: 1.5em; color: #007bff; margin-bottom: 30px;"></p>
+            <div id="scoreboard">
+                <h2>🏆 Leaderboard 🏆</h2>
+                <ol id="scoreboard-list">
+                    </ol>
+            </div>
+            <button onclick="location.reload()">Start New Game</button>
         </div>
     </div>
-</div>
 
-<div id="review-modal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeReview()">&times;</span>
-        <h2>Review Mistakes & Hints 🧐</h2>
-        <div id="mistakes-list">
-            </div>
-        <p id="no-mistakes-message" style="display: none; text-align: center; color: #00a859; font-weight: bold; font-size: 1.1em;">
-            Great job! You made no mistakes and didn't need any hints this session.
-        </p>
-    </div>
-</div>
-
-<script>
-    // --- Configuration ---
-    const MAX_LIVES = 3;
-    const INITIAL_TIME_LIMIT = 120; // 120 Seconds (2 Minutes)
-    const TIME_DECREMENT_PER_LEVEL = 2;
-    const QUESTIONS_PER_LEVEL = 5;
-    const COMPLEX_STAGE_LEVEL = 8; // NEW: Level where complex questions become available
-    const PRECISION = 2; 
-    const HINT_PENALTY = 1; 
-    
-    // --- Game State Variables ---
-    let score = 0;
-    let level = 1;
-    let lives = MAX_LIVES;
-    let timeLimit = INITIAL_TIME_LIMIT;
-    let currentData = {};
-    let currentRatioName = '';
-    let currentDataLabels = {};
-    let currentFormulaText = '';
-    let hintUsedForCurrentQuestion = false;
-    let isConceptualQuestion = false;
-    let isComplexQuestion = false; // NEW
-    let correctRatioValues = []; 
-    let correctConceptualAnswer = ''; 
-    let currentConceptualTopic = ''; 
-    let timerInterval;
-    let timeLeft = INITIAL_TIME_LIMIT;
-    let isDualQuestion = false;
-    let mistakes = []; 
-
-    // --- DOM Elements ---
-    const startScreen = document.getElementById('start-screen');
-    const gameArea = document.getElementById('game-area');
-    const gameOverScreen = document.getElementById('game-over-screen');
-    const scoreDisplay = document.getElementById('score-display');
-    const ratioGoal = document.getElementById('ratio-goal');
-    const dataArea = document.getElementById('data-area');
-    const hintDisplay = document.getElementById('hint-display');
-    const hintButton = document.getElementById('hint-button');
-    const singleInput = document.getElementById('single-answer-input');
-    const dualInputArea = document.getElementById('dual-input-area');
-    const singleInputArea = document.getElementById('single-input-area');
-    const conceptualInputArea = document.getElementById('conceptual-input-area');
-    const conceptualInput = document.getElementById('conceptual-answer-input');
-    const answerInput1 = document.getElementById('answer-input-1');
-    const answerInput2 = document.getElementById('answer-input-2');
-    const label1 = document.getElementById('label-1');
-    const label2 = document.getElementById('label-2');
-    const timerBar = document.getElementById('timer-bar');
-    const feedbackArea = document.getElementById('feedback-area');
-    const reviewModal = document.getElementById('review-modal');
-    const mistakesList = document.getElementById('mistakes-list');
-    const noMistakesMessage = document.getElementById('no-mistakes-message');
-
-    // --- Conceptual Question Data ---
-    const conceptualConfigs = [
-        { 
-            name: "CONCEPT: LIQUIDITY MEASURE", 
-            goal: "Which ratio is the MOST restrictive measure of a firm's short-term solvency?", 
-            answer: "ACID TEST RATIO", 
-            type: "conceptual", 
-            area: "LIQUIDITY", 
-            formulaText: "The Acid Test Ratio (Quick Ratio) excludes Inventory, which is the least liquid Current Asset." 
-        },
-        { 
-            name: "CONCEPT: LEVERAGE IMPLICATION", 
-            goal: "Does a high Debt-to-Equity ratio indicate LOWER or HIGHER financial risk?", 
-            answer: "HIGHER", 
-            type: "conceptual", 
-            area: "LEVERAGE", 
-            formulaText: "Higher leverage (more debt relative to equity) increases the risk of default." 
-        },
-        { 
-            name: "CONCEPT: TURNOVER IMPROVEMENT", 
-            goal: "If a firm collects cash faster from customers, will its Debtor Turnover (Days) be HIGHER or LOWER?", 
-            answer: "LOWER", 
-            type: "conceptual", 
-            area: "TURNOVER", 
-            formulaText: "Collecting cash faster means fewer days to collect, so the Debtor Days ratio is lower." 
-        },
-        { 
-            name: "CONCEPT: EFFICIENCY INDICATOR", 
-            goal: "Which category measures how effectively a company uses its assets to generate revenue: Profitability or Efficiency?", 
-            answer: "EFFICIENCY", 
-            type: "conceptual", 
-            area: "EFFICIENCY", 
-            formulaText: "Efficiency ratios (like Asset Turnover) focus on the management of assets to generate sales." 
-        },
-         { 
-            name: "CONCEPT: CURRENT RATIO BENCHMARK", 
-            goal: "Is a Current Ratio of 0.8 generally considered SAFE or UNSAFE?", 
-            answer: "UNSAFE", 
-            type: "conceptual", 
-            area: "LIQUIDITY", 
-            formulaText: "A ratio below 1.0 means Current Liabilities exceed Current Assets, indicating potential short-term liquidity problems." 
-        }
-    ];
-
-    // --- Complex Question Data (NEW) ---
-    const complexConfigs = [
-        { 
-            name: "COMPLEX: EFFICIENCY & PROFITABILITY", 
-            goal: "Calculate the *Net Profit Margin* (%) AND the *Asset Turnover* (times).", 
-            data: [
-                { label: "Sales Revenue", min: 2000000, max: 5000000, key: 'R' },
-                { label: "Net Profit", min: 100000, max: 500000, key: 'NP' },
-                { label: "Total Assets", min: 1500000, max: 4000000, key: 'TA' }
-            ], 
-            formula: (d) => [ 
-                (d.NP / d.R) * 100, // Net Profit Margin
-                d.R / d.TA          // Asset Turnover
-            ], 
-            formulaText: "Ratio 1 (NPM): (Net Profit / Revenue) * 100 | Ratio 2 (AT): Revenue / Total Assets",
-            labels: ["Net Profit Margin (%)", "Asset Turnover (times)"],
-            type: "complex"
-        },
-        { 
-            name: "COMPLEX: DEBT & LIQUIDITY", 
-            goal: "Calculate the *Debt-to-Asset Ratio* (%) AND the *Quick Ratio* (Acid Test).", 
-            data: [
-                { label: "Total Debt", min: 500000, max: 1500000, key: 'TD' },
-                { label: "Total Assets", min: 1000000, max: 2500000, key: 'TA' },
-                { label: "Current Assets", min: 400000, max: 800000, key: 'CA' },
-                { label: "Inventory", min: 50000, max: 200000, key: 'Inv' },
-                { label: "Current Liabilities", min: 300000, max: 600000, key: 'CL' }
-            ], 
-            formula: (d) => [ 
-                (d.TD / d.TA) * 100, // Debt-to-Asset Ratio
-                (d.CA - d.Inv) / d.CL // Quick Ratio
-            ], 
-            formulaText: "Ratio 1 (D/A): (Total Debt / Total Assets) * 100 | Ratio 2 (QR): (Current Assets - Inventory) / Current Liabilities",
-            labels: ["Debt-to-Asset Ratio (%)", "Quick Ratio (times)"],
-            type: "complex"
-        },
-        { 
-            name: "COMPLEX: ROCE & INTEREST COVER", 
-            goal: "Calculate the *Return on Capital Employed* (ROCE, %) AND the *Interest Cover* (times).", 
-            data: [
-                { label: "Operating Profit", min: 200000, max: 600000, key: 'OP' },
-                { label: "Total Equity", min: 800000, max: 2000000, key: 'E' },
-                { label: "Non-Current Liabilities", min: 300000, max: 800000, key: 'NCL' },
-                { label: "Interest Expense", min: 50000, max: 150000, key: 'IE' }
-            ], 
-            formula: (d) => [ 
-                (d.OP / (d.E + d.NCL)) * 100, // ROCE
-                d.OP / d.IE                  // Interest Cover
-            ], 
-            formulaText: "Ratio 1 (ROCE): (Operating Profit / Capital Employed) * 100 | Ratio 2 (IC): Operating Profit / Interest Expense",
-            labels: ["ROCE (%)", "Interest Cover (times)"],
-            type: "complex"
-        }
-    ];
-
-    // --- Calculation Question Data (Retained from previous for levels 1-7) ---
-    const calculationConfigs = [
-        { name: "CURRENT RATIO", data: [{ label: "Current Assets", min: 100000, max: 500000, key: 'CA' }, { label: "Current Liabilities", min: 50000, max: 300000, key: 'CL' }], formula: (d) => [d.CA / d.CL], formulaText: "Current Assets / Current Liabilities", maxLevel: 2, labels: [], type: "calculation" },
+    <script>
+        // --- 1. QUIZ DATA PARSING & ENHANCEMENT ---
+        // Corrected data set with renumbered questions 41 and above, and structure intact
+        const rawQuizData = `
+        1. She ____ to school every day.
+        ====
+        go 
+        ====
+        #goes
+        ====
+        went
+        ====
+        gone
+        ++++
+        Explanation: Use **Present Simple** for habitual actions ('every day'). For third-person singular (She/He/It), the verb requires the ending **-es** (go -> goes).
         
-        { name: "GROSS PROFIT MARGIN (%)", data: [{ label: "Sales Revenue", min: 800000, max: 2000000, key: 'R' }, { label: "Cost of Goods Sold (COGS)", min: 300000, max: 1500000, key: 'COGS' }], formula: (d) => [((d.R - d.COGS) / d.R) * 100], formulaText: "((Revenue - COGS) / Revenue) * 100", maxLevel: 4, labels: [], type: "calculation" },
+        2. They ____ a new car last month.
+        ====
+        buy
+        ====
+        buys
+        ====
+        #bought
+        ====
+        buying
+        ++++
+        Explanation: The phrase 'last month' indicates a completed action in the past, requiring the **Past Simple** tense. The past form of 'buy' is **bought**.
         
-        { name: "GEARING RATIO (%)", data: [{ label: "Total Debt (Long-term)", min: 100000, max: 800000, key: 'D' }, { label: "Total Equity (Shareholders' Funds)", min: 200000, max: 1000000, key: 'E' }], formula: (d) => [(d.D / (d.D + d.E)) * 100], formulaText: "(Total Debt / (Total Debt + Total Equity)) * 100", maxLevel: 99, labels: [], type: "calculation" },
+        3. He ____ watching TV when I arrived.
+        ====
+        #was
+        ====
+        were
+        ====
+        is
+        ====
+        be
+        ++++
+        Explanation: The action 'watching TV' was ongoing in the past when another action ('I arrived') interrupted it. This structure uses the **Past Continuous** (was/were + V-ing). 'He' is singular, so we use **was**.
         
-        { name: "ASSET TURNOVER (times)", data: [{ label: "Sales Revenue", min: 1000000, max: 5000000, key: 'R' }, { label: "Total Assets", min: 500000, max: 3000000, key: 'TA' }], formula: (d) => [d.R / d.TA], formulaText: "Sales Revenue / Total Assets", maxLevel: 99, labels: [], type: "calculation" },
+        4. We ____ to Paris next week.
+        ====
+        go
+        ====
+        #are going
+        ====
+        went
+        ====
+        will went
+        ++++
+        Explanation: 'Next week' indicates a future plan or arrangement. The **Present Continuous** (am/is/are + V-ing) is frequently used to express definite future plans, especially with movement verbs like 'go'.
         
-        { name: "ACID TEST RATIO", data: [{ label: "Current Assets", min: 200000, max: 600000, key: 'CA' }, { label: "Inventory", min: 50000, max: 300000, key: 'Inv' }, { label: "Current Liabilities", min: 100000, max: 400000, key: 'CL' }], formula: (d) => [(d.CA - d.Inv) / d.CL], formulaText: "(Current Assets - Inventory) / Current Liabilities", maxLevel: 99, labels: [], type: "calculation" },
+        5. I ____ my homework already.
+        ====
+        did
+        ====
+        #have done
+        ====
+        does
+        ====
+        done
+        ++++
+        Explanation: The adverb 'already' signals an action completed in the recent past that is relevant now. This requires the **Present Perfect** tense (have/has + Past Participle). The past participle of 'do' is **done**.
         
-        { name: "RETURN ON CAPITAL EMPLOYED (ROCE) (%)", data: [
-            { label: "Operating Profit", min: 80000, max: 400000, key: 'OP' }, 
-            { label: "Total Equity", min: 400000, max: 1500000, key: 'E' },
-            { label: "Non-Current Liabilities", min: 100000, max: 600000, key: 'NCL' }
-        ], formula: (d) => [(d.OP / (d.E + d.NCL)) * 100], formulaText: "(Operating Profit / (Total Equity + Non-Current Liabilities)) * 100", maxLevel: 99, labels: [], type: "calculation" },
-
-        { name: "INTEREST COVER RATIO (times)", data: [
-            { label: "Operating Profit", min: 200000, max: 600000, key: 'OP' }, 
-            { label: "Interest Expense", min: 50000, max: 200000, key: 'IE' }
-        ], formula: (d) => [d.OP / d.IE], formulaText: "Operating Profit / Interest Expense", maxLevel: 99, labels: [], type: "calculation" },
-
-        { 
-            name: "DUAL CALCULATION: GROSS MARGIN & NET MARGIN (%)", 
-            data: [
-                { label: "Sales Revenue", min: 1000000, max: 3000000, key: 'R' },
-                { label: "Cost of Goods Sold (COGS)", min: 400000, max: 1500000, key: 'COGS' },
-                { label: "Operating Expenses", min: 100000, max: 500000, key: 'OE' },
-                { label: "Interest & Tax Costs", min: 50000, max: 200000, key: 'IT' }
-            ], 
-            formula: (d) => [ 
-                ((d.R - d.COGS) / d.R) * 100, 
-                ((d.R - d.COGS - d.OE - d.IT) / d.R) * 100
-            ], 
-            formulaText: "Gross Margin: ((R - COGS) / R) * 100 | Net Margin: ((R - COGS - OE - IT) / R) * 100",
-            maxLevel: 99,
-            labels: ["Gross Margin", "Net Margin"],
-            type: "calculation"
-        }
-    ];
-    
-    // --- Game Flow Functions ---
-
-    function startGame() {
-        score = 0;
-        level = 1;
-        lives = MAX_LIVES;
-        timeLimit = INITIAL_TIME_LIMIT;
-        mistakes = []; 
+        6. The man ____ lives next door is a doctor.
+        ====
+        #who
+        ====
+        which
+        ====
+        where
+        ====
+        whose
+        ++++
+        Explanation: **'Who'** is the relative pronoun used to refer to **people** when the pronoun is the subject of the clause ('lives next door').
         
-        startScreen.style.display = 'none';
-        gameOverScreen.style.display = 'none';
-        reviewModal.style.display = 'none';
-        gameArea.style.display = 'block';
-        hintDisplay.style.display = 'none'; 
+        7. This is the book ____ I told you about.
+        ====
+        who
+        ====
+        #which
+        ====
+        whom
+        ====
+        when
+        ++++
+        Explanation: **'Which'** is the relative pronoun used to refer to **things** ('the book').
         
-        loadNewQuestion();
-    }
-
-    function generateRandomValue(min, max) {
-        return Math.round((Math.floor(Math.random() * (max - min + 1)) + min) / 1000) * 1000;
-    }
-
-    function formatCurrency(value) {
-        return '$' + value.toLocaleString('en-US');
-    }
-
-    function loadNewQuestion() {
-        stopTimer();
+        8. That’s the place ____ we met.
+        ====
+        which
+        ====
+        who
+        ====
+        #where
+        ====
+        whom
+        ++++
+        Explanation: **'Where'** is the relative adverb used to refer to a **place** ('the place').
         
-        // Clear all inputs and feedback
-        singleInput.value = '';
-        answerInput1.value = '';
-        answerInput2.value = '';
-        conceptualInput.value = '';
-        feedbackArea.innerHTML = '';
-        hintDisplay.style.display = 'none'; 
-        hintUsedForCurrentQuestion = false; 
-        isComplexQuestion = false; // Reset complexity flag
+        9. _____ is coming to dinner tonight?
+        ====
+        #Who 
+        ====
+        Whose 
+        ====
+        Whom  
+        ====
+        Which
+        ++++
+        Explanation: **'Who'** is used to ask about the subject of a sentence (the person performing the action).
         
-        let selectedConfig;
+        10. I met Sarah and told ____ the news.
+        ====
+        #her
+        ====
+        she
+        ====
+        hers
+        ====
+        him
+        ++++
+        Explanation: **'Her'** is the object pronoun corresponding to 'Sarah' (female, singular) and is needed here because she is the object of the verb 'told'.
+
+        11. This book is mine, not ____.
+        ====
+        your
+        ====
+        #yours
+        ====
+        you
+        ====
+        you’re
+        ++++
         
-        // --- Question Selection Logic ---
+        12. This exercise is ____ than that one.
+        ====
+        easy 
+        ====
+        #easier
+        ====
+        easiest
+        ====
+        most easy
+        ++++
         
-        const isComplexRoll = level >= COMPLEX_STAGE_LEVEL && Math.random() < 0.35; // 35% chance for complex at Level 8+
-        const isConceptualRoll = !isComplexRoll && Math.random() < 0.25; // 25% chance for conceptual
-
-        if (isComplexRoll) {
-            selectedConfig = complexConfigs[Math.floor(Math.random() * complexConfigs.length)];
-            isConceptualQuestion = false;
-            isComplexQuestion = true;
-        } else if (isConceptualRoll) {
-            selectedConfig = conceptualConfigs[Math.floor(Math.random() * conceptualConfigs.length)];
-            isConceptualQuestion = true;
-            isComplexQuestion = false;
-        } else {
-             // Filter calculation ratios by level
-            const availableRatios = calculationConfigs.filter(r => {
-                return r.maxLevel > level || level >= COMPLEX_STAGE_LEVEL;
-            });
-
-            // Randomly select one from available calculation ratios
-            selectedConfig = availableRatios[Math.floor(Math.random() * availableRatios.length)];
-            isConceptualQuestion = false;
-            isComplexQuestion = false;
-        }
+        13. It’s the ____ day of my life!
+        ====
+        bad 
+        ====
+        worse 
+        ====
+        #worst 
+        ====
+        baddest
+        ++++
         
-        // Store info
-        currentRatioName = selectedConfig.name;
-        currentFormulaText = selectedConfig.formulaText; 
-        isDualQuestion = selectedConfig.labels && selectedConfig.labels.length === 2;
-
-        // --- Setup Question UI ---
-        ratioGoal.textContent = selectedConfig.goal;
-        ratioGoal.className = isConceptualQuestion ? 'conceptual-goal' : (isComplexQuestion ? 'complex-goal' : '');
-        dataArea.innerHTML = ''; 
-
-        // Handle Input Fields
-        if (isConceptualQuestion) {
-            conceptualInputArea.style.display = 'flex';
-            singleInputArea.style.display = 'none';
-            dualInputArea.style.display = 'none';
-            
-            // Set conceptual answer and topic for logging
-            correctConceptualAnswer = selectedConfig.answer.toUpperCase();
-            currentConceptualTopic = selectedConfig.area; 
-            conceptualInput.focus();
-            dataArea.innerHTML = `<div style="text-align: center; font-style: italic; color: #777;">Topic: ${selectedConfig.area}</div>`;
-        } else {
-            // Setup for Calculation and Complex Questions
-            conceptualInputArea.style.display = 'none';
-            singleInputArea.style.display = isDualQuestion ? 'none' : 'flex';
-            dualInputArea.style.display = isDualQuestion ? 'block' : 'none';
-
-            let dataHtml = '';
-            currentData = {};
-            currentDataLabels = {}; 
-
-            selectedConfig.data.forEach(item => {
-                const value = generateRandomValue(item.min, item.max);
-                currentData[item.key] = value;
-                currentDataLabels[item.label] = formatCurrency(value);
-                dataHtml += `<div class="data-point"><span class="data-label">${item.label}:</span><span>${formatCurrency(value)}</span></div>`;
-            });
-            dataArea.innerHTML = dataHtml;
-            
-            correctRatioValues = selectedConfig.formula(currentData).map(val => 
-                parseFloat(val.toFixed(PRECISION))
-            );
-            
-            if (isDualQuestion) {
-                // Dual input setup (used for Complex questions as well)
-                label1.textContent = `${selectedConfig.labels[0]}:`;
-                label2.textContent = `${selectedConfig.labels[1]}:`;
-                answerInput1.focus();
-            } else {
-                singleInput.focus();
-            }
-        }
+        14. The word 'begin' means the same as
+        ____.
+        ====
+        #start 
+        ====
+        end 
+        ====
+        close 
+        ====
+        finish 
+        ++++
         
-        const timeReduction = Math.floor(score / QUESTIONS_PER_LEVEL) * TIME_DECREMENT_PER_LEVEL;
-        timeLimit = Math.max(5, INITIAL_TIME_LIMIT - timeReduction);
+        15. 'Large' is similar in meaning to ____.
+        ====
+        tiny 
+        ====
+        small 
+        ====
+        #big 
+        ====
+        short   
+        ++++
         
-        timeLeft = timeLimit;
-        updateScoreDisplay();
-        startTimer();
-    }
-
-    function startTimer() {
-        timerInterval = setInterval(() => {
-            timeLeft -= 0.1;
-            
-            const progressPercentage = (timeLeft / timeLimit) * 100;
-            timerBar.style.width = `${progressPercentage}%`;
-
-            if (progressPercentage > 66) {
-                timerBar.style.backgroundColor = '#00a859';
-            } else if (progressPercentage > 33) {
-                timerBar.style.backgroundColor = '#fbbc05';
-            } else {
-                timerBar.style.backgroundColor = '#d93025';
-            }
-
-            if (timeLeft <= 0) {
-                timeExpired();
-            }
-        }, 100);
-    }
-
-    function stopTimer() {
-        clearInterval(timerInterval);
-    }
-
-    function showHint() { 
-        if (hintUsedForCurrentQuestion) return;
-
-        stopTimer();
-        score = Math.max(0, score - HINT_PENALTY); 
-        hintUsedForCurrentQuestion = true;
+        16. The opposite of 'happy' is ____.
+        ====
+        joyful 
+        ====
+        glad 
+        ====
+        #sad 
+        ====
+        delighted
+        ++++
         
-        hintDisplay.innerHTML = `*Formula/Concept Hint:* ${currentFormulaText}`;
-        hintDisplay.style.display = 'block';
+        17. The opposite of 'cheap' is ____.
+        ====
+        #expensive
+        ====
+        affordable
+        ====
+        low 
+        ====
+        bad 
+        ++++
         
-        showFeedback(`⚠️ Hint Used! Score -${HINT_PENALTY} Point.`, false);
-        updateScoreDisplay();
+        18. They ____ a new car last month.
+        ====
+        buy 
+        ====
+        buys 
+        ====
+        #bought
+        ====
+        buying 
+        ++++ 
         
-        setTimeout(startTimer, 1000); 
-    }
-
-    function checkAnswer() {
-        stopTimer();
+        19. He ____ watching TV when I arrived.
+        ====
+        #was 
+        ====
+        were 
+        ====
+        is 
+        ====
+        be
+        ++++
         
-        let isCorrect = false;
-        let submittedAnswers = [];
+        20. I ____ my homework yet.
+        ====
+        didn’t do
+        ====
+        #haven’t done 
+        ====
+        don’t do
+        ====
+        have done 
+        ++++
+        
+        21. You look tired. You ____ go to bed
+        early.
+        ====
+        #should
+        ====
+        mustn’t
+        ====
+        can 
+        ====
+        may 
+        ++++
+        
+        22. There isn’t ____ milk left in the
+        fridge.
+        ====
+        some 
+        ====
+        many 
+        ====
+        a 
+        ====
+        #any 
+        ++++
+        
+        23. She sings as ____ as her mother.
+        ====
+        good 
+        ====
+        #well 
+        ====
+        better 
+        ====
+        best 
+        ++++
+        
+        24. I couldn’t ___ what he said because of
+        the noise.
+        ====
+        #hear 
+        ====
+        listen 
+        ====
+        tell 
+        ====
+        notice 
+        ++++
+        
+        25. She was very ___ when she heard the
+        good news.
+        ====
+        bored 
+        ====
+        #excited
+        ====
+        angry 
+        ====
+        nervous
+        ++++
+        
+        26. He always ___ the bus to school.
+        ====
+        gets 
+        ====
+        #takes 
+        ====
+        goes 
+        ====
+        drives 
+        ++++
+        
+        27. The exam was quite ___, not too hard.
+        ====
+        #simple
+        ====
+        impossible
+        ====
+        terrible
+        ====
+        heavy 
+        ++++
+        28. My parents are
+        very ___ of my success.
+        ====
+        #proud 
+        ====
+        glad 
+        ====
+        pleased
+        ====
+        tired 
+        ++++
+        
+        29. Let’s go for a walk ___ it stops
+        raining.
+        ====
+        until 
+        ====
+        if 
+        ====
+        #when 
+        ====
+        before 
+        ++++
+        
+        30. Don’t forget to ___ the lights when
+        you leave.
+        ====
+        #turn off 
+        ====
+        put on 
+        ====
+        look after 
+        ====
+        take away 
+        ++++
+        
+        31. We must hurry or we’ll ___ the train.
+        ====
+        lose 
+        ====
+        #miss 
+        ====
+        leave 
+        ====
+        fail 
+        ++++
+        
+        32. He’s interested ___ learning Japanese.
+        ====
+        to 
+        ====
+        about 
+        ====
+        for 
+        ====
+        #in 
+        ++++
+        
+        33. Can you ___ me a favor?
+        ====
+        make 
+        ====
+        #do 
+        ====
+        give
+        ====
+        take 
+        ++++
+        
+        34. My little sister is afraid ___
+        spiders.
+        ====
+        from 
+        ====
+        #of 
+        ====
+        for 
+        ====
+        about 
+        ++++
+        
+        35. I’m really looking ___ to the weekend.
+        ====
+        after 
+        ====
+        #forward
+        ====
+        out 
+        ====
+        up 
+        ++++
+        
+        36. It’s too dark in here. Please ___ the
+        light.
+        ====
+        open
+        ====
+        #turn on
+        ====
+        shut
+        ====
+        close
+        ++++
+        37. He’s a very ___
+        student. He always gets top marks.
+        ====
+        lazy 
+        ====
+        #clever
+        ====
+        quiet 
+        ====
+        bored 
+        ++++
+        
+        38. Could you ___ the salt, please?
+        ====
+        spend 
+        ====
+        #pass 
+        ====
+        lend 
+        ====
+        send 
+        ++++
+        39. They found a ____ wallet.
+        ====
+        #lost
+        ====
+        losing
+        ====
+        found
+        ====
+        go
+        ++++
+        
+        40. They decided to ___ married next
+        summer.
+        ====
+        make 
+        ====
+        go 
+        ====
+        #get 
+        ====
+        have 
+        ++++
+        
+        41. Can I have ____ water, please?
+        ====
+        #some
+        ====
+        any
+        ====
+        no
+        ====
+        many
+        ++++
+        
+        42. Do you have ____ questions?
+        ====
+        some
+        ====
+        #any
+        ====
+        much
+        ====
+        little
+        ++++
+        
+        43. We haven’t seen each other ____ March.
+        ====
+        for 
+        ====
+        #since 
+        ====
+        from 
+        ====
+        before 
+        ++++
+        
+        44. Is there ____ milk in the fridge?
+        ====
+        some
+        ====
+        #any
+        ====
+        no
+        ====
+        many
+        ++++
+        
+        45. Can I get ____ apples?
+        ====
+        #some
+        ====
+        any
+        ====
+        few
+        ====
+        much
+        ++++
+        
+        46. Don’t worry. Everything will be ___
+        soon.
+        ====
+        wrong 
+        ====
+        difficult
+        ====
+        #fine 
+        ====
+        bad 
+        ++++
+        
+        47. I haven’t seen you ___ ages!
+        ====
+        since 
+        ====
+        #for 
+        ====
+        from 
+        ====
+        at 
+        ++++
+        
+        48. My brother is very good
+        ___ playing chess.
+        ====
+        on 
+        ====
+        #at 
+        ====
+        about 
+        ====
+        to
+        ++++
+        
+        49. I like to eat ____ for breakfast.
+        ====
+        #cereal
+        ====
+        jumping
+        ====
+        swim
+        ====
+        run
+        ++++
+        
+        50. We arrived ___ the airport just in
+        time.
+        ====
+        in 
+        ====
+        to 
+        ====
+        #at 
+        ====
+        by 
+        ++++
+        
+        51. It’s important to eat ___ food to stay
+        healthy.
+        ====
+        fast
+        ====
+        junk
+        ====
+        #fresh
+        ====
+        fried
+        ++++
+        52. She speaks
+        English very ___.
+        ====
+        good 
+        ====
+        #well 
+        ====
+        better 
+        ====
+        best 
+        ++++
+        
+        53. He likes to eat ____.
+        ====
+        #fruit
+        ====
+        jumping
+        ====
+        swimming
+        ====
+        walk
+        ++++
+        
+        54. I’m sorry, I didn’t ___ to hurt you.
+        ====
+        #mean 
+        ====
+        plan 
+        ====
+        hope 
+        ====
+        think 
+        ++++
+        
+        55. Let’s meet at the café ___ the corner.
+        ====
+        in 
+        ====
+        #on 
+        ====
+        at 
+        ====
+        by 
+        ++++
+        
+        56. I’m tired. Let’s take a short ___.
+        ====
+        relax 
+        ====
+        #break 
+        ====
+        stop 
+        ====
+        pause 
+        ++++
+        
+        57. We need to buy a new ___ for the
+        living room.
+        ====
+        #carpet
+        ====
+        clothes
+        ====
+        towel 
+        ====
+        curtains
+        ++++
+        
+        58. I’ll call you as soon as I ____.
+        ====
+        will arrive 
+        ====
+        #arrive
+        ====
+        arrived
+        ====
+        am arriving 
+        ++++
+        
+        59. The opposite of “borrow” is ___.
+        ====
+        #lend 
+        ====
+        take 
+        ====
+        give 
+        ====
+        buy 
+        ++++
+        
+        60. He ____ watching TV right now.
+        ====
+        #is
+        ====
+        was
+        ====
+        are
+        ====
+        be
+        ++++
+        
+        61. It’s too noisy here. Let’s go
+        somewhere ___.
+        ====
+        #quieter
+        ====
+        more quiet
+        ====
+        quietest
+        ====
+        most quiet 
+        ++++
+        62. He’s very ___ —
+        he never smiles!
+        ====
+        friendly
+        ====
+        #serious
+        ====
+        funny 
+        ====
+        nice 
+        ++++
+        
+        63. Please don’t make so much ___. I’m
+        studying.
+        ====
+        sound 
+        ====
+        voice 
+        ====
+        speech 
+        ====
+        #noise 
+        ++++
+        
+        64. I ____ working on my project
+        yesterday.
+        ====
+        #was
+        ====
+        is
+        ====
+        are
+        ====
+        be
+        ++++
+        
+        65. While I ____ TV, my sister was
+        studying.
+        ====
+        watched
+        ====
+        #was watching 
+        ====
+        watch 
+        ====
+        watch 
+        ++++
+        
+        66. He didn’t pass the test, but he’ll try
+        ___ time.
+        ====
+        other 
+        ====
+        more 
+        ====
+        #next 
+        ====
+        again 
+        ++++
+        
+        67. Let’s go out and get some ___.
+        ====
+        #air 
+        ====
+        wind 
+        ====
+        sky 
+        ====
+        sun 
+        ++++
+        
+        68. He’s very ___ — he never forgets a
+        name.
+        ====
+        #intelligent
+        ====
+        honest 
+        ====
+        polite 
+        ====
+        forgetful
+        ++++
+        
+        69. They built a new bridge ___ the river.
+        ====
+        #over
+        ====
+        on
+        ====
+        above
+        ====
+        across
+        ++++
+        
+        70. Please be ___! The baby is sleeping.
+        ====
+        loud
+        ====
+        noisy
+        ====
+        #quiet
+        ====
+        silent
+        ++++
+        
+        71. He’s the most ___ person I know —
+        always helping others.
+        ====
+        #generous
+        ====
+        greedy 
+        ====
+        rude 
+        ====
+        lazy 
+        ++++
+        
+        72. She has lived here ____ five years.
+        ====
+        since 
+        ====
+        from 
+        ====
+        #for
+        ====
+        from 
+        ++++
+        
+        73. You ____ tell anyone. It’s a secret!
+        ====
+        don’t have to 
+        ====
+        #mustn’t
+        ====
+        should 
+        ====
+        can 
+        ++++
+        
+        74. He didn’t go to work ____ he was ill.
+        ====
+        so 
+        ====
+        #because
+        ====
+        although
+        ====
+        but 
+        ++++
+        
+        75. I don’t like this soup. It’s too ____.
+        ====
+        sweet 
+        ====
+        soft 
+        ====
+        #spicy 
+        ====
+        light 
+        ++++
+        
+        76. Let’s go for a walk ____ the park.
+        ====
+        in 
+        ====
+        at 
+        ====
+        on 
+        ====
+        #in 
+        ++++
+        
+        77. My house is ____ the end of the
+        street.
+        ====
+        on 
+        ====
+        in 
+        ====
+        #at 
+        ====
+        by 
+        ++++
+        
+        78. Don’t be late! The train leaves at
+        ____.
+        ====
+        time 
+        ====
+        #on time 
+        ====
+        the time 
+        ====
+        timely 
+        ++++
+        
+        79. Could you ____ me some money, please?
+        ====
+        #lend 
+        ====
+        borrow 
+        ====
+        take 
+        ====
+        give 
+        ++++
+        
+        80. When I was a child, I ____ go fishing
+        with my father.
+        ====
+        was used to
+        ====
+        use to
+        ====
+        #used to 
+        ====
+        am used to 
+        ++++
+        
+        81. I don’t have ____ money to buy that
+        car.
+        ====
+        any 
+        ====
+        many 
+        ====
+        few 
+        ====
+        #enough
+        ++++
+        
+        82. My phone battery is low. I need to
+        ____ it.
+        ====
+        fill 
+        ====
+        #charge
+        ====
+        change 
+        ====
+        fix 
+        ++++
+        
+        83. You ____ park your car here. It’s
+        forbidden!
+        ====
+        don’t have to 
+        ====
+        should 
+        ====
+        may 
+        ====
+        #mustn’t
+        ++++
+        
+        84. That’s the best restaurant I ____.
+        ====
+        ever visit
+        ====
+        #have ever visited 
+        ====
+        ever visited
+        ====
+        visiting
+        ++++
+        85. The film was boring, ____ we left
+        early.
+        ====
+        although
+        ====
+        because
+        ====
+        but 
+        ====
+        #so 
+        ++++
+        
+        86. I missed my flight because of the
+        heavy ____.
+        ====
+        #traffic
+        ====
+        crowd 
+        ====
+        movement
+        ====
+        jam 
+        ++++
+        
+        87. You ____ ask for help if you need it.
+        ====
+        must
+        ====
+        should
+        ====
+        #can
+        ====
+        might
+        ++++
+        
+        88. We need to protect forests to save the
+        ____.
+        ====
+        economy
+        ====
+        #environment
+        ====
+        climate
+        ====
+        culture
+        ++++
+        
+        89. I ____ go to the store later.
+        ====
+        #will
+        ====
+        going
+        ====
+        am
+        ====
+        is
+        ++++
+        
+        90. Don’t forget to fasten your seat ____
+        before take-off.
+        ====
+        line 
+        ====
+        #belt 
+        ====
+        string 
+        ====
+        rope 
+        ++++
+        
+        91. Our company will hire new ____.
+        ====
+        employers
+        ====
+        #employees
+        ====
+        employment
+        ====
+        employ 
+        ++++
+        
+        92. What is one advantage of the new
+        system for Mateo?
+        A small
+        shop in Mateo’s neighborhood has no cashiers. Customers scan a code to enter,
+        take what they need, and walk out. Cameras and shelf sensors track items, and
+        the bill is sent automatically to their phones. Mateo likes the speed, but his
+        grandmother prefers the old market where the seller knows her name and gives
+        cooking tips.
+        ====
+        It
+        delivers to homes 
+        ====
+        It
+        gives recipes 
+        ====
+        It is
+        cheaper 
+        ====
+        #It is
+        faster 
+        ++++
+        
+        93. What was true about the borrowed
+        jacket?
+        Arman
+        forgot his jacket at home the day the weather changed. At lunch, a colleague
+        offered him a spare one from the office closet. It was the wrong size and an
+        unusual color, but it kept him warm on the way back. Later, Arman sent a
+        thank-you message and returned the jacket clean, with a small box of
+        chocolates.
+        ====
+        It fit
+        perfectly 
+        ====
+        It was
+        brand new 
+        ====
+        #It was
+        the wrong size 
+        ====
+        It had
+        a hole 
+        ++++
+        
+        94. Why do many families visit the market?
+        Every
+        Sunday, the central square turns into a colorful market. Farmers sell fresh
+        fruit and vegetables, artists display handmade jewelry, and musicians play
+        cheerful songs. Many families come not just to buy things but to enjoy the
+        atmosphere and eat traditional snacks from small food stalls. 
+        ====
+        To work
+        there 
+        ====
+        #To
+        enjoy the atmosphere 
+        ====
+        To
+        paint pictures 
+        ====
+        To
+        study music 
+        ++++
+        
+        95. How did Lucas feel when he got it
+        back? 
+        After
+        finishing lunch at a café, Lucas realized his wallet was gone. He quickly
+        returned to the restaurant, hoping someone had found it. Luckily, a waiter had
+        noticed it under the table and kept it safely at the counter. Lucas was so
+        relieved that he left a generous tip.
+        ====
+        Angry 
+        ====
+        #Relieved
+        ====
+        Confused
+        ====
+        are
+        ++++
+        
+        96.
+        What does Maria do during the ride?
+        It
+        takes Maria two hours to travel from her village to the city where she studies.
+        On the bus, she usually listens to podcasts or reviews her lecture notes.
+        Although the trip is long, she enjoys watching the sunrise over the fields
+        every morning.
 
-        if (isConceptualQuestion) {
-            const submittedText = conceptualInput.value.toUpperCase().trim();
-            isCorrect = (submittedText === correctConceptualAnswer);
-            submittedAnswers = [submittedText];
-        } else if (isDualQuestion || isComplexQuestion) {
-            submittedAnswers = [answerInput1.value, answerInput2.value];
-            isCorrect = validateCalculationAnswers(submittedAnswers);
-        } else {
-            submittedAnswers = [singleInput.value];
-            isCorrect = validateCalculationAnswers(submittedAnswers);
-        }
+        ====
+        Sleeps
+        all the way
+        ====
+        #Listens to podcasts
+        ====
+        Talks loudly 
+        ====
+        Eats breakfast 
+        ++++
+        
+        97.
+        What problem did Amir have?
+        When
+        Amir bought his new smartphone, he was excited about the camera. The photos
+        looked amazing, but the battery didn’t last long. After a few days, he changed
+        the settings to reduce brightness and turn off unused apps. Now the phone works
+        much better.
 
-        if (isCorrect) {
-            score++;
-            showFeedback("✅ Correct! +1 Point", true);
-            
-            if (hintUsedForCurrentQuestion) {
-                 logMistake('CORRECT (Hint Used)', submittedAnswers.join(' / '));
-            }
+        ====
+        Slow
+        internet 
+        ====
+        Broken screen 
+        ====
+        #Weak battery 
+        ====
+        Lost charger 
+        ++++
+        
+        98.
+        Who helped the students clean the local park?
+        Students
+        at Greenhill School spent Saturday cleaning the local park. They picked up
+        trash, painted benches, and planted flowers. Many parents joined too. By the
+        afternoon, the park looked fresh and colorful again, and everyone felt proud of
+        their teamwork.
 
-            if (score > 0 && score % QUESTIONS_PER_LEVEL === 0) {
-                levelUp();
-            } else {
-                setTimeout(loadNewQuestion, 1200);
-            }
-        } else {
-            // Log mistake 
-            logMistake('INCORRECT', submittedAnswers.join(' / '));
+        ====
+        Only teachers 
+        ====
+        #Parents 
+        ====
+        Tourists 
+        ====
+        No one 
+        ++++
+        
+        99.
+        When did Leo arrive at work?
+        The
+        temperature dropped to –5°C last night. When Leo woke up, the windows were
+        covered with ice, and his car wouldn’t start. He wrapped himself in a thick
+        scarf and took the bus instead. Despite the delay, he arrived at work just in
+        time for the morning meeting.
 
-            let correctDisplay = isConceptualQuestion 
-                ? correctConceptualAnswer 
-                : correctRatioValues.map(v => v.toFixed(PRECISION)).join(' / ');
+        ====
+        Late 
+        ====
+        Early
+        ====
+        #On time 
+        ====
+        After lunch
+        ++++
+        
+        100.
+        Where did Julia and her brother find the recipe?
+        Julia
+        and her brother decided to cook dinner for their parents. They followed an
+        online recipe for pasta and salad. At first, they made a mess in the kitchen,
+        but the meal turned out delicious. Their parents were surprised and happy to
+        see the effort.
 
-            let feedbackMessage = `❌ Wrong! Correct Answer: ${correctDisplay}`;
-            showFeedback(feedbackMessage, false);
-            handleIncorrectAnswer();
-        }
-    }
+        ====
+        From a book 
+        ====
+        #Online
+        ====
+        From a friend 
+        ====
+        On TV 
+        ++++
+        
+        101.
+        According to the teacher, which pairs are the best?
+        Omar
+        joined a cultural exchange project at school. Each student was matched with a
+        partner from another country to write weekly emails. Omar’s partner, Hana,
+        sends photos of local festivals and short recipes. In return, Omar shares
+        videos of traditional songs from his region. Their teacher says the best pairs
+        are those who ask questions and reply on time.
 
-    function validateCalculationAnswers(submitted) {
-        const tolerance = 0.01;
-        let allCorrect = true;
+        ====
+        Those who write long essays
+        ====
+        Those
+        who never send photos 
+        ====
+        #Those who ask questions and reply on time 
+        ====
+        Those who meet every day 
+        ++++
+        `;
 
-        if (submitted.length !== correctRatioValues.length) return false;
+        // Utility to parse the complex data format
+        function parseQuizData(rawData) {
+            const questions = [];
+            const blocks = rawData.split(/\s*\+\+\+\+\s*/);
 
-        for (let i = 0; i < submitted.length; i++) {
-            const submittedValue = parseFloat(submitted[i]);
-            if (isNaN(submittedValue)) return false;
-
-            const roundedSubmitted = parseFloat(submittedValue.toFixed(PRECISION));
-            
-            if (Math.abs(roundedSubmitted - correctRatioValues[i]) > tolerance) {
-                allCorrect = false;
-                break;
-            }
-        }
-        return allCorrect;
-    }
-
-    function logMistake(type, userAnswer) {
-        const dataForReview = isConceptualQuestion 
-            ? { "Topic": currentConceptualTopic } 
-            : currentDataLabels;
-
-        mistakes.push({
-            type: type, 
-            ratio: currentRatioName,
-            formula: currentFormulaText,
-            data: dataForReview,
-            correct: isConceptualQuestion ? correctConceptualAnswer : correctRatioValues.map(v => v.toFixed(PRECISION)).join(' / '),
-            user: userAnswer,
-            hintUsed: hintUsedForCurrentQuestion,
-            isConceptual: isConceptualQuestion,
-            isComplex: isComplexQuestion // Log complexity
-        });
-    }
-
-    function handleIncorrectAnswer() {
-        lives--;
-        if (lives <= 0) {
-            setTimeout(gameOver, 1500);
-        } else {
-            updateScoreDisplay();
-            setTimeout(loadNewQuestion, 1500); 
-        }
-    }
-
-    function timeExpired() {
-        stopTimer();
-        showFeedback("⏰ Time Expired!", false);
-        logMistake('TIMEOUT', 'N/A (Timeout)'); 
-        handleIncorrectAnswer();
-    }
-
-    function levelUp() {
-        level++;
-        showFeedback(`⭐ LEVEL UP! Now Level ${level}`, true);
-        setTimeout(loadNewQuestion, 2000);
-    }
-
-    function updateScoreDisplay() {
-        scoreDisplay.innerHTML = `Score: ${score} / Level ${level} / Lives: ${'❤️'.repeat(lives)}`;
-    }
-
-    function showFeedback(message, isCorrect) {
-        feedbackArea.innerHTML = `<div class="feedback ${isCorrect ? 'correct-feedback' : 'incorrect-feedback'}">${message}</div>`;
-    }
-
-    function gameOver() {
-        stopTimer();
-        gameArea.style.display = 'none';
-        gameOverScreen.style.display = 'block';
-        document.getElementById('final-score').textContent = score;
-    }
-    
-    // --- Review Functions ---
-    function showReview() {
-        gameOverScreen.style.display = 'none';
-        mistakesList.innerHTML = ''; 
-
-        const reviewItems = mistakes.filter(m => m.type !== 'CORRECT (Hint Used)' || m.hintUsed);
-
-        if (reviewItems.length === 0) {
-            noMistakesMessage.style.display = 'block';
-            mistakesList.style.display = 'none';
-        } else {
-            noMistakesMessage.style.display = 'none';
-            mistakesList.style.display = 'block';
-
-            reviewItems.forEach((item, index) => {
-                let dataHtml = '';
-                for (const label in item.data) {
-                    dataHtml += `<div><strong>${label}:</strong> ${item.data[label]}</div>`;
-                }
-
-                const titleText = item.type === 'CORRECT (Hint Used)' 
-                    ? `Hint Used (Question ${index + 1}): ${item.ratio}`
-                    : `Mistake (Question ${index + 1}): ${item.ratio}`;
+            blocks.forEach(block => {
+                const parts = block.trim().split(/\s*====\s*/).map(p => p.trim()).filter(p => p !== '');
                 
-                let typeClass = '';
-                if (item.hintUsed && item.type === 'CORRECT (Hint Used)') {
-                    typeClass = 'hint-used';
-                } else if (item.isConceptual) {
-                    typeClass = 'conceptual-mistake';
-                } else if (item.isComplex) {
-                    typeClass = 'complex-mistake';
-                }
+                if (parts.length >= 5) { // Expecting question + 4 options
+                    let questionLine = parts[0];
+                    let question = '';
+                    let explanation = "No detailed explanation available for this question.";
+                    
+                    // Separate question from explanation if present
+                    const explanationIndex = questionLine.indexOf('Explanation:');
+                    if (explanationIndex !== -1) {
+                        explanation = questionLine.substring(explanationIndex).replace('Explanation:', '').trim();
+                        question = questionLine.substring(0, explanationIndex).trim();
+                    } else {
+                        question = questionLine;
+                    }
 
-                const mistakeItem = `
-                    <div class="mistake-item ${typeClass.trim()}">
-                        <div class="mistake-title">${titleText}</div>
-                        
-                        <div class="mistake-data">
-                            <strong>Hint/Explanation:</strong> <span style="color: #6c757d;">${item.formula}</span>
-                        </div>
-                        ${item.type !== 'CORRECT (Hint Used)' ? 
-                            `<div class="mistake-data">
-                                <strong>Your Answer(s):</strong> <span style="color: #d93025;">${item.user}</span>
-                            </div>` : ''}
-                        
-                        <div class="mistake-data">
-                            <strong>Correct Answer(s):</strong> <span style="color: #00a859;">${item.correct}</span>
-                        </div>
-                        <p style="font-weight: bold; margin-top: 10px; color: #34495e;">${item.isConceptual ? 'Topic Context:' : 'Input Data Used:'}</p>
-                        <div class="mistake-data" style="border-top: 1px dashed #ccc;">${dataHtml}</div>
-                    </div>
-                `;
-                mistakesList.innerHTML += mistakeItem;
+                    question = question.replace(/^\d+\.\s*/, '').trim();
+
+                    const optionsRaw = parts.slice(1, 5); // Take the first 4 parts as options
+                    
+                    let answer = '';
+                    const cleanOptions = optionsRaw.map(opt => {
+                        if (opt.startsWith('#')) {
+                            answer = opt.substring(1).trim();
+                            return answer;
+                        }
+                        return opt;
+                    });
+                    
+                    if (question && answer && cleanOptions.length === 4) {
+                        questions.push({
+                            question: question,
+                            options: cleanOptions,
+                            answer: answer,
+                            explanation: explanation
+                        });
+                    }
+                }
+            });
+            return questions;
+        }
+
+        const questions = parseQuizData(rawQuizData);
+
+        // --- 2. GAME STATE & VARIABLES ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+        let playerName = '';
+        let leaderboard = JSON.parse(localStorage.getItem('quizLeaderboard')) || [];
+
+        // Elements
+        const startPage = document.getElementById('start-page');
+        const quizArea = document.getElementById('quiz-area');
+        const playerNameInput = document.getElementById('player-name-input');
+        const startButton = document.getElementById('start-button');
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextButton = document.getElementById('next-button');
+        const scoreElement = document.getElementById('score-display');
+        const feedbackElement = document.getElementById('feedback');
+        const finalResults = document.getElementById('final-results');
+        const finalScoreText = document.getElementById('final-score-text');
+        const scoreboardList = document.getElementById('scoreboard-list');
+
+        // --- 3. GAME LOGIC ---
+
+        function startGame() {
+            playerName = playerNameInput.value.trim() || 'Guest';
+            startPage.style.display = 'none';
+            quizArea.style.display = 'block';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            answered = false;
+            nextButton.disabled = true;
+            feedbackElement.innerHTML = '';
+            
+            const currentQuestion = questions[currentQuestionIndex];
+
+            scoreElement.textContent = `Score: ${score} / ${currentQuestionIndex} | Player: ${playerName} (Total: ${questions.length})`;
+            questionTextElement.textContent = `${currentQuestionIndex + 1}. ${currentQuestion.question}`;
+            optionsContainer.innerHTML = '';
+
+            // Create option buttons
+            currentQuestion.options.forEach(optionText => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.textContent = optionText;
+                button.addEventListener('click', () => selectAnswer(button, optionText, currentQuestion));
+                optionsContainer.appendChild(button);
             });
         }
-        
-        reviewModal.style.display = 'block';
-    }
 
-    function closeReview() {
-        reviewModal.style.display = 'none';
-        gameOverScreen.style.display = 'block';
-    }
+        function selectAnswer(selectedButton, selectedText, currentQuestion) {
+            if (answered) return;
+            answered = true;
+            nextButton.disabled = false;
 
-    // Initialize: Show start screen on load
-    document.addEventListener('DOMContentLoaded', () => {
-        startScreen.style.display = 'block';
-        gameArea.style.display = 'none';
-        gameOverScreen.style.display = 'none';
-    });
-</script>
+            // Disable all buttons after selection
+            Array.from(optionsContainer.children).forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('selected-disabled');
+            });
 
+            const resultText = document.createElement('div');
+            resultText.classList.add('result-text');
+            const explanation = document.createElement('p');
+            explanation.classList.add('explanation');
+            explanation.textContent = `Detailed Explanation: ${currentQuestion.explanation}`;
+
+            if (selectedText === currentQuestion.answer) {
+                score++;
+                selectedButton.classList.add('correct');
+                resultText.textContent = `✅ Correct! Well done.`;
+            } else {
+                selectedButton.classList.add('incorrect');
+                resultText.textContent = `❌ Incorrect. The correct answer was: ${currentQuestion.answer}`;
+                
+                // Highlight the correct answer
+                Array.from(optionsContainer.children).forEach(btn => {
+                    if (btn.textContent === currentQuestion.answer) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            feedbackElement.appendChild(resultText);
+            feedbackElement.appendChild(explanation);
+
+            scoreElement.textContent = `Score: ${score} / ${currentQuestionIndex + 1} | Player: ${playerName} (Total: ${questions.length})`;
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function showResults() {
+            // 1. Hide quiz, show final screen
+            quizArea.style.display = 'none';
+            finalResults.style.display = 'block';
+            
+            finalScoreText.textContent = `${playerName}, you scored ${score} out of ${questions.length}!`;
+
+            // 2. Update and display leaderboard
+            updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            // Load the latest data before updating
+            leaderboard = JSON.parse(localStorage.getItem('quizLeaderboard')) || [];
+            
+            const existingIndex = leaderboard.findIndex(entry => entry.name.toLowerCase() === playerName.toLowerCase());
+
+            if (existingIndex !== -1) {
+                // Player exists: update score only if the new score is higher
+                if (score > leaderboard[existingIndex].score) {
+                    leaderboard[existingIndex].score = score;
+                    leaderboard[existingIndex].date = new Date().toLocaleString();
+                }
+            } else {
+                // New player: add new entry
+                leaderboard.push({ name: playerName, score: score, date: new Date().toLocaleString() });
+            }
+            
+            // Sort: highest score first
+            leaderboard.sort((a, b) => b.score - a.score);
+
+            // Keep only top 10
+            leaderboard = leaderboard.slice(0, 10);
+
+            // Save to local storage
+            localStorage.setItem('quizLeaderboard', JSON.stringify(leaderboard));
+
+            // Display in HTML
+            scoreboardList.innerHTML = '';
+            leaderboard.forEach((entry, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <span>${index + 1}. ${entry.name}</span>
+                    <span>${entry.score} / ${questions.length}</span>
+                `;
+                scoreboardList.appendChild(listItem);
+            });
+        }
+
+        // --- 4. INITIALIZATION & EVENT LISTENERS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure the Start Button is enabled only when a name is entered
+            playerNameInput.addEventListener('input', () => {
+                startButton.disabled = playerNameInput.value.trim() === '';
+            });
+
+            startButton.addEventListener('click', startGame);
+            nextButton.addEventListener('click', nextQuestion);
+            
+            // CRITICAL FIX: DO NOT call updateLeaderboard() here. 
+            // The leaderboard data is loaded and displayed ONLY inside showResults() 
+            // after the quiz is finished, ensuring the game starts on the first page.
+        });
+    </script>
 </body>
 </html>
