@@ -1,1689 +1,222 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Grammar & Vocabulary Quiz</title>
+    <title>Статистический Тренажер: 20 Задач</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
+        :root {
+            --primary: #00d2ff;
+            --accent: #9d50bb;
+            --bg: #0b0e14;
+            --glass: rgba(255, 255, 255, 0.07);
+            --success: #00ff88;
+            --error: #ff3366;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: radial-gradient(circle at top right, #1e1e2f, var(--bg));
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f4f7f6;
             margin: 0;
-            padding: 20px;
-        }
-        #quiz-container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        h1 {
-            color: #007bff;
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
         }
 
-        /* --- Start Page Styles --- */
-        #start-page {
-            text-align: center;
-            padding: 50px 0;
-        }
-        #player-name-input {
-            padding: 10px;
-            margin: 20px 0;
-            width: 80%;
-            max-width: 300px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 1em;
-        }
-        #start-button {
-            padding: 12px 30px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-        #start-button:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 35px;
+            border-radius: 24px;
+            width: 95%;
+            max-width: 650px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
 
-        /* --- Quiz Styles --- */
-        #score-display {
-            text-align: right;
-            font-weight: bold;
-            color: #343a40;
-            margin-bottom: 15px;
-        }
-        #question-text {
-            font-size: 1.25em;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-        #options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin: 20px 0;
-        }
-        .option-btn {
-            padding: 15px 20px;
-            border: 1px solid #ced4da;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
-            background-color: #f8f9fa;
-            transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s;
-            font-size: 1em;
-            line-height: 1.4;
-        }
-        .option-btn:hover:not([disabled]) {
-            background-color: #e2e6ea;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-        .correct {
-            background-color: #d4edda !important;
-            border-color: #28a745 !important;
-            color: #155724;
-            animation: pulse-correct 0.5s ease-out;
-            font-weight: bold;
-        }
-        .incorrect {
-            background-color: #f8d7da !important;
-            border-color: #dc3545 !important;
-            color: #721c24;
-            animation: shake 0.5s;
-        }
-        .selected-disabled {
-            pointer-events: none;
-        }
-        
-        #feedback {
-            margin-top: 15px;
-            min-height: 24px;
-            font-size: 1.1em;
-            display: flex;
-            flex-direction: column;
-        }
-        .result-text {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .explanation {
-            font-weight: normal;
-            font-size: 0.9em;
-            color: #495057;
-            padding: 10px;
-            background-color: #e2f0ff;
-            border-left: 4px solid #007bff;
-            border-radius: 4px;
-        }
+        .hidden { display: none !important; }
 
-        #next-button {
-            padding: 10px 25px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background-color 0.2s;
-            float: right;
-            margin-top: 15px;
-        }
-        #next-button:disabled {
-            background-color: #a0c3e6;
-            cursor: not-allowed;
-        }
+        h1 { font-size: 2rem; text-align: center; margin-bottom: 1rem; background: linear-gradient(45deg, var(--primary), #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* --- Animations --- */
-        @keyframes pulse-correct {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.01); box-shadow: 0 0 10px #28a745; }
-            100% { transform: scale(1); }
+        input {
+            width: 100%; padding: 16px; border-radius: 12px; border: 2px solid #333;
+            background: rgba(0,0,0,0.4); color: white; font-size: 1rem; margin-bottom: 20px; box-sizing: border-box; outline: none; transition: 0.3s;
         }
+        input:focus { border-color: var(--primary); }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
+        .btn {
+            width: 100%; background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white; border: none; padding: 16px; border-radius: 12px;
+            cursor: pointer; font-size: 1.1rem; font-weight: 700; transition: 0.3s;
         }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-        /* --- Scoreboard Styles --- */
-        #scoreboard {
-            padding: 30px 0;
-            text-align: center;
+        .opt-btn {
+            width: 100%; padding: 14px 20px; margin: 8px 0; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
+            text-align: left; cursor: pointer; transition: 0.2s; font-size: 1rem;
         }
-        #scoreboard h2 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-        #scoreboard-list {
-            list-style: none;
-            padding: 0;
-            text-align: left;
-            margin: 0 auto;
-            max-width: 350px;
-        }
-        #scoreboard-list li {
-            background-color: #e9ecef;
-            margin-bottom: 8px;
-            padding: 10px 15px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            font-weight: 500;
-        }
-        #scoreboard-list li:first-child {
-            background-color: #ffe08a;
-            font-weight: bold;
-        }
+        .opt-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); transform: scale(1.01); }
+
+        .progress-container { margin-bottom: 20px; }
+        .bar-bg { height: 6px; background: #222; border-radius: 10px; }
+        .bar-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; transition: 0.4s; }
+
+        #review-scroll { max-height: 400px; overflow-y: auto; margin: 20px 0; padding-right: 10px; }
+        .review-box { padding: 15px; border-radius: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.2); border-left: 4px solid var(--error); }
+        .review-box.correct { border-left-color: var(--success); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
     </style>
 </head>
 <body>
-    <div id="quiz-container">
-        <h1>📚 English Quiz Game</h1>
-        
-        <div id="start-page">
-            <h2>Welcome to the Quiz!</h2>
-            <p>Please enter your name to start:</p>
-            <input type="text" id="player-name-input" placeholder="Your Name">
-            <button id="start-button" disabled>Start Quiz</button>
-        </div>
 
-        <div id="quiz-area" style="display: none;">
-            <div id="score-display">Score: 0 / 0 | Player: Guest</div>
-            <div id="question-content">
-                <p id="question-text"></p>
-                <div id="options-container">
-                    </div>
-                <div id="feedback"></div>
-                <button id="next-button" disabled>Next Question &raquo;</button>
+    <div id="scr-start" class="card animate__animated animate__fadeIn">
+        <h1>🏆 STATS CHAMPION</h1>
+        <p style="text-align:center; opacity:0.7">Марафон из 20 задач на логику и статистику</p>
+        <input type="text" id="nameInput" placeholder="Введите ваш никнейм">
+        <button class="btn" onclick="initGame()">НАЧАТЬ МАРАФОН</button>
+    </div>
+
+    <div id="scr-game" class="card hidden">
+        <div class="progress-container">
+            <div style="display:flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                <span id="q-num-text">Вопрос 1/20</span>
+                <span id="score-live">Счет: 0</span>
             </div>
+            <div class="bar-bg"><div id="bar-fill" class="bar-fill"></div></div>
         </div>
-        
-        <div id="final-results" style="display: none;">
-            <h2>Quiz Finished! 🎉</h2>
-            <p id="final-score-text" style="font-size: 1.5em; color: #007bff; margin-bottom: 30px;"></p>
-            <div id="scoreboard">
-                <h2>🏆 Leaderboard 🏆</h2>
-                <ol id="scoreboard-list">
-                    </ol>
-            </div>
-            <button onclick="location.reload()">Start New Game</button>
-        </div>
+        <h2 id="q-text" style="font-size: 1.3rem; margin-bottom: 25px;"></h2>
+        <div id="options"></div>
+    </div>
+
+    <div id="scr-end" class="card hidden">
+        <h1 id="final-title">Готово!</h1>
+        <div id="review-scroll"></div>
+        <button class="btn" onclick="location.reload()">ПОПРОБОВАТЬ СНОВА</button>
     </div>
 
     <script>
-        // --- 1. QUIZ DATA PARSING & ENHANCEMENT ---
-        // Corrected data set with renumbered questions 41 and above, and structure intact
-        const rawQuizData = `
-        1. She ____ to school every day.
-        ====
-        go 
-        ====
-        #goes
-        ====
-        went
-        ====
-        gone
-        ++++
-        Explanation: Use **Present Simple** for habitual actions ('every day'). For third-person singular (She/He/It), the verb requires the ending **-es** (go -> goes).
-        
-        2. They ____ a new car last month.
-        ====
-        buy
-        ====
-        buys
-        ====
-        #bought
-        ====
-        buying
-        ++++
-        Explanation: The phrase 'last month' indicates a completed action in the past, requiring the **Past Simple** tense. The past form of 'buy' is **bought**.
-        
-        3. He ____ watching TV when I arrived.
-        ====
-        #was
-        ====
-        were
-        ====
-        is
-        ====
-        be
-        ++++
-        Explanation: The action 'watching TV' was ongoing in the past when another action ('I arrived') interrupted it. This structure uses the **Past Continuous** (was/were + V-ing). 'He' is singular, so we use **was**.
-        
-        4. We ____ to Paris next week.
-        ====
-        go
-        ====
-        #are going
-        ====
-        went
-        ====
-        will went
-        ++++
-        Explanation: 'Next week' indicates a future plan or arrangement. The **Present Continuous** (am/is/are + V-ing) is frequently used to express definite future plans, especially with movement verbs like 'go'.
-        
-        5. I ____ my homework already.
-        ====
-        did
-        ====
-        #have done
-        ====
-        does
-        ====
-        done
-        ++++
-        Explanation: The adverb 'already' signals an action completed in the recent past that is relevant now. This requires the **Present Perfect** tense (have/has + Past Participle). The past participle of 'do' is **done**.
-        
-        6. The man ____ lives next door is a doctor.
-        ====
-        #who
-        ====
-        which
-        ====
-        where
-        ====
-        whose
-        ++++
-        Explanation: **'Who'** is the relative pronoun used to refer to **people** when the pronoun is the subject of the clause ('lives next door').
-        
-        7. This is the book ____ I told you about.
-        ====
-        who
-        ====
-        #which
-        ====
-        whom
-        ====
-        when
-        ++++
-        Explanation: **'Which'** is the relative pronoun used to refer to **things** ('the book').
-        
-        8. That’s the place ____ we met.
-        ====
-        which
-        ====
-        who
-        ====
-        #where
-        ====
-        whom
-        ++++
-        Explanation: **'Where'** is the relative adverb used to refer to a **place** ('the place').
-        
-        9. _____ is coming to dinner tonight?
-        ====
-        #Who 
-        ====
-        Whose 
-        ====
-        Whom  
-        ====
-        Which
-        ++++
-        Explanation: **'Who'** is used to ask about the subject of a sentence (the person performing the action).
-        
-        10. I met Sarah and told ____ the news.
-        ====
-        #her
-        ====
-        she
-        ====
-        hers
-        ====
-        him
-        ++++
-        Explanation: **'Her'** is the object pronoun corresponding to 'Sarah' (female, singular) and is needed here because she is the object of the verb 'told'.
+        // БАЗА ДАННЫХ 50 ВОПРОСОВ
+        const bank = [
+            { q: "Размах — это разность между...", a: ["Средним и Минимумом", "Максимумом и Минимумом", "Медианой и Квартилем"], c: 1 },
+            { q: "Дисперсия — это отклонение от среднего в...", a: ["Квадрате", "Кубе", "Процентах"], c: 0 },
+            { q: "Стандартное отклонение измеряется в...", a: ["Единицах данных", "Квадратных единицах", "Безразмерно"], c: 0 },
+            { q: "IQR (межквартильный размах) отсекает...", a: ["Только 10% краев", "По 25% с каждого края", "По 50% с каждого края"], c: 1 },
+            { q: "Если все числа в ряду увеличить на 10, как изменится размах?", a: ["Увеличится на 10", "Не изменится", "Станет в 10 раз больше"], c: 1 },
+            { q: "Вероятность случайного события всегда...", a: ["От -1 до 1", "От 0 до 1", "Больше 1"], c: 1 },
+            { q: "Чему равно 3! ?", a: ["3", "6", "9"], c: 1 },
+            { q: "Нижний квартиль (Q1) — это точка...", a: ["25% данных", "50% данных", "75% данных"], c: 0 },
+            { q: "Медиана ряда 4, 1, 9 (сначала упорядочить!):", a: ["4", "1", "9"], c: 0 },
+            { q: "Событие 'Завтра солнце взойдет' для физики это:", a: ["Случайное", "Невозможное", "Достоверное"], c: 2 },
+            { q: "Если вероятность P(A) = 0.2, вероятность P(не A) равна:", a: ["0.2", "0.8", "0.5"], c: 1 },
+            { q: "Корень из дисперсии это:", a: ["Размах", "IQR", "Стандартное отклонение"], c: 2 },
+            { q: "Сколько способов выбрать 1 книгу из 5?", a: ["1", "5", "120"], c: 1 },
+            { q: "События совместны, если они:", a: ["Исключают друг друга", "Могут произойти вместе", "Никогда не происходят"], c: 1 },
+            { q: "Что точнее описывает разброс без учета выбросов?", a: ["Размах", "IQR", "Среднее"], c: 1 },
+            { q: "Чему равна вероятность выпада 7 на кубике?", a: ["0", "1/6", "1"], c: 0 },
+            { q: "Факториал 0! равен:", a: ["0", "1", "Ошибка"], c: 1 },
+            { q: "В мешке 2 черных и 3 белых шара. Вероятность белого:", a: ["0.4", "0.6", "0.5"], c: 1 },
+            { q: "Среднее арифметическое 0, 10, 20:", a: ["10", "15", "30"], c: 0 },
+            { q: "Какое событие невозможно при броске монеты?", a: ["Орел", "Решка", "Ребро (в идеальной задаче)", "6 очков"], c: 3 },
+            { q: "Верхний квартиль (Q3) — это...", a: ["25% данных", "50% данных", "75% данных"], c: 2 },
+            { q: "Чему равно 5! ?", a: ["25", "120", "60"], c: 1 },
+            { q: "Размещения используются, когда порядок...", a: ["Важен", "Не важен", "Запрещен"], c: 0 },
+            { q: "Сочетания используются, когда порядок...", a: ["Важен", "Не важен", "Произволен"], c: 1 },
+            { q: "Если станд. отклонение 3, дисперсия равна:", a: ["9", "1.5", "6"], c: 0 },
+            { q: "Если дисперсия 25, станд. отклонение равно:", a: ["625", "5", "12.5"], c: 1 },
+            { q: "Размах чисел -5, 0, 5 равен:", a: ["0", "5", "10"], c: 2 },
+            { q: "IQR — это разница между:", a: ["Max и Min", "Q3 и Q1", "Средним и Медианой"], c: 1 },
+            { q: "Мода — это...", a: ["Среднее", "Самое частое значение", "Значение в центре"], c: 1 },
+            { q: "Если в наборе 1, 1, 2, 3, мода это:", a: ["1", "2", "3"], c: 0 },
+            { q: "Вероятность выпадения четного числа на кубике:", a: ["1/6", "1/2", "1/3"], c: 1 },
+            { q: "Сколько граней у игральной кости?", a: ["4", "6", "10"], c: 1 },
+            { q: "P(A) = 1 означает, что событие:", a: ["Редкое", "Достоверное", "Невозможное"], c: 1 },
+            { q: "Если данных 10, 10, 10, дисперсия равна:", a: ["10", "0", "1"], c: 1 },
+            { q: "Межквартильный размах — это...", a: ["Средние 25%", "Средние 50%", "Средние 75%"], c: 1 },
+            { q: "В ящике с усами медиана это...", a: ["Ус", "Линия внутри ящика", "Край ящика"], c: 1 },
+            { q: "Сумма вероятностей противоположных событий:", a: ["0", "0.5", "1"], c: 2 },
+            { q: "Что больше: 4! или 20?", a: ["4! (24)", "20", "Равны"], c: 0 },
+            { q: "Какое число не может быть вероятностью?", a: ["0", "0.7", "1.1"], c: 2 },
+            { q: "Среднее ряда 5, 5, 5, 5:", a: ["0", "5", "20"], c: 1 },
+            { q: "Как называется 'ящик с усами' в статистике?", a: ["Boxplot", "Histogram", "Scatterplot"], c: 0 },
+            { q: "Что показывает хвост (ус) в boxplot?", a: ["Среднее", "Разброс до максимума/минимума", "Ошибку"], c: 1 },
+            { q: "Вероятность того, что 2+2=4:", a: ["0", "1", "0.5"], c: 1 },
+            { q: "Сколько исходов при броске 1 монеты?", a: ["1", "2", "4"], c: 1 },
+            { q: "Если бросить кубик 2 раза, сколько всего исходов?", a: ["12", "36", "6"], c: 1 },
+            { q: "Как называется наука о сборе данных?", a: ["Математика", "Статистика", "Геометрия"], c: 1 },
+            { q: "Выброс — это значение...", a: ["В центре", "Сильно выбивающееся", "Равное нулю"], c: 1 },
+            { q: "Нижний квартиль отсекает...", a: ["Верхние 25%", "Нижние 25%", "Средние 25%"], c: 1 },
+            { q: "Если вероятность 0, событие:", a: ["Случайное", "Невозможное", "Редкое"], c: 1 },
+            { q: "Статистический размах ряда 1, 2, 3, 10:", a: ["9", "10", "3"], c: 0 }
+        ];
 
-        11. This book is mine, not ____.
-        ====
-        your
-        ====
-        #yours
-        ====
-        you
-        ====
-        you’re
-        ++++
-        
-        12. This exercise is ____ than that one.
-        ====
-        easy 
-        ====
-        #easier
-        ====
-        easiest
-        ====
-        most easy
-        ++++
-        
-        13. It’s the ____ day of my life!
-        ====
-        bad 
-        ====
-        worse 
-        ====
-        #worst 
-        ====
-        baddest
-        ++++
-        
-        14. The word 'begin' means the same as
-        ____.
-        ====
-        #start 
-        ====
-        end 
-        ====
-        close 
-        ====
-        finish 
-        ++++
-        
-        15. 'Large' is similar in meaning to ____.
-        ====
-        tiny 
-        ====
-        small 
-        ====
-        #big 
-        ====
-        short   
-        ++++
-        
-        16. The opposite of 'happy' is ____.
-        ====
-        joyful 
-        ====
-        glad 
-        ====
-        #sad 
-        ====
-        delighted
-        ++++
-        
-        17. The opposite of 'cheap' is ____.
-        ====
-        #expensive
-        ====
-        affordable
-        ====
-        low 
-        ====
-        bad 
-        ++++
-        
-        18. They ____ a new car last month.
-        ====
-        buy 
-        ====
-        buys 
-        ====
-        #bought
-        ====
-        buying 
-        ++++ 
-        
-        19. He ____ watching TV when I arrived.
-        ====
-        #was 
-        ====
-        were 
-        ====
-        is 
-        ====
-        be
-        ++++
-        
-        20. I ____ my homework yet.
-        ====
-        didn’t do
-        ====
-        #haven’t done 
-        ====
-        don’t do
-        ====
-        have done 
-        ++++
-        
-        21. You look tired. You ____ go to bed
-        early.
-        ====
-        #should
-        ====
-        mustn’t
-        ====
-        can 
-        ====
-        may 
-        ++++
-        
-        22. There isn’t ____ milk left in the
-        fridge.
-        ====
-        some 
-        ====
-        many 
-        ====
-        a 
-        ====
-        #any 
-        ++++
-        
-        23. She sings as ____ as her mother.
-        ====
-        good 
-        ====
-        #well 
-        ====
-        better 
-        ====
-        best 
-        ++++
-        
-        24. I couldn’t ___ what he said because of
-        the noise.
-        ====
-        #hear 
-        ====
-        listen 
-        ====
-        tell 
-        ====
-        notice 
-        ++++
-        
-        25. She was very ___ when she heard the
-        good news.
-        ====
-        bored 
-        ====
-        #excited
-        ====
-        angry 
-        ====
-        nervous
-        ++++
-        
-        26. He always ___ the bus to school.
-        ====
-        gets 
-        ====
-        #takes 
-        ====
-        goes 
-        ====
-        drives 
-        ++++
-        
-        27. The exam was quite ___, not too hard.
-        ====
-        #simple
-        ====
-        impossible
-        ====
-        terrible
-        ====
-        heavy 
-        ++++
-        28. My parents are
-        very ___ of my success.
-        ====
-        #proud 
-        ====
-        glad 
-        ====
-        pleased
-        ====
-        tired 
-        ++++
-        
-        29. Let’s go for a walk ___ it stops
-        raining.
-        ====
-        until 
-        ====
-        if 
-        ====
-        #when 
-        ====
-        before 
-        ++++
-        
-        30. Don’t forget to ___ the lights when
-        you leave.
-        ====
-        #turn off 
-        ====
-        put on 
-        ====
-        look after 
-        ====
-        take away 
-        ++++
-        
-        31. We must hurry or we’ll ___ the train.
-        ====
-        lose 
-        ====
-        #miss 
-        ====
-        leave 
-        ====
-        fail 
-        ++++
-        
-        32. He’s interested ___ learning Japanese.
-        ====
-        to 
-        ====
-        about 
-        ====
-        for 
-        ====
-        #in 
-        ++++
-        
-        33. Can you ___ me a favor?
-        ====
-        make 
-        ====
-        #do 
-        ====
-        give
-        ====
-        take 
-        ++++
-        
-        34. My little sister is afraid ___
-        spiders.
-        ====
-        from 
-        ====
-        #of 
-        ====
-        for 
-        ====
-        about 
-        ++++
-        
-        35. I’m really looking ___ to the weekend.
-        ====
-        after 
-        ====
-        #forward
-        ====
-        out 
-        ====
-        up 
-        ++++
-        
-        36. It’s too dark in here. Please ___ the
-        light.
-        ====
-        open
-        ====
-        #turn on
-        ====
-        shut
-        ====
-        close
-        ++++
-        37. He’s a very ___
-        student. He always gets top marks.
-        ====
-        lazy 
-        ====
-        #clever
-        ====
-        quiet 
-        ====
-        bored 
-        ++++
-        
-        38. Could you ___ the salt, please?
-        ====
-        spend 
-        ====
-        #pass 
-        ====
-        lend 
-        ====
-        send 
-        ++++
-        39. They found a ____ wallet.
-        ====
-        #lost
-        ====
-        losing
-        ====
-        found
-        ====
-        go
-        ++++
-        
-        40. They decided to ___ married next
-        summer.
-        ====
-        make 
-        ====
-        go 
-        ====
-        #get 
-        ====
-        have 
-        ++++
-        
-        41. Can I have ____ water, please?
-        ====
-        #some
-        ====
-        any
-        ====
-        no
-        ====
-        many
-        ++++
-        
-        42. Do you have ____ questions?
-        ====
-        some
-        ====
-        #any
-        ====
-        much
-        ====
-        little
-        ++++
-        
-        43. We haven’t seen each other ____ March.
-        ====
-        for 
-        ====
-        #since 
-        ====
-        from 
-        ====
-        before 
-        ++++
-        
-        44. Is there ____ milk in the fridge?
-        ====
-        some
-        ====
-        #any
-        ====
-        no
-        ====
-        many
-        ++++
-        
-        45. Can I get ____ apples?
-        ====
-        #some
-        ====
-        any
-        ====
-        few
-        ====
-        much
-        ++++
-        
-        46. Don’t worry. Everything will be ___
-        soon.
-        ====
-        wrong 
-        ====
-        difficult
-        ====
-        #fine 
-        ====
-        bad 
-        ++++
-        
-        47. I haven’t seen you ___ ages!
-        ====
-        since 
-        ====
-        #for 
-        ====
-        from 
-        ====
-        at 
-        ++++
-        
-        48. My brother is very good
-        ___ playing chess.
-        ====
-        on 
-        ====
-        #at 
-        ====
-        about 
-        ====
-        to
-        ++++
-        
-        49. I like to eat ____ for breakfast.
-        ====
-        #cereal
-        ====
-        jumping
-        ====
-        swim
-        ====
-        run
-        ++++
-        
-        50. We arrived ___ the airport just in
-        time.
-        ====
-        in 
-        ====
-        to 
-        ====
-        #at 
-        ====
-        by 
-        ++++
-        
-        51. It’s important to eat ___ food to stay
-        healthy.
-        ====
-        fast
-        ====
-        junk
-        ====
-        #fresh
-        ====
-        fried
-        ++++
-        52. She speaks
-        English very ___.
-        ====
-        good 
-        ====
-        #well 
-        ====
-        better 
-        ====
-        best 
-        ++++
-        
-        53. He likes to eat ____.
-        ====
-        #fruit
-        ====
-        jumping
-        ====
-        swimming
-        ====
-        walk
-        ++++
-        
-        54. I’m sorry, I didn’t ___ to hurt you.
-        ====
-        #mean 
-        ====
-        plan 
-        ====
-        hope 
-        ====
-        think 
-        ++++
-        
-        55. Let’s meet at the café ___ the corner.
-        ====
-        in 
-        ====
-        #on 
-        ====
-        at 
-        ====
-        by 
-        ++++
-        
-        56. I’m tired. Let’s take a short ___.
-        ====
-        relax 
-        ====
-        #break 
-        ====
-        stop 
-        ====
-        pause 
-        ++++
-        
-        57. We need to buy a new ___ for the
-        living room.
-        ====
-        #carpet
-        ====
-        clothes
-        ====
-        towel 
-        ====
-        curtains
-        ++++
-        
-        58. I’ll call you as soon as I ____.
-        ====
-        will arrive 
-        ====
-        #arrive
-        ====
-        arrived
-        ====
-        am arriving 
-        ++++
-        
-        59. The opposite of “borrow” is ___.
-        ====
-        #lend 
-        ====
-        take 
-        ====
-        give 
-        ====
-        buy 
-        ++++
-        
-        60. He ____ watching TV right now.
-        ====
-        #is
-        ====
-        was
-        ====
-        are
-        ====
-        be
-        ++++
-        
-        61. It’s too noisy here. Let’s go
-        somewhere ___.
-        ====
-        #quieter
-        ====
-        more quiet
-        ====
-        quietest
-        ====
-        most quiet 
-        ++++
-        62. He’s very ___ —
-        he never smiles!
-        ====
-        friendly
-        ====
-        #serious
-        ====
-        funny 
-        ====
-        nice 
-        ++++
-        
-        63. Please don’t make so much ___. I’m
-        studying.
-        ====
-        sound 
-        ====
-        voice 
-        ====
-        speech 
-        ====
-        #noise 
-        ++++
-        
-        64. I ____ working on my project
-        yesterday.
-        ====
-        #was
-        ====
-        is
-        ====
-        are
-        ====
-        be
-        ++++
-        
-        65. While I ____ TV, my sister was
-        studying.
-        ====
-        watched
-        ====
-        #was watching 
-        ====
-        watch 
-        ====
-        watch 
-        ++++
-        
-        66. He didn’t pass the test, but he’ll try
-        ___ time.
-        ====
-        other 
-        ====
-        more 
-        ====
-        #next 
-        ====
-        again 
-        ++++
-        
-        67. Let’s go out and get some ___.
-        ====
-        #air 
-        ====
-        wind 
-        ====
-        sky 
-        ====
-        sun 
-        ++++
-        
-        68. He’s very ___ — he never forgets a
-        name.
-        ====
-        #intelligent
-        ====
-        honest 
-        ====
-        polite 
-        ====
-        forgetful
-        ++++
-        
-        69. They built a new bridge ___ the river.
-        ====
-        #over
-        ====
-        on
-        ====
-        above
-        ====
-        across
-        ++++
-        
-        70. Please be ___! The baby is sleeping.
-        ====
-        loud
-        ====
-        noisy
-        ====
-        #quiet
-        ====
-        silent
-        ++++
-        
-        71. He’s the most ___ person I know —
-        always helping others.
-        ====
-        #generous
-        ====
-        greedy 
-        ====
-        rude 
-        ====
-        lazy 
-        ++++
-        
-        72. She has lived here ____ five years.
-        ====
-        since 
-        ====
-        from 
-        ====
-        #for
-        ====
-        from 
-        ++++
-        
-        73. You ____ tell anyone. It’s a secret!
-        ====
-        don’t have to 
-        ====
-        #mustn’t
-        ====
-        should 
-        ====
-        can 
-        ++++
-        
-        74. He didn’t go to work ____ he was ill.
-        ====
-        so 
-        ====
-        #because
-        ====
-        although
-        ====
-        but 
-        ++++
-        
-        75. I don’t like this soup. It’s too ____.
-        ====
-        sweet 
-        ====
-        soft 
-        ====
-        #spicy 
-        ====
-        light 
-        ++++
-        
-        76. Let’s go for a walk ____ the park.
-        ====
-        in 
-        ====
-        at 
-        ====
-        on 
-        ====
-        #in 
-        ++++
-        
-        77. My house is ____ the end of the
-        street.
-        ====
-        on 
-        ====
-        in 
-        ====
-        #at 
-        ====
-        by 
-        ++++
-        
-        78. Don’t be late! The train leaves at
-        ____.
-        ====
-        time 
-        ====
-        #on time 
-        ====
-        the time 
-        ====
-        timely 
-        ++++
-        
-        79. Could you ____ me some money, please?
-        ====
-        #lend 
-        ====
-        borrow 
-        ====
-        take 
-        ====
-        give 
-        ++++
-        
-        80. When I was a child, I ____ go fishing
-        with my father.
-        ====
-        was used to
-        ====
-        use to
-        ====
-        #used to 
-        ====
-        am used to 
-        ++++
-        
-        81. I don’t have ____ money to buy that
-        car.
-        ====
-        any 
-        ====
-        many 
-        ====
-        few 
-        ====
-        #enough
-        ++++
-        
-        82. My phone battery is low. I need to
-        ____ it.
-        ====
-        fill 
-        ====
-        #charge
-        ====
-        change 
-        ====
-        fix 
-        ++++
-        
-        83. You ____ park your car here. It’s
-        forbidden!
-        ====
-        don’t have to 
-        ====
-        should 
-        ====
-        may 
-        ====
-        #mustn’t
-        ++++
-        
-        84. That’s the best restaurant I ____.
-        ====
-        ever visit
-        ====
-        #have ever visited 
-        ====
-        ever visited
-        ====
-        visiting
-        ++++
-        85. The film was boring, ____ we left
-        early.
-        ====
-        although
-        ====
-        because
-        ====
-        but 
-        ====
-        #so 
-        ++++
-        
-        86. I missed my flight because of the
-        heavy ____.
-        ====
-        #traffic
-        ====
-        crowd 
-        ====
-        movement
-        ====
-        jam 
-        ++++
-        
-        87. You ____ ask for help if you need it.
-        ====
-        must
-        ====
-        should
-        ====
-        #can
-        ====
-        might
-        ++++
-        
-        88. We need to protect forests to save the
-        ____.
-        ====
-        economy
-        ====
-        #environment
-        ====
-        climate
-        ====
-        culture
-        ++++
-        
-        89. I ____ go to the store later.
-        ====
-        #will
-        ====
-        going
-        ====
-        am
-        ====
-        is
-        ++++
-        
-        90. Don’t forget to fasten your seat ____
-        before take-off.
-        ====
-        line 
-        ====
-        #belt 
-        ====
-        string 
-        ====
-        rope 
-        ++++
-        
-        91. Our company will hire new ____.
-        ====
-        employers
-        ====
-        #employees
-        ====
-        employment
-        ====
-        employ 
-        ++++
-        
-        92. What is one advantage of the new
-        system for Mateo?
-        A small
-        shop in Mateo’s neighborhood has no cashiers. Customers scan a code to enter,
-        take what they need, and walk out. Cameras and shelf sensors track items, and
-        the bill is sent automatically to their phones. Mateo likes the speed, but his
-        grandmother prefers the old market where the seller knows her name and gives
-        cooking tips.
-        ====
-        It
-        delivers to homes 
-        ====
-        It
-        gives recipes 
-        ====
-        It is
-        cheaper 
-        ====
-        #It is
-        faster 
-        ++++
-        
-        93. What was true about the borrowed
-        jacket?
-        Arman
-        forgot his jacket at home the day the weather changed. At lunch, a colleague
-        offered him a spare one from the office closet. It was the wrong size and an
-        unusual color, but it kept him warm on the way back. Later, Arman sent a
-        thank-you message and returned the jacket clean, with a small box of
-        chocolates.
-        ====
-        It fit
-        perfectly 
-        ====
-        It was
-        brand new 
-        ====
-        #It was
-        the wrong size 
-        ====
-        It had
-        a hole 
-        ++++
-        
-        94. Why do many families visit the market?
-        Every
-        Sunday, the central square turns into a colorful market. Farmers sell fresh
-        fruit and vegetables, artists display handmade jewelry, and musicians play
-        cheerful songs. Many families come not just to buy things but to enjoy the
-        atmosphere and eat traditional snacks from small food stalls. 
-        ====
-        To work
-        there 
-        ====
-        #To
-        enjoy the atmosphere 
-        ====
-        To
-        paint pictures 
-        ====
-        To
-        study music 
-        ++++
-        
-        95. How did Lucas feel when he got it
-        back? 
-        After
-        finishing lunch at a café, Lucas realized his wallet was gone. He quickly
-        returned to the restaurant, hoping someone had found it. Luckily, a waiter had
-        noticed it under the table and kept it safely at the counter. Lucas was so
-        relieved that he left a generous tip.
-        ====
-        Angry 
-        ====
-        #Relieved
-        ====
-        Confused
-        ====
-        are
-        ++++
-        
-        96.
-        What does Maria do during the ride?
-        It
-        takes Maria two hours to travel from her village to the city where she studies.
-        On the bus, she usually listens to podcasts or reviews her lecture notes.
-        Although the trip is long, she enjoys watching the sunrise over the fields
-        every morning.
-
-        ====
-        Sleeps
-        all the way
-        ====
-        #Listens to podcasts
-        ====
-        Talks loudly 
-        ====
-        Eats breakfast 
-        ++++
-        
-        97.
-        What problem did Amir have?
-        When
-        Amir bought his new smartphone, he was excited about the camera. The photos
-        looked amazing, but the battery didn’t last long. After a few days, he changed
-        the settings to reduce brightness and turn off unused apps. Now the phone works
-        much better.
-
-        ====
-        Slow
-        internet 
-        ====
-        Broken screen 
-        ====
-        #Weak battery 
-        ====
-        Lost charger 
-        ++++
-        
-        98.
-        Who helped the students clean the local park?
-        Students
-        at Greenhill School spent Saturday cleaning the local park. They picked up
-        trash, painted benches, and planted flowers. Many parents joined too. By the
-        afternoon, the park looked fresh and colorful again, and everyone felt proud of
-        their teamwork.
-
-        ====
-        Only teachers 
-        ====
-        #Parents 
-        ====
-        Tourists 
-        ====
-        No one 
-        ++++
-        
-        99.
-        When did Leo arrive at work?
-        The
-        temperature dropped to –5°C last night. When Leo woke up, the windows were
-        covered with ice, and his car wouldn’t start. He wrapped himself in a thick
-        scarf and took the bus instead. Despite the delay, he arrived at work just in
-        time for the morning meeting.
-
-        ====
-        Late 
-        ====
-        Early
-        ====
-        #On time 
-        ====
-        After lunch
-        ++++
-        
-        100.
-        Where did Julia and her brother find the recipe?
-        Julia
-        and her brother decided to cook dinner for their parents. They followed an
-        online recipe for pasta and salad. At first, they made a mess in the kitchen,
-        but the meal turned out delicious. Their parents were surprised and happy to
-        see the effort.
-
-        ====
-        From a book 
-        ====
-        #Online
-        ====
-        From a friend 
-        ====
-        On TV 
-        ++++
-        
-        101.
-        According to the teacher, which pairs are the best?
-        Omar
-        joined a cultural exchange project at school. Each student was matched with a
-        partner from another country to write weekly emails. Omar’s partner, Hana,
-        sends photos of local festivals and short recipes. In return, Omar shares
-        videos of traditional songs from his region. Their teacher says the best pairs
-        are those who ask questions and reply on time.
-
-        ====
-        Those who write long essays
-        ====
-        Those
-        who never send photos 
-        ====
-        #Those who ask questions and reply on time 
-        ====
-        Those who meet every day 
-        ++++
-        `;
-
-        // Utility to parse the complex data format
-        function parseQuizData(rawData) {
-            const questions = [];
-            const blocks = rawData.split(/\s*\+\+\+\+\s*/);
-
-            blocks.forEach(block => {
-                const parts = block.trim().split(/\s*====\s*/).map(p => p.trim()).filter(p => p !== '');
-                
-                if (parts.length >= 5) { // Expecting question + 4 options
-                    let questionLine = parts[0];
-                    let question = '';
-                    let explanation = "No detailed explanation available for this question.";
-                    
-                    // Separate question from explanation if present
-                    const explanationIndex = questionLine.indexOf('Explanation:');
-                    if (explanationIndex !== -1) {
-                        explanation = questionLine.substring(explanationIndex).replace('Explanation:', '').trim();
-                        question = questionLine.substring(0, explanationIndex).trim();
-                    } else {
-                        question = questionLine;
-                    }
-
-                    question = question.replace(/^\d+\.\s*/, '').trim();
-
-                    const optionsRaw = parts.slice(1, 5); // Take the first 4 parts as options
-                    
-                    let answer = '';
-                    const cleanOptions = optionsRaw.map(opt => {
-                        if (opt.startsWith('#')) {
-                            answer = opt.substring(1).trim();
-                            return answer;
-                        }
-                        return opt;
-                    });
-                    
-                    if (question && answer && cleanOptions.length === 4) {
-                        questions.push({
-                            question: question,
-                            options: cleanOptions,
-                            answer: answer,
-                            explanation: explanation
-                        });
-                    }
-                }
-            });
-            return questions;
-        }
-
-        const questions = parseQuizData(rawQuizData);
-
-        // --- 2. GAME STATE & VARIABLES ---
-        let currentQuestionIndex = 0;
+        let questions = [];
+        let cur = 0;
         let score = 0;
-        let answered = false;
-        let playerName = '';
-        let leaderboard = JSON.parse(localStorage.getItem('quizLeaderboard')) || [];
+        let history = [];
 
-        // Elements
-        const startPage = document.getElementById('start-page');
-        const quizArea = document.getElementById('quiz-area');
-        const playerNameInput = document.getElementById('player-name-input');
-        const startButton = document.getElementById('start-button');
-        const questionTextElement = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const nextButton = document.getElementById('next-button');
-        const scoreElement = document.getElementById('score-display');
-        const feedbackElement = document.getElementById('feedback');
-        const finalResults = document.getElementById('final-results');
-        const finalScoreText = document.getElementById('final-score-text');
-        const scoreboardList = document.getElementById('scoreboard-list');
-
-        // --- 3. GAME LOGIC ---
-
-        function startGame() {
-            playerName = playerNameInput.value.trim() || 'Guest';
-            startPage.style.display = 'none';
-            quizArea.style.display = 'block';
-            loadQuestion();
+        function initGame() {
+            const n = document.getElementById('nameInput').value;
+            if(!n) return alert("Введите имя!");
+            questions = bank.sort(() => 0.5 - Math.random()).slice(0, 20);
+            document.getElementById('scr-start').classList.add('hidden');
+            document.getElementById('scr-game').classList.remove('hidden');
+            renderQ();
         }
 
-        function loadQuestion() {
-            if (currentQuestionIndex >= questions.length) {
-                showResults();
-                return;
-            }
-
-            answered = false;
-            nextButton.disabled = true;
-            feedbackElement.innerHTML = '';
+        function renderQ() {
+            const q = questions[cur];
+            document.getElementById('q-num-text').innerText = `Вопрос ${cur + 1} / 20`;
+            document.getElementById('score-live').innerText = `Счет: ${score}`;
+            document.getElementById('q-text').innerText = q.q;
             
-            const currentQuestion = questions[currentQuestionIndex];
+            const optDiv = document.getElementById('options');
+            optDiv.innerHTML = '';
+            
+            q.a.forEach((t, i) => {
+                const b = document.createElement('button');
+                b.className = 'opt-btn animate__animated animate__fadeInUp';
+                b.style.animationDelay = (i * 0.1) + 's';
+                b.innerText = t;
+                b.onclick = () => handle(i);
+                optDiv.appendChild(b);
+            });
+            document.getElementById('bar-fill').style.width = (cur / 20 * 100) + '%';
+        }
 
-            scoreElement.textContent = `Score: ${score} / ${currentQuestionIndex} | Player: ${playerName} (Total: ${questions.length})`;
-            questionTextElement.textContent = `${currentQuestionIndex + 1}. ${currentQuestion.question}`;
-            optionsContainer.innerHTML = '';
+        function handle(idx) {
+            const q = questions[cur];
+            const isOk = (idx === q.c);
+            if(isOk) score++;
+            history.push({q: q.q, ua: q.a[idx], ca: q.a[q.c], ok: isOk});
+            
+            cur++;
+            if(cur < 20) renderQ(); else showResult();
+        }
 
-            // Create option buttons
-            currentQuestion.options.forEach(optionText => {
-                const button = document.createElement('button');
-                button.classList.add('option-btn');
-                button.textContent = optionText;
-                button.addEventListener('click', () => selectAnswer(button, optionText, currentQuestion));
-                optionsContainer.appendChild(button);
+        function showResult() {
+            document.getElementById('scr-game').classList.add('hidden');
+            const end = document.getElementById('scr-end');
+            end.classList.remove('hidden');
+            
+            const nick = document.getElementById('nameInput').value;
+            document.getElementById('final-title').innerText = `${nick}, твой счет: ${score}/20`;
+            
+            const scroll = document.getElementById('review-scroll');
+            scroll.innerHTML = '';
+            history.forEach(h => {
+                const d = document.createElement('div');
+                d.className = `review-box ${h.ok ? 'correct' : ''}`;
+                d.innerHTML = `<strong>${h.q}</strong><br>
+                ${h.ok ? `✅ Верно: ${h.ca}` : `❌ Твой ответ: ${h.ua}<br>✔️ Правильно: ${h.ca}`}`;
+                scroll.appendChild(d);
             });
         }
-
-        function selectAnswer(selectedButton, selectedText, currentQuestion) {
-            if (answered) return;
-            answered = true;
-            nextButton.disabled = false;
-
-            // Disable all buttons after selection
-            Array.from(optionsContainer.children).forEach(btn => {
-                btn.disabled = true;
-                btn.classList.add('selected-disabled');
-            });
-
-            const resultText = document.createElement('div');
-            resultText.classList.add('result-text');
-            const explanation = document.createElement('p');
-            explanation.classList.add('explanation');
-            explanation.textContent = `Detailed Explanation: ${currentQuestion.explanation}`;
-
-            if (selectedText === currentQuestion.answer) {
-                score++;
-                selectedButton.classList.add('correct');
-                resultText.textContent = `✅ Correct! Well done.`;
-            } else {
-                selectedButton.classList.add('incorrect');
-                resultText.textContent = `❌ Incorrect. The correct answer was: ${currentQuestion.answer}`;
-                
-                // Highlight the correct answer
-                Array.from(optionsContainer.children).forEach(btn => {
-                    if (btn.textContent === currentQuestion.answer) {
-                        btn.classList.add('correct');
-                    }
-                });
-            }
-
-            feedbackElement.appendChild(resultText);
-            feedbackElement.appendChild(explanation);
-
-            scoreElement.textContent = `Score: ${score} / ${currentQuestionIndex + 1} | Player: ${playerName} (Total: ${questions.length})`;
-        }
-
-        function nextQuestion() {
-            currentQuestionIndex++;
-            loadQuestion();
-        }
-
-        function showResults() {
-            // 1. Hide quiz, show final screen
-            quizArea.style.display = 'none';
-            finalResults.style.display = 'block';
-            
-            finalScoreText.textContent = `${playerName}, you scored ${score} out of ${questions.length}!`;
-
-            // 2. Update and display leaderboard
-            updateLeaderboard();
-        }
-
-        function updateLeaderboard() {
-            // Load the latest data before updating
-            leaderboard = JSON.parse(localStorage.getItem('quizLeaderboard')) || [];
-            
-            const existingIndex = leaderboard.findIndex(entry => entry.name.toLowerCase() === playerName.toLowerCase());
-
-            if (existingIndex !== -1) {
-                // Player exists: update score only if the new score is higher
-                if (score > leaderboard[existingIndex].score) {
-                    leaderboard[existingIndex].score = score;
-                    leaderboard[existingIndex].date = new Date().toLocaleString();
-                }
-            } else {
-                // New player: add new entry
-                leaderboard.push({ name: playerName, score: score, date: new Date().toLocaleString() });
-            }
-            
-            // Sort: highest score first
-            leaderboard.sort((a, b) => b.score - a.score);
-
-            // Keep only top 10
-            leaderboard = leaderboard.slice(0, 10);
-
-            // Save to local storage
-            localStorage.setItem('quizLeaderboard', JSON.stringify(leaderboard));
-
-            // Display in HTML
-            scoreboardList.innerHTML = '';
-            leaderboard.forEach((entry, index) => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <span>${index + 1}. ${entry.name}</span>
-                    <span>${entry.score} / ${questions.length}</span>
-                `;
-                scoreboardList.appendChild(listItem);
-            });
-        }
-
-        // --- 4. INITIALIZATION & EVENT LISTENERS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Ensure the Start Button is enabled only when a name is entered
-            playerNameInput.addEventListener('input', () => {
-                startButton.disabled = playerNameInput.value.trim() === '';
-            });
-
-            startButton.addEventListener('click', startGame);
-            nextButton.addEventListener('click', nextQuestion);
-            
-            // CRITICAL FIX: DO NOT call updateLeaderboard() here. 
-            // The leaderboard data is loaded and displayed ONLY inside showResults() 
-            // after the quiz is finished, ensuring the game starts on the first page.
-        });
     </script>
 </body>
 </html>
