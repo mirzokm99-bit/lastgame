@@ -1,222 +1,205 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Статистический Тренажер: 20 Задач</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <title>Linguist Quest: Simple Logic Master</title>
     <style>
         :root {
-            --primary: #00d2ff;
-            --accent: #9d50bb;
-            --bg: #0b0e14;
-            --glass: rgba(255, 255, 255, 0.07);
-            --success: #00ff88;
-            --error: #ff3366;
+            --a1: #2ecc71; --a2: #f1c40f; --b1: #3498db; --b2: #9b59b6; --c1: #e74c3c;
+            --dark: #0f172a; --card: #1e293b; --text: #f8fafc;
         }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--dark); color: var(--text); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        #game-container { width: 100%; max-width: 1000px; background: var(--card); padding: 40px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        
+        .screen { display: none; }
+        .active { display: block; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .xp-count { color: #fbbf24; font-weight: bold; font-size: 1.5rem; }
+        
+        .progress-bar { width: 100%; height: 6px; background: #334155; border-radius: 10px; margin-bottom: 30px; overflow: hidden; }
+        #progress-fill { height: 100%; width: 0%; background: #00adb5; transition: 0.5s; }
 
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: radial-gradient(circle at top right, #1e1e2f, var(--bg));
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
+        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .passage-content { background: #0f172a; padding: 30px; border-radius: 8px; height: 400px; overflow-y: auto; line-height: 1.6; font-size: 1.1rem; border-left: 6px solid var(--a1); }
+        
+        .options-list { display: grid; gap: 12px; margin-top: 20px; }
+        button { background: transparent; border: 1px solid #475569; color: white; padding: 16px; border-radius: 8px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 0.95rem; }
+        button:hover:not(:disabled) { background: #334155; border-color: #00adb5; }
+        
+        .lvl-badge { padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; margin-right: 10px; }
+        #feedback { margin-top: 20px; font-weight: bold; font-size: 1.1rem; text-align: center; height: 1.5em; }
 
-        .card {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 35px;
-            border-radius: 24px;
-            width: 95%;
-            max-width: 650px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-        }
-
-        .hidden { display: none !important; }
-
-        h1 { font-size: 2rem; text-align: center; margin-bottom: 1rem; background: linear-gradient(45deg, var(--primary), #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        input {
-            width: 100%; padding: 16px; border-radius: 12px; border: 2px solid #333;
-            background: rgba(0,0,0,0.4); color: white; font-size: 1rem; margin-bottom: 20px; box-sizing: border-box; outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: var(--primary); }
-
-        .btn {
-            width: 100%; background: linear-gradient(45deg, var(--primary), var(--accent));
-            color: white; border: none; padding: 16px; border-radius: 12px;
-            cursor: pointer; font-size: 1.1rem; font-weight: 700; transition: 0.3s;
-        }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-        .opt-btn {
-            width: 100%; padding: 14px 20px; margin: 8px 0; background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;
-            text-align: left; cursor: pointer; transition: 0.2s; font-size: 1rem;
-        }
-        .opt-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); transform: scale(1.01); }
-
-        .progress-container { margin-bottom: 20px; }
-        .bar-bg { height: 6px; background: #222; border-radius: 10px; }
-        .bar-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; transition: 0.4s; }
-
-        #review-scroll { max-height: 400px; overflow-y: auto; margin: 20px 0; padding-right: 10px; }
-        .review-box { padding: 15px; border-radius: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.2); border-left: 4px solid var(--error); }
-        .review-box.correct { border-left-color: var(--success); }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        .review-row { padding: 20px; border-bottom: 1px solid #334155; background: rgba(15, 23, 42, 0.5); margin-bottom: 10px; border-radius: 8px; }
+        .reasoning-box { margin-top: 10px; padding: 10px; background: #0f172a; border-radius: 4px; font-size: 0.9rem; color: #94a3b8; font-style: italic; }
+        .correct { color: #2ecc71; } .wrong { color: #ef4444; }
+        .instruction-card { background: #0f172a; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 0.9rem; border: 1px solid #3498db; }
     </style>
 </head>
 <body>
 
-    <div id="scr-start" class="card animate__animated animate__fadeIn">
-        <h1>🏆 STATS CHAMPION</h1>
-        <p style="text-align:center; opacity:0.7">Марафон из 20 задач на логику и статистику</p>
-        <input type="text" id="nameInput" placeholder="Введите ваш никнейм">
-        <button class="btn" onclick="initGame()">НАЧАТЬ МАРАФОН</button>
-    </div>
-
-    <div id="scr-game" class="card hidden">
-        <div class="progress-container">
-            <div style="display:flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
-                <span id="q-num-text">Вопрос 1/20</span>
-                <span id="score-live">Счет: 0</span>
-            </div>
-            <div class="bar-bg"><div id="bar-fill" class="bar-fill"></div></div>
+<div id="game-container">
+    <div id="screen-start" class="screen active" style="text-align:center;">
+        <h1 style="font-size: 2.5rem; letter-spacing: 1px;">🛡️ THE LOGICIAN'S QUEST</h1>
+        
+        <div class="instruction-card">
+            <h3 style="margin-top:0; color:#3498db;">📜 Instructions:</h3>
+            <ul>
+                <li>Read the passage on the left carefully.</li>
+                <li>The questions test <strong>logic</strong>: why the author wrote something or what is hidden "between the lines."</li>
+                <li>After the game, you will see a "Reasoning" section explaining the logic behind every answer.</li>
+            </ul>
         </div>
-        <h2 id="q-text" style="font-size: 1.3rem; margin-bottom: 25px;"></h2>
-        <div id="options"></div>
+
+        <p style="color: #94a3b8; margin-bottom: 20px;">Simplified Language • High-Level Logic</p>
+        <input type="text" id="user-name" placeholder="Enter Candidate Name" style="padding: 15px; border-radius: 8px; background: #0f172a; border: 1px solid #334155; color: white; width: 280px; text-align: center; margin-bottom: 20px;"><br>
+        <button onclick="startGame()" style="text-align:center; background:#00adb5; border:none; padding:15px 50px; font-weight:bold; color:white; border-radius:8px;">BEGIN ASSESSMENT</button>
     </div>
 
-    <div id="scr-end" class="card hidden">
-        <h1 id="final-title">Готово!</h1>
-        <div id="review-scroll"></div>
-        <button class="btn" onclick="location.reload()">ПОПРОБОВАТЬ СНОВА</button>
+    <div id="screen-game" class="screen">
+        <div class="header">
+            <div id="current-title"></div>
+            <div class="xp-count">XP: <span id="xp-val">0</span></div>
+        </div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+        <div class="layout">
+            <div id="passage-text" class="passage-content"></div>
+            <div class="quiz-area">
+                <h4 id="question-text" style="margin-top: 0; line-height: 1.5;"></h4>
+                <div id="options-container" class="options-list"></div>
+                <div id="feedback"></div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // БАЗА ДАННЫХ 50 ВОПРОСОВ
-        const bank = [
-            { q: "Размах — это разность между...", a: ["Средним и Минимумом", "Максимумом и Минимумом", "Медианой и Квартилем"], c: 1 },
-            { q: "Дисперсия — это отклонение от среднего в...", a: ["Квадрате", "Кубе", "Процентах"], c: 0 },
-            { q: "Стандартное отклонение измеряется в...", a: ["Единицах данных", "Квадратных единицах", "Безразмерно"], c: 0 },
-            { q: "IQR (межквартильный размах) отсекает...", a: ["Только 10% краев", "По 25% с каждого края", "По 50% с каждого края"], c: 1 },
-            { q: "Если все числа в ряду увеличить на 10, как изменится размах?", a: ["Увеличится на 10", "Не изменится", "Станет в 10 раз больше"], c: 1 },
-            { q: "Вероятность случайного события всегда...", a: ["От -1 до 1", "От 0 до 1", "Больше 1"], c: 1 },
-            { q: "Чему равно 3! ?", a: ["3", "6", "9"], c: 1 },
-            { q: "Нижний квартиль (Q1) — это точка...", a: ["25% данных", "50% данных", "75% данных"], c: 0 },
-            { q: "Медиана ряда 4, 1, 9 (сначала упорядочить!):", a: ["4", "1", "9"], c: 0 },
-            { q: "Событие 'Завтра солнце взойдет' для физики это:", a: ["Случайное", "Невозможное", "Достоверное"], c: 2 },
-            { q: "Если вероятность P(A) = 0.2, вероятность P(не A) равна:", a: ["0.2", "0.8", "0.5"], c: 1 },
-            { q: "Корень из дисперсии это:", a: ["Размах", "IQR", "Стандартное отклонение"], c: 2 },
-            { q: "Сколько способов выбрать 1 книгу из 5?", a: ["1", "5", "120"], c: 1 },
-            { q: "События совместны, если они:", a: ["Исключают друг друга", "Могут произойти вместе", "Никогда не происходят"], c: 1 },
-            { q: "Что точнее описывает разброс без учета выбросов?", a: ["Размах", "IQR", "Среднее"], c: 1 },
-            { q: "Чему равна вероятность выпада 7 на кубике?", a: ["0", "1/6", "1"], c: 0 },
-            { q: "Факториал 0! равен:", a: ["0", "1", "Ошибка"], c: 1 },
-            { q: "В мешке 2 черных и 3 белых шара. Вероятность белого:", a: ["0.4", "0.6", "0.5"], c: 1 },
-            { q: "Среднее арифметическое 0, 10, 20:", a: ["10", "15", "30"], c: 0 },
-            { q: "Какое событие невозможно при броске монеты?", a: ["Орел", "Решка", "Ребро (в идеальной задаче)", "6 очков"], c: 3 },
-            { q: "Верхний квартиль (Q3) — это...", a: ["25% данных", "50% данных", "75% данных"], c: 2 },
-            { q: "Чему равно 5! ?", a: ["25", "120", "60"], c: 1 },
-            { q: "Размещения используются, когда порядок...", a: ["Важен", "Не важен", "Запрещен"], c: 0 },
-            { q: "Сочетания используются, когда порядок...", a: ["Важен", "Не важен", "Произволен"], c: 1 },
-            { q: "Если станд. отклонение 3, дисперсия равна:", a: ["9", "1.5", "6"], c: 0 },
-            { q: "Если дисперсия 25, станд. отклонение равно:", a: ["625", "5", "12.5"], c: 1 },
-            { q: "Размах чисел -5, 0, 5 равен:", a: ["0", "5", "10"], c: 2 },
-            { q: "IQR — это разница между:", a: ["Max и Min", "Q3 и Q1", "Средним и Медианой"], c: 1 },
-            { q: "Мода — это...", a: ["Среднее", "Самое частое значение", "Значение в центре"], c: 1 },
-            { q: "Если в наборе 1, 1, 2, 3, мода это:", a: ["1", "2", "3"], c: 0 },
-            { q: "Вероятность выпадения четного числа на кубике:", a: ["1/6", "1/2", "1/3"], c: 1 },
-            { q: "Сколько граней у игральной кости?", a: ["4", "6", "10"], c: 1 },
-            { q: "P(A) = 1 означает, что событие:", a: ["Редкое", "Достоверное", "Невозможное"], c: 1 },
-            { q: "Если данных 10, 10, 10, дисперсия равна:", a: ["10", "0", "1"], c: 1 },
-            { q: "Межквартильный размах — это...", a: ["Средние 25%", "Средние 50%", "Средние 75%"], c: 1 },
-            { q: "В ящике с усами медиана это...", a: ["Ус", "Линия внутри ящика", "Край ящика"], c: 1 },
-            { q: "Сумма вероятностей противоположных событий:", a: ["0", "0.5", "1"], c: 2 },
-            { q: "Что больше: 4! или 20?", a: ["4! (24)", "20", "Равны"], c: 0 },
-            { q: "Какое число не может быть вероятностью?", a: ["0", "0.7", "1.1"], c: 2 },
-            { q: "Среднее ряда 5, 5, 5, 5:", a: ["0", "5", "20"], c: 1 },
-            { q: "Как называется 'ящик с усами' в статистике?", a: ["Boxplot", "Histogram", "Scatterplot"], c: 0 },
-            { q: "Что показывает хвост (ус) в boxplot?", a: ["Среднее", "Разброс до максимума/минимума", "Ошибку"], c: 1 },
-            { q: "Вероятность того, что 2+2=4:", a: ["0", "1", "0.5"], c: 1 },
-            { q: "Сколько исходов при броске 1 монеты?", a: ["1", "2", "4"], c: 1 },
-            { q: "Если бросить кубик 2 раза, сколько всего исходов?", a: ["12", "36", "6"], c: 1 },
-            { q: "Как называется наука о сборе данных?", a: ["Математика", "Статистика", "Геометрия"], c: 1 },
-            { q: "Выброс — это значение...", a: ["В центре", "Сильно выбивающееся", "Равное нулю"], c: 1 },
-            { q: "Нижний квартиль отсекает...", a: ["Верхние 25%", "Нижние 25%", "Средние 25%"], c: 1 },
-            { q: "Если вероятность 0, событие:", a: ["Случайное", "Невозможное", "Редкое"], c: 1 },
-            { q: "Статистический размах ряда 1, 2, 3, 10:", a: ["9", "10", "3"], c: 0 }
-        ];
+    <div id="screen-review" class="screen">
+        <h2>📊 Logical Accuracy Report</h2>
+        <div id="final-stats" style="padding: 20px; background: #0f172a; border-radius: 8px; margin-bottom: 20px;"></div>
+        <div id="review-output"></div>
+        <button onclick="location.reload()" style="width: 100%; margin-top: 20px; background: #00adb5; border: none; padding: 15px; color: white; font-weight: bold; border-radius: 8px; cursor: pointer;">Restart Session</button>
+    </div>
+</div>
 
-        let questions = [];
-        let cur = 0;
-        let score = 0;
-        let history = [];
+<script>
+const GRE_BANK = [
+    { lvl: "A1", title: "Mark's Commute", text: "Mark lives in a small apartment. He works in a big office. Every morning, he takes the bus to work. He does not like the bus because it is slow. He wants to buy a car next year.", 
+      qs: [
+        {q: "What can we guess about Mark?", o: ["He has a car now.", "He is not happy with the bus.", "He works at home."], c: 1, x: 15, r: "Correct. The text says he 'does not like' the bus and 'wants a car,' which proves his unhappiness with current transport."},
+        {q: "Why does the author talk about 'next year'?", o: ["To show Mark's future plan.", "To say Mark is late.", "To talk about Mark's birthday."], c: 0, x: 15, r: "Correct. Planning to buy something in the future is a solution to a current problem."},
+        {q: "Why does Mark dislike the bus?", o: ["The bus speed.", "The bus size.", "The bus cost."], c: 0, x: 15, r: "Correct. The text explicitly links his dislike to the bus being 'slow.'"},
+        {q: "The word 'big' in 'big office' helps us see that:", o: ["Mark works alone.", "Many people probably work there.", "The office is in his house."], c: 1, x: 15, r: "Correct. A 'big' office implies a large workspace with many employees or departments."}
+    ]},
+    { lvl: "A2", title: "The Art Gallery", text: "The town gallery has a new show. It has pictures of the sea. Kids enter for free, but adults must pay. Many people came yesterday. The room was very quiet. People looked at the art for a long time.", 
+      qs: [
+        {q: "What is likely true about the people there?", o: ["They were bored.", "They were focused on the art.", "They were mostly loud children."], c: 1, x: 20, r: "Correct. Silence and looking for a long time indicate concentration and interest, not boredom."},
+        {q: "The story suggests the show was:", o: ["A failure.", "Popular and interesting.", "Closed early."], c: 1, x: 20, r: "Correct. 'Many people came' and they stayed to look, which suggests it was a success."},
+        {q: "Why mention that 'adults must pay'?", o: ["To stop adults from coming.", "To explain the price rules.", "To show the gallery is rich."], c: 1, x: 20, r: "Correct. This is a factual detail about how the gallery operates its business."},
+        {q: "If a child goes to the gallery, they:", o: ["Pay half.", "Pay nothing.", "Cannot go inside."], c: 1, x: 20, r: "Correct. 'Free for children' means they pay zero dollars."}
+    ]},
+    { lvl: "B1", title: "Paper in the Office", text: "In 1970, experts said computers would stop the use of paper. But paper use actually went up. Today, we have email, but many people still print pages to read them. People feel that paper is safer and better for careful reading than a screen.", 
+      qs: [
+        {q: "The 'paperless office' idea was:", o: ["A successful plan.", "A wrong prediction.", "A bad invention."], c: 1, x: 25, r: "Correct. Since paper use went 'up' instead of stopping, the prediction failed."},
+        {q: "Why do people still use paper?", o: ["It is cheaper than computers.", "It feels better for deep reading.", "Printers are faster."], c: 1, x: 25, r: "Correct. The text states people prefer it for 'reading carefully' and 'security.'"},
+        {q: "The word 'But' in the second sentence is used to:", o: ["Agree with the experts.", "Show a different result.", "End the story."], c: 1, x: 25, r: "Correct. 'But' introduces a contrast between the 1970s prediction and the actual reality."},
+        {q: "What can we infer about screens?", o: ["They might feel less 'safe' for deep reading.", "They are broken.", "They will be gone soon."], c: 0, x: 25, r: "Correct. If paper provides a 'security' that screens 'lack,' screens are logically less secure in that context."}
+    ]},
+    { lvl: "B2", title: "Nature Zones", text: "Some people think we only need small, protected parks to save animals. But some scientists say this is a bad idea. If the land outside the park is dirty or has factories, the animals inside the park are trapped. We must protect nature everywhere, not just in small zones.", 
+      qs: [
+        {q: "What does the author think about small parks?", o: ["They are perfect.", "They are not enough by themselves.", "They are too expensive."], c: 1, x: 30, r: "Correct. The author argues that protecting nature 'everywhere' is necessary because small zones 'trap' animals."},
+        {q: "What is the main goal of the author?", o: ["To talk about factories.", "To suggest a better way to save nature.", "To close all parks."], c: 1, x: 30, r: "Correct. The author is advocating for a broader conservation strategy beyond just isolated parks."},
+        {q: "The text says animals in small parks are 'trapped' because:", o: ["The parks have walls.", "The area outside is unhealthy.", "They don't like the trees."], c: 1, x: 30, r: "Correct. If the land 'surrounding' the park is polluted, animals cannot leave or thrive safely."},
+        {q: "What does 'not just in small zones' imply?", o: ["Small zones are useless.", "Small zones are part of the answer, but not the whole answer.", "We should stop making zones."], c: 1, x: 30, r: "Correct. The word 'just' implies that zones are okay, but they are insufficient on their own."}
+    ]},
+    { lvl: "C1", title: "The Choice Nudge", text: "Governments sometimes use 'nudges.' These are small changes that help people make better choices without forcing them. For example, putting fruit at eye level in a shop helps people eat better. Some say this is bad because it controls people. Others say no choice is ever truly neutral, so we should design choices to help people.", 
+      qs: [
+        {q: "What is a 'nudge'?", o: ["A new law.", "A small, helpful influence.", "A way to force people."], c: 1, x: 40, r: "Correct. The text defines it as 'subtle changes... without forcing.'"},
+        {q: "What do supporters of nudges believe?", o: ["Everything we see influences our choice anyway.", "People are lazy.", "Fruit is better than candy."], c: 0, x: 40, r: "Correct. They argue 'no choice architecture is neutral,' so influence is unavoidable."},
+        {q: "The debate is mostly about:", o: ["Healthy food.", "The ethics of influencing behavior.", "Government money."], c: 1, x: 40, r: "Correct. The passage weighs the idea of 'controlling' people against 'designing choices to help.'"},
+        {q: "A 'nudge' is different from a 'command' because:", o: ["A nudge is for food.", "A nudge gives you a choice; a command does not.", "A command is always helpful."], c: 1, x: 50, r: "Correct. Commands are 'mandates' (forces), while nudges influence 'without mandates.'"}
+    ]}
+];
 
-        function initGame() {
-            const n = document.getElementById('nameInput').value;
-            if(!n) return alert("Введите имя!");
-            questions = bank.sort(() => 0.5 - Math.random()).slice(0, 20);
-            document.getElementById('scr-start').classList.add('hidden');
-            document.getElementById('scr-game').classList.remove('hidden');
-            renderQ();
-        }
+let session = [];
+let currentQ = 0;
+let xp = 0;
+let userLog = [];
 
-        function renderQ() {
-            const q = questions[cur];
-            document.getElementById('q-num-text').innerText = `Вопрос ${cur + 1} / 20`;
-            document.getElementById('score-live').innerText = `Счет: ${score}`;
-            document.getElementById('q-text').innerText = q.q;
-            
-            const optDiv = document.getElementById('options');
-            optDiv.innerHTML = '';
-            
-            q.a.forEach((t, i) => {
-                const b = document.createElement('button');
-                b.className = 'opt-btn animate__animated animate__fadeInUp';
-                b.style.animationDelay = (i * 0.1) + 's';
-                b.innerText = t;
-                b.onclick = () => handle(i);
-                optDiv.appendChild(b);
-            });
-            document.getElementById('bar-fill').style.width = (cur / 20 * 100) + '%';
-        }
+function startGame() {
+    const nameInput = document.getElementById('user-name');
+    const name = nameInput.value || "Logician";
+    
+    let shuffled = [...GRE_BANK].sort(() => 0.5 - Math.random());
+    let selected = shuffled.slice(0, 5);
+    const order = ["A1", "A2", "B1", "B2", "C1"];
+    selected.sort((a,b) => order.indexOf(a.lvl) - order.indexOf(b.lvl));
 
-        function handle(idx) {
-            const q = questions[cur];
-            const isOk = (idx === q.c);
-            if(isOk) score++;
-            history.push({q: q.q, ua: q.a[idx], ca: q.a[q.c], ok: isOk});
-            
-            cur++;
-            if(cur < 20) renderQ(); else showResult();
-        }
+    session = [];
+    selected.forEach(r => r.qs.forEach(q => session.push({...q, p: r.text, lvl: r.lvl, title: r.title})));
 
-        function showResult() {
-            document.getElementById('scr-game').classList.add('hidden');
-            const end = document.getElementById('scr-end');
-            end.classList.remove('hidden');
-            
-            const nick = document.getElementById('nameInput').value;
-            document.getElementById('final-title').innerText = `${nick}, твой счет: ${score}/20`;
-            
-            const scroll = document.getElementById('review-scroll');
-            scroll.innerHTML = '';
-            history.forEach(h => {
-                const d = document.createElement('div');
-                d.className = `review-box ${h.ok ? 'correct' : ''}`;
-                d.innerHTML = `<strong>${h.q}</strong><br>
-                ${h.ok ? `✅ Верно: ${h.ca}` : `❌ Твой ответ: ${h.ua}<br>✔️ Правильно: ${h.ca}`}`;
-                scroll.appendChild(d);
-            });
-        }
-    </script>
+    document.getElementById('screen-start').classList.remove('active');
+    document.getElementById('screen-game').classList.add('active');
+    render();
+}
+
+function render() {
+    if (currentQ >= session.length) { end(); return; }
+    const d = session[currentQ];
+    const colors = {"A1":"var(--a1)","A2":"var(--a2)","B1":"var(--b1)","B2":"var(--b2)","C1":"var(--c1)"};
+    
+    document.getElementById('current-title').innerHTML = `<span class="lvl-badge" style="background:${colors[d.lvl]}">${d.lvl}</span> ${d.title}`;
+    document.getElementById('passage-text').innerText = d.p;
+    document.getElementById('passage-text').style.borderLeftColor = colors[d.lvl];
+    document.getElementById('question-text').innerText = d.q;
+    
+    const container = document.getElementById('options-container');
+    container.innerHTML = "";
+    d.o.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.onclick = () => check(i);
+        container.appendChild(btn);
+    });
+
+    document.getElementById('progress-fill').style.width = (currentQ / session.length * 100) + "%";
+}
+
+function check(i) {
+    const d = session[currentQ];
+    const correct = i === d.c;
+    userLog.push({q: d.q, u: d.o[i], a: d.o[d.c], ok: correct, reason: d.r});
+
+    const f = document.getElementById('feedback');
+    if (correct) {
+        xp += d.x;
+        f.innerText = "✓ LOGIC VALIDATED"; f.style.color = "#2ecc71";
+    } else {
+        f.innerText = "✗ LOGICAL ERROR"; f.style.color = "#ef4444";
+    }
+    document.getElementById('xp-val').innerText = xp;
+    currentQ++;
+    setTimeout(() => { f.innerText = ""; render(); }, 1200);
+}
+
+function end() {
+    document.getElementById('screen-game').classList.remove('active');
+    document.getElementById('screen-review').classList.add('active');
+    document.getElementById('final-stats').innerHTML = `<h3>Total Mastery Score: ${xp} XP</h3><p>Correct Logic: ${userLog.filter(x=>x.ok).length} / ${session.length}</p>`;
+    
+    const out = document.getElementById('review-output');
+    out.innerHTML = "";
+    userLog.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = "review-row";
+        row.innerHTML = `
+            <strong>${idx+1}. ${item.q}</strong><br>
+            Your Answer: <span class="${item.ok?'correct':'wrong'}">${item.u}</span> 
+            ${!item.ok ? `<br>Correct Answer: <span class="correct">${item.a}</span>` : ''}
+            <div class="reasoning-box"><strong>Reasoning:</strong> ${item.reason}</div>
+        `;
+        out.appendChild(row);
+    });
+}
+</script>
 </body>
 </html>
