@@ -2,203 +2,201 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linguist Quest: Simple Logic Master</title>
+    <title>Passive Ops: Elite Protocol 2.0</title>
     <style>
-        :root {
-            --a1: #2ecc71; --a2: #f1c40f; --b1: #3498db; --b2: #9b59b6; --c1: #e74c3c;
-            --dark: #0f172a; --card: #1e293b; --text: #f8fafc;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--dark); color: var(--text); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        #game-container { width: 100%; max-width: 1000px; background: var(--card); padding: 40px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        
-        .screen { display: none; }
-        .active { display: block; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .xp-count { color: #fbbf24; font-weight: bold; font-size: 1.5rem; }
-        
-        .progress-bar { width: 100%; height: 6px; background: #334155; border-radius: 10px; margin-bottom: 30px; overflow: hidden; }
-        #progress-fill { height: 100%; width: 0%; background: #00adb5; transition: 0.5s; }
-
-        .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .passage-content { background: #0f172a; padding: 30px; border-radius: 8px; height: 400px; overflow-y: auto; line-height: 1.6; font-size: 1.1rem; border-left: 6px solid var(--a1); }
-        
-        .options-list { display: grid; gap: 12px; margin-top: 20px; }
-        button { background: transparent; border: 1px solid #475569; color: white; padding: 16px; border-radius: 8px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 0.95rem; }
-        button:hover:not(:disabled) { background: #334155; border-color: #00adb5; }
-        
-        .lvl-badge { padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; margin-right: 10px; }
-        #feedback { margin-top: 20px; font-weight: bold; font-size: 1.1rem; text-align: center; height: 1.5em; }
-
-        .review-row { padding: 20px; border-bottom: 1px solid #334155; background: rgba(15, 23, 42, 0.5); margin-bottom: 10px; border-radius: 8px; }
-        .reasoning-box { margin-top: 10px; padding: 10px; background: #0f172a; border-radius: 4px; font-size: 0.9rem; color: #94a3b8; font-style: italic; }
-        .correct { color: #2ecc71; } .wrong { color: #ef4444; }
-        .instruction-card { background: #0f172a; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 0.9rem; border: 1px solid #3498db; }
+        :root { --neon: #00ffcc; --warn: #ffcc00; --error: #ff4444; --bg: #0a0a0c; --card: #16161a; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; }
+        #game-box { background: var(--card); border: 2px solid var(--neon); padding: 30px; border-radius: 5px; width: 100%; max-width: 850px; box-shadow: 0 0 20px rgba(0,255,204,0.1); }
+        h1 { text-align: center; color: var(--neon); letter-spacing: 4px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .hidden { display: none; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 12px; cursor: pointer; transition: 0.2s; font-weight: bold; font-family: inherit; font-size: 0.9rem;}
+        .btn:hover { background: var(--neon); color: var(--bg); box-shadow: 0 0 15px var(--neon); }
+        input { background: #000; border: 1px solid #444; color: var(--neon); padding: 10px; width: 80%; display: block; margin: 10px auto; text-align: center; }
+        .status-bar { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .prog-container { height: 4px; background: #222; margin-bottom: 20px; }
+        #prog-bar { height: 100%; background: var(--neon); width: 0%; transition: 0.3s; }
+        .review-item { border-left: 2px solid #444; margin: 10px 0; padding-left: 10px; font-size: 0.8rem; }
+        .correct { color: var(--neon); }
+        .wrong { color: var(--error); }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div id="screen-start" class="screen active" style="text-align:center;">
-        <h1 style="font-size: 2.5rem; letter-spacing: 1px;">🛡️ THE LOGICIAN'S QUEST</h1>
-        
-        <div class="instruction-card">
-            <h3 style="margin-top:0; color:#3498db;">📜 Instructions:</h3>
-            <ul>
-                <li>Read the passage on the left carefully.</li>
-                <li>The questions test <strong>logic</strong>: why the author wrote something or what is hidden "between the lines."</li>
-                <li>After the game, you will see a "Reasoning" section explaining the logic behind every answer.</li>
-            </ul>
-        </div>
-
-        <p style="color: #94a3b8; margin-bottom: 20px;">Simplified Language • High-Level Logic</p>
-        <input type="text" id="user-name" placeholder="Enter Candidate Name" style="padding: 15px; border-radius: 8px; background: #0f172a; border: 1px solid #334155; color: white; width: 280px; text-align: center; margin-bottom: 20px;"><br>
-        <button onclick="startGame()" style="text-align:center; background:#00adb5; border:none; padding:15px 50px; font-weight:bold; color:white; border-radius:8px;">BEGIN ASSESSMENT</button>
+<div id="game-box">
+    <div id="p-start">
+        <h1>ACCESS_POINT</h1>
+        <input type="text" id="id-name" placeholder="[CODENAME]">
+        <button class="btn" style="width:100%" onclick="goMenu()">LOGIN</button>
     </div>
 
-    <div id="screen-game" class="screen">
-        <div class="header">
-            <div id="current-title"></div>
-            <div class="xp-count">XP: <span id="xp-val">0</span></div>
-        </div>
-        <div class="progress-bar"><div id="progress-fill"></div></div>
-        <div class="layout">
-            <div id="passage-text" class="passage-content"></div>
-            <div class="quiz-area">
-                <h4 id="question-text" style="margin-top: 0; line-height: 1.5;"></h4>
-                <div id="options-container" class="options-list"></div>
-                <div id="feedback"></div>
-            </div>
+    <div id="p-menu" class="hidden">
+        <p>GREETINGS, AGENT <span id="agent-display" style="color:var(--neon)"></span></p>
+        <div class="menu-grid">
+            <button class="btn" onclick="startGame('logic')">LOGIC DECODER<br><small>Tense & Agreement</small></button>
+            <button class="btn" onclick="startGame('rebuild')">STRUCTURE RECON<br><small>Sentence Building</small></button>
+            <button class="btn" onclick="startGame('audit')">THE AUDIT<br><small>Active vs Passive</small></button>
         </div>
     </div>
 
-    <div id="screen-review" class="screen">
-        <h2>📊 Logical Accuracy Report</h2>
-        <div id="final-stats" style="padding: 20px; background: #0f172a; border-radius: 8px; margin-bottom: 20px;"></div>
-        <div id="review-output"></div>
-        <button onclick="location.reload()" style="width: 100%; margin-top: 20px; background: #00adb5; border: none; padding: 15px; color: white; font-weight: bold; border-radius: 8px; cursor: pointer;">Restart Session</button>
+    <div id="p-play" class="hidden">
+        <div class="status-bar"><span id="mode-name"></span><span id="q-counter">0/20</span></div>
+        <div class="prog-container"><div id="prog-bar"></div></div>
+        <div id="clue-box" style="margin-bottom:20px">
+            <p id="a-sentence" style="color:var(--warn); font-style:italic"></p>
+            <p id="task-desc"></p>
+        </div>
+        <div id="interact-area" style="display:flex; flex-direction:column; gap:10px"></div>
+    </div>
+
+    <div id="p-end" class="hidden">
+        <h1>SESSION_END</h1>
+        <p id="final-stats"></p>
+        <button class="btn" style="width:100%" onclick="showReview()">ANALYZE ERRORS</button>
+        <button class="btn" style="width:100%; margin-top:10px" onclick="location.reload()">REBOOT</button>
+        <div id="review-box" class="hidden"></div>
     </div>
 </div>
 
 <script>
-const GRE_BANK = [
-    { lvl: "A1", title: "Mark's Commute", text: "Mark lives in a small apartment. He works in a big office. Every morning, he takes the bus to work. He does not like the bus because it is slow. He wants to buy a car next year.", 
-      qs: [
-        {q: "What can we guess about Mark?", o: ["He has a car now.", "He is not happy with the bus.", "He works at home."], c: 1, x: 15, r: "Correct. The text says he 'does not like' the bus and 'wants a car,' which proves his unhappiness with current transport."},
-        {q: "Why does the author talk about 'next year'?", o: ["To show Mark's future plan.", "To say Mark is late.", "To talk about Mark's birthday."], c: 0, x: 15, r: "Correct. Planning to buy something in the future is a solution to a current problem."},
-        {q: "Why does Mark dislike the bus?", o: ["The bus speed.", "The bus size.", "The bus cost."], c: 0, x: 15, r: "Correct. The text explicitly links his dislike to the bus being 'slow.'"},
-        {q: "The word 'big' in 'big office' helps us see that:", o: ["Mark works alone.", "Many people probably work there.", "The office is in his house."], c: 1, x: 15, r: "Correct. A 'big' office implies a large workspace with many employees or departments."}
-    ]},
-    { lvl: "A2", title: "The Art Gallery", text: "The town gallery has a new show. It has pictures of the sea. Kids enter for free, but adults must pay. Many people came yesterday. The room was very quiet. People looked at the art for a long time.", 
-      qs: [
-        {q: "What is likely true about the people there?", o: ["They were bored.", "They were focused on the art.", "They were mostly loud children."], c: 1, x: 20, r: "Correct. Silence and looking for a long time indicate concentration and interest, not boredom."},
-        {q: "The story suggests the show was:", o: ["A failure.", "Popular and interesting.", "Closed early."], c: 1, x: 20, r: "Correct. 'Many people came' and they stayed to look, which suggests it was a success."},
-        {q: "Why mention that 'adults must pay'?", o: ["To stop adults from coming.", "To explain the price rules.", "To show the gallery is rich."], c: 1, x: 20, r: "Correct. This is a factual detail about how the gallery operates its business."},
-        {q: "If a child goes to the gallery, they:", o: ["Pay half.", "Pay nothing.", "Cannot go inside."], c: 1, x: 20, r: "Correct. 'Free for children' means they pay zero dollars."}
-    ]},
-    { lvl: "B1", title: "Paper in the Office", text: "In 1970, experts said computers would stop the use of paper. But paper use actually went up. Today, we have email, but many people still print pages to read them. People feel that paper is safer and better for careful reading than a screen.", 
-      qs: [
-        {q: "The 'paperless office' idea was:", o: ["A successful plan.", "A wrong prediction.", "A bad invention."], c: 1, x: 25, r: "Correct. Since paper use went 'up' instead of stopping, the prediction failed."},
-        {q: "Why do people still use paper?", o: ["It is cheaper than computers.", "It feels better for deep reading.", "Printers are faster."], c: 1, x: 25, r: "Correct. The text states people prefer it for 'reading carefully' and 'security.'"},
-        {q: "The word 'But' in the second sentence is used to:", o: ["Agree with the experts.", "Show a different result.", "End the story."], c: 1, x: 25, r: "Correct. 'But' introduces a contrast between the 1970s prediction and the actual reality."},
-        {q: "What can we infer about screens?", o: ["They might feel less 'safe' for deep reading.", "They are broken.", "They will be gone soon."], c: 0, x: 25, r: "Correct. If paper provides a 'security' that screens 'lack,' screens are logically less secure in that context."}
-    ]},
-    { lvl: "B2", title: "Nature Zones", text: "Some people think we only need small, protected parks to save animals. But some scientists say this is a bad idea. If the land outside the park is dirty or has factories, the animals inside the park are trapped. We must protect nature everywhere, not just in small zones.", 
-      qs: [
-        {q: "What does the author think about small parks?", o: ["They are perfect.", "They are not enough by themselves.", "They are too expensive."], c: 1, x: 30, r: "Correct. The author argues that protecting nature 'everywhere' is necessary because small zones 'trap' animals."},
-        {q: "What is the main goal of the author?", o: ["To talk about factories.", "To suggest a better way to save nature.", "To close all parks."], c: 1, x: 30, r: "Correct. The author is advocating for a broader conservation strategy beyond just isolated parks."},
-        {q: "The text says animals in small parks are 'trapped' because:", o: ["The parks have walls.", "The area outside is unhealthy.", "They don't like the trees."], c: 1, x: 30, r: "Correct. If the land 'surrounding' the park is polluted, animals cannot leave or thrive safely."},
-        {q: "What does 'not just in small zones' imply?", o: ["Small zones are useless.", "Small zones are part of the answer, but not the whole answer.", "We should stop making zones."], c: 1, x: 30, r: "Correct. The word 'just' implies that zones are okay, but they are insufficient on their own."}
-    ]},
-    { lvl: "C1", title: "The Choice Nudge", text: "Governments sometimes use 'nudges.' These are small changes that help people make better choices without forcing them. For example, putting fruit at eye level in a shop helps people eat better. Some say this is bad because it controls people. Others say no choice is ever truly neutral, so we should design choices to help people.", 
-      qs: [
-        {q: "What is a 'nudge'?", o: ["A new law.", "A small, helpful influence.", "A way to force people."], c: 1, x: 40, r: "Correct. The text defines it as 'subtle changes... without forcing.'"},
-        {q: "What do supporters of nudges believe?", o: ["Everything we see influences our choice anyway.", "People are lazy.", "Fruit is better than candy."], c: 0, x: 40, r: "Correct. They argue 'no choice architecture is neutral,' so influence is unavoidable."},
-        {q: "The debate is mostly about:", o: ["Healthy food.", "The ethics of influencing behavior.", "Government money."], c: 1, x: 40, r: "Correct. The passage weighs the idea of 'controlling' people against 'designing choices to help.'"},
-        {q: "A 'nudge' is different from a 'command' because:", o: ["A nudge is for food.", "A nudge gives you a choice; a command does not.", "A command is always helpful."], c: 1, x: 50, r: "Correct. Commands are 'mandates' (forces), while nudges influence 'without mandates.'"}
-    ]}
+// FULL 50 QUESTION BANK - HIGH COMPLEXITY
+const bank = [
+    {a: "The board is reviewing the data.", p: "The data is being reviewed by the board.", bits: ["The", "data", "is", "being", "reviewed"]},
+    {a: "Experts have detected a breach.", p: "A breach has been detected by experts.", bits: ["A", "breach", "has", "been", "detected"]},
+    {a: "The CEO signed the merger.", p: "The merger was signed by the CEO.", bits: ["The", "merger", "was", "signed"]},
+    {a: "The team is coding the app.", p: "The app is being coded by the team.", bits: ["The", "app", "is", "being", "coded"]},
+    {a: "Wind destroyed the farm.", p: "The farm was destroyed by wind.", bits: ["The", "farm", "was", "destroyed"]},
+    {a: "NASA will launch the rocket.", p: "The rocket will be launched by NASA.", bits: ["The", "rocket", "will", "be", "launched"]},
+    {a: "She found the lost files.", p: "The lost files were found by her.", bits: ["The", "lost", "files", "were", "found"]},
+    {a: "He must finish the report.", p: "The report must be finished by him.", bits: ["The", "report", "must", "be", "finished"]},
+    {a: "Rain flooded the streets.", p: "The streets were flooded by rain.", bits: ["The", "streets", "were", "flooded"]},
+    {a: "They are tracking the signal.", p: "The signal is being tracked by them.", bits: ["The", "signal", "is", "being", "tracked"]},
+    {a: "Gravity pulls the moon.", p: "The moon is pulled by gravity.", bits: ["The", "moon", "is", "pulled"]},
+    {a: "Fire consumed the building.", p: "The building was consumed by fire.", bits: ["The", "building", "was", "consumed"]},
+    {a: "The lab has tested the cure.", p: "The cure has been tested by the lab.", bits: ["The", "cure", "has", "been", "tested"]},
+    {a: "We should start the engine.", p: "The engine should be started by us.", bits: ["The", "engine", "should", "be", "started"]},
+    {a: "The judge issued a warrant.", p: "A warrant was issued by the judge.", bits: ["A", "warrant", "was", "issued"]},
+    {a: "Fans adore the singer.", p: "The singer is adored by fans.", bits: ["The", "singer", "is", "adored"]},
+    {a: "The dog bit the man.", p: "The man was bitten by the dog.", bits: ["The", "man", "was", "bitten"]},
+    {a: "You must sign the contract.", p: "The contract must be signed by you.", bits: ["The", "contract", "must", "be", "signed"]},
+    {a: "Bees produced the honey.", p: "The honey was produced by bees.", bits: ["The", "honey", "was", "produced"]},
+    {a: "The chef is cooking fish.", p: "Fish is being cooked by the chef.", bits: ["Fish", "is", "being", "cooked"]},
+    {a: "The storm damaged the roof.", p: "The roof was damaged by the storm.", bits: ["The", "roof", "was", "damaged"]},
+    {a: "Someone stole the jewels.", p: "The jewels were stolen.", bits: ["The", "jewels", "were", "stolen"]},
+    {a: "The guide led the group.", p: "The group was led by the guide.", bits: ["The", "group", "was", "led"]},
+    {a: "She had read the book.", p: "The book had been read by her.", bits: ["The", "book", "had", "been", "read"]},
+    {a: "The jury reached a verdict.", p: "A verdict was reached by the jury.", bits: ["A", "verdict", "was", "reached"]},
+    {a: "The company hired the intern.", p: "The intern was hired by the company.", bits: ["The", "intern", "was", "hired"]},
+    {a: "Birds build nests.", p: "Nests are built by birds.", bits: ["Nests", "are", "built"]},
+    {a: "He repaired the engine.", p: "The engine was repaired by him.", bits: ["The", "engine", "was", "repaired"]},
+    {a: "The police caught the thief.", p: "The thief was caught by the police.", bits: ["The", "thief", "was", "caught"]},
+    {a: "I will call the doctor.", p: "The doctor will be called by me.", bits: ["The", "doctor", "will", "be", "called"]},
+    {a: "The waiter served the wine.", p: "The wine was served by the waiter.", bits: ["The", "wine", "was", "served"]},
+    {a: "She is cleaning the room.", p: "The room is being cleaned by her.", bits: ["The", "room", "is", "being", "cleaned"]},
+    {a: "Lightning hit the tower.", p: "The tower was hit by lightning.", bits: ["The", "tower", "was", "hit"]},
+    {a: "They have won the game.", p: "The game has been won by them.", bits: ["The", "game", "has", "been", "won"]},
+    {a: "The mayor opened the park.", p: "The park was opened by the mayor.", bits: ["The", "park", "was", "opened"]},
+    {a: "The sun warms the earth.", p: "The earth is warmed by the sun.", bits: ["The", "earth", "is", "warmed"]},
+    {a: "He is recording the song.", p: "The song is being recorded by him.", bits: ["The", "song", "is", "being", "recorded"]},
+    {a: "The cat caught the bird.", p: "The bird was caught by the cat.", bits: ["The", "bird", "was", "caught"]},
+    {a: "I wrote the letter.", p: "The letter was written by me.", bits: ["The", "letter", "was", "written"]},
+    {a: "They sell shoes here.", p: "Shoes are sold here.", bits: ["Shoes", "are", "sold"]},
+    {a: "She will buy the house.", p: "The house will be bought by her.", bits: ["The", "house", "will", "be", "bought"]},
+    {a: "He has found the map.", p: "The map has been found by him.", bits: ["The", "map", "has", "been", "found"]},
+    {a: "We are painting the fence.", p: "The fence is being painted by us.", bits: ["The", "fence", "is", "being", "painted"]},
+    {a: "The wind shook the trees.", p: "The trees were shaken by the wind.", bits: ["The", "trees", "were", "shaken"]},
+    {a: "The kids ate the pizza.", p: "The pizza was eaten by the kids.", bits: ["The", "pizza", "was", "eaten"]},
+    {a: "He had locked the gate.", p: "The gate had been locked by him.", bits: ["The", "gate", "had", "been", "locked"]},
+    {a: "She creates beautiful art.", p: "Beautiful art is created by her.", bits: ["Beautiful", "art", "is", "created"]},
+    {a: "They will finish the task.", p: "The task will be finished by them.", bits: ["The", "task", "will", "be", "finished"]},
+    {a: "The nurse treats the patient.", p: "The patient is treated by the nurse.", bits: ["The", "patient", "is", "treated"]},
+    {a: "The mechanic fixed the car.", p: "The car was fixed by the mechanic.", bits: ["The", "car", "was", "fixed"]}
 ];
 
-let session = [];
-let currentQ = 0;
-let xp = 0;
-let userLog = [];
+let state = { user: "", score: 0, current: 0, mode: "", questions: [], log: [] };
 
-function startGame() {
-    const nameInput = document.getElementById('user-name');
-    const name = nameInput.value || "Logician";
-    
-    let shuffled = [...GRE_BANK].sort(() => 0.5 - Math.random());
-    let selected = shuffled.slice(0, 5);
-    const order = ["A1", "A2", "B1", "B2", "C1"];
-    selected.sort((a,b) => order.indexOf(a.lvl) - order.indexOf(b.lvl));
+function goMenu() {
+    state.user = document.getElementById('id-name').value || "RECRUIT";
+    document.getElementById('agent-display').innerText = state.user;
+    switchPage('p-start', 'p-menu');
+}
 
-    session = [];
-    selected.forEach(r => r.qs.forEach(q => session.push({...q, p: r.text, lvl: r.lvl, title: r.title})));
-
-    document.getElementById('screen-start').classList.remove('active');
-    document.getElementById('screen-game').classList.add('active');
+function startGame(mode) {
+    state.mode = mode; state.current = 0; state.score = 0; state.log = [];
+    state.questions = [...bank].sort(() => 0.5 - Math.random()).slice(0, 20);
+    switchPage('p-menu', 'p-play');
     render();
 }
 
 function render() {
-    if (currentQ >= session.length) { end(); return; }
-    const d = session[currentQ];
-    const colors = {"A1":"var(--a1)","A2":"var(--a2)","B1":"var(--b1)","B2":"var(--b2)","C1":"var(--c1)"};
-    
-    document.getElementById('current-title').innerHTML = `<span class="lvl-badge" style="background:${colors[d.lvl]}">${d.lvl}</span> ${d.title}`;
-    document.getElementById('passage-text').innerText = d.p;
-    document.getElementById('passage-text').style.borderLeftColor = colors[d.lvl];
-    document.getElementById('question-text').innerText = d.q;
-    
-    const container = document.getElementById('options-container');
-    container.innerHTML = "";
-    d.o.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        btn.innerText = opt;
-        btn.onclick = () => check(i);
-        container.appendChild(btn);
-    });
+    if(state.current >= state.questions.length) return end();
+    const q = state.questions[state.current];
+    document.getElementById('q-counter').innerText = `${state.current+1}/20`;
+    document.getElementById('prog-bar').style.width = `${(state.current/20)*100}%`;
+    const area = document.getElementById('interact-area');
+    area.innerHTML = "";
 
-    document.getElementById('progress-fill').style.width = (currentQ / session.length * 100) + "%";
+    if(state.mode === 'logic') {
+        document.getElementById('a-sentence').innerText = `INPUT: ${q.a}`;
+        document.getElementById('task-desc').innerText = "SELECT ACCURATE PASSIVE RECONSTRUCTION:";
+        let opts = [q.p, q.p.replace("been", "being"), q.p.replace("was", "is").replace("were", "are")].sort(() => 0.5 - Math.random());
+        opts.forEach(opt => {
+            let b = document.createElement('button'); b.className = "btn"; b.innerText = opt;
+            b.onclick = () => submit(opt === q.p, opt, q.p);
+            area.appendChild(b);
+        });
+    } else if(state.mode === 'rebuild') {
+        document.getElementById('a-sentence').innerText = `INPUT: ${q.a}`;
+        document.getElementById('task-desc').innerText = "REASSEMBLE PASSIVE DATA:";
+        let build = [];
+        let p = document.createElement('p'); p.innerText = "_ "; area.appendChild(p);
+        [...q.bits].sort(() => 0.5 - Math.random()).forEach(w => {
+            let b = document.createElement('button'); b.className = "btn"; b.innerText = w;
+            b.onclick = () => {
+                build.push(w); p.innerText = build.join(" "); b.style.display = "none";
+                if(build.length === q.bits.length) submit(build.join(" ") === q.bits.join(" "), build.join(" "), q.p);
+            };
+            area.appendChild(b);
+        });
+    } else if(state.mode === 'audit') {
+        let isPass = Math.random() > 0.5;
+        let testS = isPass ? q.p : q.a;
+        document.getElementById('a-sentence').innerText = `SCANNING: "${testS}"`;
+        document.getElementById('task-desc').innerText = "SYSTEM AUDIT: DETECT VOICE PROTOCOL";
+        ['ACTIVE VOICE', 'PASSIVE VOICE'].forEach(type => {
+            let b = document.createElement('button'); b.className = "btn"; b.innerText = type;
+            b.onclick = () => {
+                let correct = (isPass && type === 'PASSIVE VOICE') || (!isPass && type === 'ACTIVE VOICE');
+                submit(correct, type, isPass ? 'PASSIVE' : 'ACTIVE');
+            };
+            area.appendChild(b);
+        });
+    }
 }
 
-function check(i) {
-    const d = session[currentQ];
-    const correct = i === d.c;
-    userLog.push({q: d.q, u: d.o[i], a: d.o[d.c], ok: correct, reason: d.r});
-
-    const f = document.getElementById('feedback');
-    if (correct) {
-        xp += d.x;
-        f.innerText = "✓ LOGIC VALIDATED"; f.style.color = "#2ecc71";
-    } else {
-        f.innerText = "✗ LOGICAL ERROR"; f.style.color = "#ef4444";
-    }
-    document.getElementById('xp-val').innerText = xp;
-    currentQ++;
-    setTimeout(() => { f.innerText = ""; render(); }, 1200);
+function submit(correct, got, want) {
+    if(correct) state.score++;
+    state.log.push({q: state.questions[state.current].a, got, want, ok: correct});
+    state.current++; render();
 }
 
 function end() {
-    document.getElementById('screen-game').classList.remove('active');
-    document.getElementById('screen-review').classList.add('active');
-    document.getElementById('final-stats').innerHTML = `<h3>Total Mastery Score: ${xp} XP</h3><p>Correct Logic: ${userLog.filter(x=>x.ok).length} / ${session.length}</p>`;
-    
-    const out = document.getElementById('review-output');
-    out.innerHTML = "";
-    userLog.forEach((item, idx) => {
-        const row = document.createElement('div');
-        row.className = "review-row";
-        row.innerHTML = `
-            <strong>${idx+1}. ${item.q}</strong><br>
-            Your Answer: <span class="${item.ok?'correct':'wrong'}">${item.u}</span> 
-            ${!item.ok ? `<br>Correct Answer: <span class="correct">${item.a}</span>` : ''}
-            <div class="reasoning-box"><strong>Reasoning:</strong> ${item.reason}</div>
-        `;
-        out.appendChild(row);
+    switchPage('p-play', 'p-end');
+    document.getElementById('final-stats').innerText = `SCORE: ${state.score} / 20 | EFFICIENCY: ${(state.score/20)*100}%`;
+}
+
+function showReview() {
+    const box = document.getElementById('review-box');
+    box.innerHTML = "";
+    state.log.forEach(l => {
+        box.innerHTML += `<div class="review-item">CASE: ${l.q}<br><span class="${l.ok?'correct':'wrong'}">${l.ok?'✔':'✘'} ${l.got}</span> ${!l.ok ? `[REQ: ${l.want}]` : ''}</div>`;
     });
+    box.classList.remove('hidden');
+}
+
+function switchPage(oldP, newP) {
+    document.getElementById(oldP).classList.add('hidden');
+    document.getElementById(newP).classList.remove('hidden');
 }
 </script>
 </body>
