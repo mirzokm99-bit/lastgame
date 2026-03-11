@@ -2,202 +2,285 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Passive Ops: Elite Protocol 2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic English: The 50-Question Challenge</title>
     <style>
-        :root { --neon: #00ffcc; --warn: #ffcc00; --error: #ff4444; --bg: #0a0a0c; --card: #16161a; }
-        body { background: var(--bg); color: #e0e0e0; font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 20px; }
-        #game-box { background: var(--card); border: 2px solid var(--neon); padding: 30px; border-radius: 5px; width: 100%; max-width: 850px; box-shadow: 0 0 20px rgba(0,255,204,0.1); }
-        h1 { text-align: center; color: var(--neon); letter-spacing: 4px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        :root {
+            --primary: #1e40af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--card-bg);
+            width: 95%;
+            max-width: 700px;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            margin: 20px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #f1f5f9; }
+        .correct { background: var(--success) !important; color: white; border-color: var(--success) !important; }
+        .wrong { background: var(--danger) !important; color: white; border-color: var(--danger) !important; }
+
+        #explanation-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f9ff;
+            border-left: 4px solid var(--primary);
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .progress-container { height: 8px; background: #e2e8f0; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        #progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.4s; }
+
+        .review-scroll { max-height: 400px; overflow-y: auto; margin-top: 20px; text-align: left; }
+        .review-box { padding: 15px; border-bottom: 1px solid #e2e8f0; }
         .hidden { display: none; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); padding: 12px; cursor: pointer; transition: 0.2s; font-weight: bold; font-family: inherit; font-size: 0.9rem;}
-        .btn:hover { background: var(--neon); color: var(--bg); box-shadow: 0 0 15px var(--neon); }
-        input { background: #000; border: 1px solid #444; color: var(--neon); padding: 10px; width: 80%; display: block; margin: 10px auto; text-align: center; }
-        .status-bar { display: flex; justify-content: space-between; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-        .prog-container { height: 4px; background: #222; margin-bottom: 20px; }
-        #prog-bar { height: 100%; background: var(--neon); width: 0%; transition: 0.3s; }
-        .review-item { border-left: 2px solid #444; margin: 10px 0; padding-left: 10px; font-size: 0.8rem; }
-        .correct { color: var(--neon); }
-        .wrong { color: var(--error); }
     </style>
 </head>
 <body>
 
-<div id="game-box">
-    <div id="p-start">
-        <h1>ACCESS_POINT</h1>
-        <input type="text" id="id-name" placeholder="[CODENAME]">
-        <button class="btn" style="width:100%" onclick="goMenu()">LOGIN</button>
-    </div>
+<div id="start-screen" class="container">
+    <h1>Word Mastery Challenge</h1>
+    <p>50 Question Pool | 20 Random Rounds | Explanation Mode</p>
+    <input type="text" id="user-name" placeholder="Enter your full name" autocomplete="off">
+    <button class="btn" onclick="initGame()">Start Assessment</button>
+</div>
 
-    <div id="p-menu" class="hidden">
-        <p>GREETINGS, AGENT <span id="agent-display" style="color:var(--neon)"></span></p>
-        <div class="menu-grid">
-            <button class="btn" onclick="startGame('logic')">LOGIC DECODER<br><small>Tense & Agreement</small></button>
-            <button class="btn" onclick="startGame('rebuild')">STRUCTURE RECON<br><small>Sentence Building</small></button>
-            <button class="btn" onclick="startGame('audit')">THE AUDIT<br><small>Active vs Passive</small></button>
-        </div>
+<div id="game-screen" class="container hidden">
+    <div class="progress-container"><div id="progress-fill"></div></div>
+    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem;">
+        <span id="player-label"></span>
+        <span id="score-label">Score: 0</span>
+        <span id="timer-label" style="color:var(--danger)">15s</span>
     </div>
+    
+    <h2 id="q-text" style="margin: 30px 0; font-size: 1.3rem;"></h2>
+    <div id="options-grid"></div>
+    
+    <div id="explanation-area" class="hidden"></div>
+    <button id="next-btn" class="btn hidden" style="margin-top: 20px; width: 100%;" onclick="nextQuestion()">Next Question</button>
+</div>
 
-    <div id="p-play" class="hidden">
-        <div class="status-bar"><span id="mode-name"></span><span id="q-counter">0/20</span></div>
-        <div class="prog-container"><div id="prog-bar"></div></div>
-        <div id="clue-box" style="margin-bottom:20px">
-            <p id="a-sentence" style="color:var(--warn); font-style:italic"></p>
-            <p id="task-desc"></p>
-        </div>
-        <div id="interact-area" style="display:flex; flex-direction:column; gap:10px"></div>
-    </div>
-
-    <div id="p-end" class="hidden">
-        <h1>SESSION_END</h1>
-        <p id="final-stats"></p>
-        <button class="btn" style="width:100%" onclick="showReview()">ANALYZE ERRORS</button>
-        <button class="btn" style="width:100%; margin-top:10px" onclick="location.reload()">REBOOT</button>
-        <div id="review-box" class="hidden"></div>
-    </div>
+<div id="end-screen" class="container hidden">
+    <h1>Final Results</h1>
+    <h2 id="final-score"></h2>
+    <div id="mistake-log" class="review-scroll"></div>
+    <button class="btn" style="margin-top: 20px; width: 100%;" onclick="location.reload()">Play Again</button>
 </div>
 
 <script>
-// FULL 50 QUESTION BANK - HIGH COMPLEXITY
-const bank = [
-    {a: "The board is reviewing the data.", p: "The data is being reviewed by the board.", bits: ["The", "data", "is", "being", "reviewed"]},
-    {a: "Experts have detected a breach.", p: "A breach has been detected by experts.", bits: ["A", "breach", "has", "been", "detected"]},
-    {a: "The CEO signed the merger.", p: "The merger was signed by the CEO.", bits: ["The", "merger", "was", "signed"]},
-    {a: "The team is coding the app.", p: "The app is being coded by the team.", bits: ["The", "app", "is", "being", "coded"]},
-    {a: "Wind destroyed the farm.", p: "The farm was destroyed by wind.", bits: ["The", "farm", "was", "destroyed"]},
-    {a: "NASA will launch the rocket.", p: "The rocket will be launched by NASA.", bits: ["The", "rocket", "will", "be", "launched"]},
-    {a: "She found the lost files.", p: "The lost files were found by her.", bits: ["The", "lost", "files", "were", "found"]},
-    {a: "He must finish the report.", p: "The report must be finished by him.", bits: ["The", "report", "must", "be", "finished"]},
-    {a: "Rain flooded the streets.", p: "The streets were flooded by rain.", bits: ["The", "streets", "were", "flooded"]},
-    {a: "They are tracking the signal.", p: "The signal is being tracked by them.", bits: ["The", "signal", "is", "being", "tracked"]},
-    {a: "Gravity pulls the moon.", p: "The moon is pulled by gravity.", bits: ["The", "moon", "is", "pulled"]},
-    {a: "Fire consumed the building.", p: "The building was consumed by fire.", bits: ["The", "building", "was", "consumed"]},
-    {a: "The lab has tested the cure.", p: "The cure has been tested by the lab.", bits: ["The", "cure", "has", "been", "tested"]},
-    {a: "We should start the engine.", p: "The engine should be started by us.", bits: ["The", "engine", "should", "be", "started"]},
-    {a: "The judge issued a warrant.", p: "A warrant was issued by the judge.", bits: ["A", "warrant", "was", "issued"]},
-    {a: "Fans adore the singer.", p: "The singer is adored by fans.", bits: ["The", "singer", "is", "adored"]},
-    {a: "The dog bit the man.", p: "The man was bitten by the dog.", bits: ["The", "man", "was", "bitten"]},
-    {a: "You must sign the contract.", p: "The contract must be signed by you.", bits: ["The", "contract", "must", "be", "signed"]},
-    {a: "Bees produced the honey.", p: "The honey was produced by bees.", bits: ["The", "honey", "was", "produced"]},
-    {a: "The chef is cooking fish.", p: "Fish is being cooked by the chef.", bits: ["Fish", "is", "being", "cooked"]},
-    {a: "The storm damaged the roof.", p: "The roof was damaged by the storm.", bits: ["The", "roof", "was", "damaged"]},
-    {a: "Someone stole the jewels.", p: "The jewels were stolen.", bits: ["The", "jewels", "were", "stolen"]},
-    {a: "The guide led the group.", p: "The group was led by the guide.", bits: ["The", "group", "was", "led"]},
-    {a: "She had read the book.", p: "The book had been read by her.", bits: ["The", "book", "had", "been", "read"]},
-    {a: "The jury reached a verdict.", p: "A verdict was reached by the jury.", bits: ["A", "verdict", "was", "reached"]},
-    {a: "The company hired the intern.", p: "The intern was hired by the company.", bits: ["The", "intern", "was", "hired"]},
-    {a: "Birds build nests.", p: "Nests are built by birds.", bits: ["Nests", "are", "built"]},
-    {a: "He repaired the engine.", p: "The engine was repaired by him.", bits: ["The", "engine", "was", "repaired"]},
-    {a: "The police caught the thief.", p: "The thief was caught by the police.", bits: ["The", "thief", "was", "caught"]},
-    {a: "I will call the doctor.", p: "The doctor will be called by me.", bits: ["The", "doctor", "will", "be", "called"]},
-    {a: "The waiter served the wine.", p: "The wine was served by the waiter.", bits: ["The", "wine", "was", "served"]},
-    {a: "She is cleaning the room.", p: "The room is being cleaned by her.", bits: ["The", "room", "is", "being", "cleaned"]},
-    {a: "Lightning hit the tower.", p: "The tower was hit by lightning.", bits: ["The", "tower", "was", "hit"]},
-    {a: "They have won the game.", p: "The game has been won by them.", bits: ["The", "game", "has", "been", "won"]},
-    {a: "The mayor opened the park.", p: "The park was opened by the mayor.", bits: ["The", "park", "was", "opened"]},
-    {a: "The sun warms the earth.", p: "The earth is warmed by the sun.", bits: ["The", "earth", "is", "warmed"]},
-    {a: "He is recording the song.", p: "The song is being recorded by him.", bits: ["The", "song", "is", "being", "recorded"]},
-    {a: "The cat caught the bird.", p: "The bird was caught by the cat.", bits: ["The", "bird", "was", "caught"]},
-    {a: "I wrote the letter.", p: "The letter was written by me.", bits: ["The", "letter", "was", "written"]},
-    {a: "They sell shoes here.", p: "Shoes are sold here.", bits: ["Shoes", "are", "sold"]},
-    {a: "She will buy the house.", p: "The house will be bought by her.", bits: ["The", "house", "will", "be", "bought"]},
-    {a: "He has found the map.", p: "The map has been found by him.", bits: ["The", "map", "has", "been", "found"]},
-    {a: "We are painting the fence.", p: "The fence is being painted by us.", bits: ["The", "fence", "is", "being", "painted"]},
-    {a: "The wind shook the trees.", p: "The trees were shaken by the wind.", bits: ["The", "trees", "were", "shaken"]},
-    {a: "The kids ate the pizza.", p: "The pizza was eaten by the kids.", bits: ["The", "pizza", "was", "eaten"]},
-    {a: "He had locked the gate.", p: "The gate had been locked by him.", bits: ["The", "gate", "had", "been", "locked"]},
-    {a: "She creates beautiful art.", p: "Beautiful art is created by her.", bits: ["Beautiful", "art", "is", "created"]},
-    {a: "They will finish the task.", p: "The task will be finished by them.", bits: ["The", "task", "will", "be", "finished"]},
-    {a: "The nurse treats the patient.", p: "The patient is treated by the nurse.", bits: ["The", "patient", "is", "treated"]},
-    {a: "The mechanic fixed the car.", p: "The car was fixed by the mechanic.", bits: ["The", "car", "was", "fixed"]}
-];
+    // THE 50 QUESTION POOL
+    const masterPool = [
+        { q: "The experiment resulted ____ a breakthrough.", a: "in", o: ["in", "to", "at", "with"], exp: "'Result' pairs with 'in' for outcomes. 'Result to' is incorrect grammar." },
+        { q: "This research is different ____ the previous one.", a: "from", o: ["from", "than", "with", "against"], exp: "'Different from' is the standard academic form. Avoid 'different than' in formal writing." },
+        { q: "We need to find ____ why the hardware failed.", a: "out", o: ["out", "up", "off", "on"], exp: "'Find out' is a phrasal verb meaning to discover facts." },
+        { q: "The lab equipment was out of ____.", a: "order", o: ["order", "work", "lack", "use"], exp: "'Out of order' means broken. 'Out of work' means unemployed." },
+        { q: "I came ____ an interesting article by chance.", a: "across", o: ["across", "into", "over", "by"], exp: "'Come across' means to find something by accident." },
+        { q: "In my ____, AI will change economic modeling.", a: "opinion", o: ["opinion", "view", "thought", "idea"], exp: "'In my opinion' is a fixed phrase for personal perspectives." },
+        { q: "The scientist decided to ____ the program again.", a: "run", o: ["run", "operate", "invent", "lack"], exp: "In computing and research, we 'run' a program or an experiment." },
+        { q: "What is the exact ____ of the metal wire?", a: "length", o: ["length", "long", "longly", "measure"], exp: "We need the noun form 'length'. 'Long' is an adjective." },
+        { q: "At ____, the complex project was finished.", a: "last", o: ["last", "end", "future", "chance"], exp: "'At last' expresses relief after a long wait." },
+        { q: "The robot has an ____ arm for precision.", a: "artificial", o: ["artificial", "exact", "sudden", "digital"], exp: "'Artificial' means man-made, suitable for robotics." },
+        { q: "There is a lack ____ funding for this study.", a: "of", o: ["of", "in", "to", "with"], exp: "The noun 'lack' is almost always followed by the preposition 'of'." },
+        { q: "He arrived at the ____ that the data was wrong.", a: "conclusion", o: ["conclusion", "conclude", "concluding", "conclusive"], exp: "We need the noun 'conclusion' after the article 'the'." },
+        { q: "The discovery was made by ____.", a: "chance", o: ["chance", "end", "future", "last"], exp: "'By chance' means accidentally or unexpectedly." },
+        { q: "We must ____ the laptop to the network.", a: "connect", o: ["connect", "disconnect", "involve", "operate"], exp: "'Connect' is used when joining two technical components." },
+        { q: "A large ____ of students applied today.", a: "number", o: ["number", "amount", "type", "lack"], exp: "Use 'number' for countable things like students; 'amount' is for uncountable things." },
+        { q: "The software ____ the results instantly.", a: "processes", o: ["processes", "hardware", "screen", "gadget"], exp: "'Process' is the verb for handling data." },
+        { q: "The process began ____ a simple test.", a: "with", o: ["with", "to", "from", "at"], exp: "We 'begin with' a specific starting point." },
+        { q: "In the ____, the research was successful.", a: "end", o: ["end", "last", "future", "chance"], exp: "'In the end' refers to the final result of a process." },
+        { q: "The historian studied a ____ battle.", a: "historic", o: ["historic", "history", "scientist", "identical"], exp: "'Historic' describes an event that is important in history." },
+        { q: "Is this model ____ to the old one?", a: "identical", o: ["identical", "unique", "exact", "sudden"], exp: "'Identical' means exactly the same in every detail." },
+        { q: "The gadget has a ____ screen.", a: "digital", o: ["digital", "plastic", "automatic", "exact"], exp: "'Digital' refers to electronic technology using binary data." },
+        { q: "Can you ____ the height of the tower?", a: "measure", o: ["measure", "estimate", "examine", "invent"], exp: "To 'measure' is to find the exact size or amount using a tool." },
+        { q: "It is hard to ____ the final cost.", a: "estimate", o: ["estimate", "research", "conclude", "involve"], exp: "To 'estimate' is to guess a value based on available info." },
+        { q: "The chemist works in a ____.", a: "laboratory", o: ["laboratory", "hardware", "software", "screen"], exp: "A 'laboratory' is a room used for scientific research." },
+        { q: "The phone screen is ____ from the body.", a: "disconnected", o: ["disconnected", "connected", "involved", "operated"], exp: "'Disconnected' means the link or join has been broken." },
+        { q: "The fascinating ____ of the moon kept us busy.", a: "sight", o: ["sight", "fascination", "discovery", "effect"], exp: "'Sight' refers to something seen, especially something impressive." },
+        { q: "The scientist ____ a new way to save power.", a: "invented", o: ["invented", "discovered", "estimated", "researched"], exp: "To 'invent' is to create something that did not exist before." },
+        { q: "Is there an ____ for why it failed?", a: "explanation", o: ["explanation", "reason", "idea", "number"], exp: "An 'explanation' is a statement that makes something clear." },
+        { q: "The laptop is ____ and easy to carry.", a: "portable", o: ["portable", "digital", "automatic", "complicated"], exp: "'Portable' means light and easy to move or carry." },
+        { q: "A number ____ researchers joined us.", a: "of", o: ["of", "in", "to", "with"], exp: "'A number of' is a fixed phrase meaning 'some' or 'several'." },
+        { q: "This is a unique ____ of ancient tool.", a: "type", o: ["type", "number", "reason", "idea"], exp: "'Type' refers to a group of things with similar features." },
+        { q: "The robot has ____ movements.", a: "automatic", o: ["automatic", "artificial", "exact", "sudden"], exp: "'Automatic' means working by itself without human control." },
+        { q: "We need to ____ the results carefully.", a: "examine", o: ["examine", "fascinate", "boil", "measure"], exp: "To 'examine' is to look at something very closely to learn about it." },
+        { q: "The new software is very ____ to use.", a: "complicated", o: ["complicated", "digital", "automatic", "plastic"], exp: "'Complicated' means having many parts and being difficult to understand." },
+        { q: "The process resulted ____ a sudden decrease.", a: "in", o: ["in", "to", "at", "with"], exp: "'Result in' is the standard phrase for consequences." },
+        { q: "The gadget has a ____ touch screen.", a: "digital", o: ["digital", "plastic", "automatic", "exact"], exp: "'Digital' is the technical term for this type of screen." },
+        { q: "The chemist used a glass ____.", a: "beaker", o: ["beaker", "laboratory", "hardware", "software"], exp: "A 'beaker' is a glass container used in science labs." },
+        { q: "The scientist ____ the behavior of ants.", a: "researched", o: ["researched", "invented", "estimated", "concluded"], exp: "To 'research' is to study a subject in detail to find new info." },
+        { q: "There is an ____ amount of data here.", a: "exact", o: ["exact", "sudden", "digital", "automatic"], exp: "'Exact' means completely correct in every detail." },
+        { q: "The machine stopped due to a ____ failure.", a: "sudden", o: ["sudden", "exact", "digital", "automatic"], exp: "'Sudden' means happening quickly and without warning." },
+        { q: "We used ____ components to build it.", a: "plastic", o: ["plastic", "digital", "automatic", "exact"], exp: "'Plastic' refers to the material used for parts." },
+        { q: "The software has a high ____ on efficiency.", a: "effect", o: ["effect", "affect", "effort", "effective"], exp: "Use 'effect' as a noun; 'affect' is usually a verb." },
+        { q: "It involves a ____ of different steps.", a: "number", o: ["number", "type", "reason", "idea"], exp: "'A number of' indicates multiple steps." },
+        { q: "The laptop screen is very ____.", a: "clear", o: ["clear", "exact", "sudden", "automatic"], exp: "'Clear' is a common adjective for high-quality screens." },
+        { q: "The process was ____ from start to finish.", a: "automatic", o: ["automatic", "artificial", "exact", "sudden"], exp: "'Automatic' implies it ran without intervention." },
+        { q: "The chemist is ____ by the reaction.", a: "fascinated", o: ["fascinated", "boiled", "examined", "measured"], exp: "To be 'fascinated' is to be extremely interested." },
+        { q: "Water will ____ at 100 degrees.", a: "boil", o: ["boil", "examine", "fascinate", "measure"], exp: "'Boil' is the scientific term for liquid turning to gas." },
+        { q: "The measurement was very ____.", a: "exact", o: ["exact", "sudden", "digital", "automatic"], exp: "Scientific measurements should be 'exact'." },
+        { q: "The software is ____ to this computer.", a: "unique", o: ["unique", "identical", "exact", "sudden"], exp: "'Unique' means it is the only one of its kind." },
+        { q: "He is a brilliant ____.", a: "scientist", o: ["scientist", "science", "scientific", "historian"], exp: "We need the noun 'scientist' to describe the person." }
+    ];
 
-let state = { user: "", score: 0, current: 0, mode: "", questions: [], log: [] };
+    let currentQuestions = [];
+    let currentIdx = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 15;
+    let playerName = "";
+    let mistakes = [];
 
-function goMenu() {
-    state.user = document.getElementById('id-name').value || "RECRUIT";
-    document.getElementById('agent-display').innerText = state.user;
-    switchPage('p-start', 'p-menu');
-}
-
-function startGame(mode) {
-    state.mode = mode; state.current = 0; state.score = 0; state.log = [];
-    state.questions = [...bank].sort(() => 0.5 - Math.random()).slice(0, 20);
-    switchPage('p-menu', 'p-play');
-    render();
-}
-
-function render() {
-    if(state.current >= state.questions.length) return end();
-    const q = state.questions[state.current];
-    document.getElementById('q-counter').innerText = `${state.current+1}/20`;
-    document.getElementById('prog-bar').style.width = `${(state.current/20)*100}%`;
-    const area = document.getElementById('interact-area');
-    area.innerHTML = "";
-
-    if(state.mode === 'logic') {
-        document.getElementById('a-sentence').innerText = `INPUT: ${q.a}`;
-        document.getElementById('task-desc').innerText = "SELECT ACCURATE PASSIVE RECONSTRUCTION:";
-        let opts = [q.p, q.p.replace("been", "being"), q.p.replace("was", "is").replace("were", "are")].sort(() => 0.5 - Math.random());
-        opts.forEach(opt => {
-            let b = document.createElement('button'); b.className = "btn"; b.innerText = opt;
-            b.onclick = () => submit(opt === q.p, opt, q.p);
-            area.appendChild(b);
-        });
-    } else if(state.mode === 'rebuild') {
-        document.getElementById('a-sentence').innerText = `INPUT: ${q.a}`;
-        document.getElementById('task-desc').innerText = "REASSEMBLE PASSIVE DATA:";
-        let build = [];
-        let p = document.createElement('p'); p.innerText = "_ "; area.appendChild(p);
-        [...q.bits].sort(() => 0.5 - Math.random()).forEach(w => {
-            let b = document.createElement('button'); b.className = "btn"; b.innerText = w;
-            b.onclick = () => {
-                build.push(w); p.innerText = build.join(" "); b.style.display = "none";
-                if(build.length === q.bits.length) submit(build.join(" ") === q.bits.join(" "), build.join(" "), q.p);
-            };
-            area.appendChild(b);
-        });
-    } else if(state.mode === 'audit') {
-        let isPass = Math.random() > 0.5;
-        let testS = isPass ? q.p : q.a;
-        document.getElementById('a-sentence').innerText = `SCANNING: "${testS}"`;
-        document.getElementById('task-desc').innerText = "SYSTEM AUDIT: DETECT VOICE PROTOCOL";
-        ['ACTIVE VOICE', 'PASSIVE VOICE'].forEach(type => {
-            let b = document.createElement('button'); b.className = "btn"; b.innerText = type;
-            b.onclick = () => {
-                let correct = (isPass && type === 'PASSIVE VOICE') || (!isPass && type === 'ACTIVE VOICE');
-                submit(correct, type, isPass ? 'PASSIVE' : 'ACTIVE');
-            };
-            area.appendChild(b);
-        });
+    function initGame() {
+        playerName = document.getElementById('user-name').value;
+        if (!playerName) return alert("Please enter your name!");
+        
+        // Randomize and pick 20
+        currentQuestions = [...masterPool].sort(() => 0.5 - Math.random()).slice(0, 20);
+        
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('player-label').innerText = `Player: ${playerName}`;
+        
+        loadQuestion();
     }
-}
 
-function submit(correct, got, want) {
-    if(correct) state.score++;
-    state.log.push({q: state.questions[state.current].a, got, want, ok: correct});
-    state.current++; render();
-}
+    function loadQuestion() {
+        const q = currentQuestions[currentIdx];
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('explanation-area').classList.add('hidden');
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('progress-fill').style.width = `${(currentIdx / 20) * 100}%`;
+        
+        const grid = document.getElementById('options-grid');
+        grid.innerHTML = "";
+        
+        [...q.o].sort(() => 0.5 - Math.random()).forEach(opt => {
+            const b = document.createElement('button');
+            b.className = "option-btn";
+            b.innerText = opt;
+            b.onclick = () => check(opt, b);
+            grid.appendChild(b);
+        });
 
-function end() {
-    switchPage('p-play', 'p-end');
-    document.getElementById('final-stats').innerText = `SCORE: ${state.score} / 20 | EFFICIENCY: ${(state.score/20)*100}%`;
-}
+        timeLeft = 15;
+        document.getElementById('timer-label').innerText = `${timeLeft}s`;
+        clearInterval(timer);
+        timer = setInterval(tick, 1000);
+    }
 
-function showReview() {
-    const box = document.getElementById('review-box');
-    box.innerHTML = "";
-    state.log.forEach(l => {
-        box.innerHTML += `<div class="review-item">CASE: ${l.q}<br><span class="${l.ok?'correct':'wrong'}">${l.ok?'✔':'✘'} ${l.got}</span> ${!l.ok ? `[REQ: ${l.want}]` : ''}</div>`;
-    });
-    box.classList.remove('hidden');
-}
+    function tick() {
+        timeLeft--;
+        document.getElementById('timer-label').innerText = `${timeLeft}s`;
+        if (timeLeft <= 0) check(null, null);
+    }
 
-function switchPage(oldP, newP) {
-    document.getElementById(oldP).classList.add('hidden');
-    document.getElementById(newP).classList.remove('hidden');
-}
+    function check(choice, btn) {
+        clearInterval(timer);
+        const q = currentQuestions[currentIdx];
+        const btns = document.querySelectorAll('.option-btn');
+        
+        btns.forEach(b => {
+            b.disabled = true;
+            if (b.innerText === q.a) b.classList.add('correct');
+        });
+
+        if (choice === q.a) {
+            score += 10;
+            document.getElementById('score-label').innerText = `Score: ${score}`;
+        } else {
+            if (btn) btn.classList.add('wrong');
+            mistakes.push({ q: q.q, correct: q.a, yours: choice || "Time Out", exp: q.exp });
+        }
+
+        const expArea = document.getElementById('explanation-area');
+        expArea.innerHTML = `<strong>Logic:</strong> ${q.exp}`;
+        expArea.classList.remove('hidden');
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if (currentIdx < 20) loadQuestion();
+        else showEnd();
+    }
+
+    function showEnd() {
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('end-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `${playerName}, your score is ${score}/200`;
+        
+        const log = document.getElementById('mistake-log');
+        if (mistakes.length === 0) {
+            log.innerHTML = "<p>Amazing! You got a perfect score.</p>";
+        } else {
+            log.innerHTML = "<h3>Review Your Mistakes:</h3>" + mistakes.map(m => `
+                <div class="review-box">
+                    <p><strong>Question:</strong> ${m.q}</p>
+                    <p>Your Answer: <span style="color:red; text-decoration:line-through">${m.yours}</span> | 
+                       Correct: <span style="color:green; font-weight:bold">${m.correct}</span></p>
+                    <p style="font-size:0.9rem; color:#666"><em>${m.exp}</em></p>
+                </div>
+            `).join('');
+        }
+    }
 </script>
 </body>
 </html>
